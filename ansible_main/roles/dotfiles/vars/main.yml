@@ -1,0 +1,5 @@
+# roles/dotfiles/vars/main.yml
+dotfiles_dir: "/home/snake/.local/dotfiles"
+user_config_dir: "/home/snake/.config"
+home_dir: "/home/snake"
+system_config_dir: "/etc"

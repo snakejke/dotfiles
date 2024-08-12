@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Get the window id of the selected window
+window_id=$(xwininfo | grep "Window id:" | awk '{print $4}')
+
+# Get the width and height of the selected window
+width=$(xwininfo -id $window_id | grep "Width:" | awk '{print $2}')
+height=$(xwininfo -id $window_id | grep "Height:" | awk '{print $2}')
+
+# Get the X and Y position of the selected window
+x_pos=$(xwininfo -id $window_id | grep "Absolute upper-left X:" | awk '{print $5}')
+y_pos=$(xwininfo -id $window_id | grep "Absolute upper-left Y:" | awk '{print $5}')
+
+# Calculate the number of columns and lines (rows)
+columns=$(($width / 7))
+lines=$(($height / 15))
+
+# Print the result
+echo "COLUMNS: $columns"
+echo "lines (rows): $lines"
+echo "X position: $x_pos"
+echo "Y position: $y_pos"

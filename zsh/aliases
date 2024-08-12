@@ -1,0 +1,13 @@
+alias sss="loginctl poweroff"
+alias rrr="loginctl reboot"
+
+alias pu='sudo pacman -Syu'
+alias pi='sudo pacman -Sy'
+
+alias calc='emacsclient -c -n -e "(full-calc)" '
+alias e='emacsclient -c -n -a ""'
+alias dired='emacsclient -e "(dired default-directory)" -c -t'
+alias tmc="flatpak run fi.mooc.tmc.tmc-cli-rust"
+alias du=dust
+alias ip='ip -c=always'
+alias ls='ls --color=auto'

@@ -1,0 +1,8 @@
+#!/bin/bash
+exec 2>&1
+export HOME=/home/$USER
+export XAUTHORITY=/home/snake/.local/share/sx/xauthority
+
+cd $HOME
+
+exec /usr/bin/udiskie

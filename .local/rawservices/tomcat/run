@@ -1,0 +1,8 @@
+#!/bin/sh
+exec 2>&1
+
+
+export CATALINA_BASE=/home/snake/.local/devjava/sdkman/candidates/tomcat/current/
+export CATALINA_TMPDIR=/tmp
+
+exec /home/snake/.local/devjava/sdkman/candidates/tomcat/current/bin/catalina.sh run

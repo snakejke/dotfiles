@@ -1,0 +1,244 @@
+" Плагины
+Plug 'machakann/vim-highlightedyank'
+Plug 'tpope/vim-commentary'
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-surround'
+Plug 'easymotion/vim-easymotion'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tommcdo/vim-exchange'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'vim-scripts/argtextobj.vim'
+Plug 'kana/vim-textobj-entire'
+Plug 'vim-scripts/ReplaceWithRegister'
+set which-key
+
+
+"  https://stackoverflow.com/questions/17905207/ideavim-and-russian-layout
+"
+"
+let rumap = 'йцукенгшщзхъфывапролджэёячсмитьбюЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ'
+let enmap = 'qwertyuiop[]asdfghjkl;''\zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>'
+let mapLen = strchars(rumap)
+let i = 0
+while i < mapLen
+    let ruChar = matchstr(rumap, ".", byteidx(rumap, i))
+    let enChar = enmap[i]
+    "echo 'map '.ruChar.' '.enChar
+    execute 'map '.ruChar.' '.enChar
+    execute 'cmap '.ruChar.' '.enChar
+    let i += 1
+endwhile
+
+map Ё \|
+cmap Ё \|
+
+map й q
+map ц w
+map у e
+map к r
+map е t
+map н y
+map г u
+map ш i
+map щ o
+map з p
+map х [
+map ъ ]
+map ф a
+map ы s
+map в d
+map а f
+map п g
+map р h
+map о j
+map л k
+map д l
+map ж ;
+map э '
+map ё \
+map я z
+map ч x
+map с c
+map м v
+map и b
+map т n
+map ь m
+map б ,
+map ю .
+map Й Q
+map Ц W
+map У E
+map К R
+map Е T
+map Н Y
+map Г U
+map Ш I
+map Щ O
+map З P
+map Х {
+map Ъ }
+map Ф A
+map Ы S
+map В D
+map А F
+map П G
+map Р H
+map О J
+map Л K
+map Д L
+map Ж :
+map Э "
+map Я Z
+map Ч X
+map С C
+map М V
+map И B
+map Т N
+map Ь M
+map Б <
+map Ю >
+map Ё /|
+
+set clipboard+=unnamed
+set scrolloff=5
+set incsearch
+set ideajoin
+set idearefactormode=keep
+
+" Don't use Ex mode, use Q for formatting.
+map Q gq
+set showmode
+" Leader
+let mapleader=" "
+
+" Distraction Mode
+nnoremap <c-z> :action ToggleDistractionFreeMode<CR>
+
+" Terminal
+nnoremap <c-t> :action ActivateTerminalToolWindow<CR>
+nnoremap <leader>t :action Terminal.OpenInTerminal<CR>
+
+
+" Reload
+nnoremap <leader>re :source ~/.ideavimrc<cr>
+nnoremap \e :e ~/.ideavimrc<CR>
+nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
+
+" Build & Run
+nnoremap <leader>rr :action Run<cr>
+nnoremap <leader>cc :action CleanGradleProject<cr>
+nnoremap <leader>ss :action Android.SyncProject<cr>
+
+" Debug
+nnoremap <leader>dd :action Debug<cr>
+nnoremap <leader>bb :action ToggleLineBreakpoint<cr>
+nnoremap <leader>only :action CloseAllEditorsButActive<cr>
+nnoremap <leader>clear :action CloseAllEditors<cr>
+
+" Window
+nnoremap <leader>sp :action SplitVertically<cr>
+nnoremap <leader>hsp :action SplitHorizontally<cr>
+nnoremap <leader>vsp :action SplitVertically<cr>
+" Windows test
+nnoremap <c-\> :action SplitVertically<CR>
+nnoremap <c--> :action SplitHorizontally<CR>
+nnoremap <c-=> :action Unsplit<CR>
+nnoremap <c-m> :action MoveEditorToOppositeTabGroup<CR>
+sethandler <c-j> a:vim
+sethandler <c-k> a:vim
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <TAB> :action PreviousTab<CR>
+nnoremap <s-TAB> :action NextTab<CR>
+nnoremap <Leader>en :action EditSourceInNewWindow<CR>
+nnoremap <Leader>n :action NextWindow<CR>
+nnoremap <Leader>q :action CloseContent<CR>
+nnoremap <Leader>qa :action CloseAllEditors<CR>
+nnoremap <c-p> :action JumpToLastWindow<CR>
+nnoremap <c-x> :action HideAllWindows<CR>
+
+
+" Code Edit  test
+vnoremap < <gv
+vnoremap > >gv
+nnoremap [[ :action MethodUp<CR>
+nnoremap ]] :action MethodDown<CR>
+nnoremap zc :action CollapseRegion<CR>
+nnoremap zo :action ExpandRegion<CR>
+nnoremap <leader>zc :action CollapseAllRegions<CR>
+nnoremap <leader>zo :action ExpandAllRegions<CR>
+nnoremap <leader>c :action CommentByLineComment<CR>
+nnoremap <leader>r :action Refactorings.QuickListPopupAction<CR>
+nnoremap <Leader>=  :action ReformatCode<CR>
+nnoremap <leader>o :action OptimizeImports<CR>
+nnoremap <c-r> :action RecentFiles<CR>
+nnoremap <leader>l :action RecentLocations<CR>
+nnoremap <leader>h  :action LocalHistory.ShowHistory<CR>
+nnoremap ge :action GotoNextError<CR>
+nnoremap gE :action GotoPreviousError<CR>
+
+" Searching and Source Code Navigation
+nnoremap <c-/> :action FindInPath<CR>
+nnoremap <c-a> :action GotoAction<CR>
+nnoremap <c-f> :action GotoFile<CR>
+nnoremap <leader>u :action FindUsages<CR>
+nnoremap <leader>s :action GotoRelated<CR>
+nnoremap <leader>h :action CallHierarchy<CR>
+nnoremap <leader>b :action ShowNavBar<CR>
+nnoremap <c-s> :action FileStructurePopup<CR>
+nnoremap <c-o> :action GotoSymbol<CR>
+nnoremap gc :action GotoClass<CR>
+nnoremap gi :action GotoImplementation<CR>
+nnoremap gd :action GotToDeclaration<CR>
+nnoremap gp :action GotToSuperMethod<CR>
+nnoremap gt :action GotoTest<CR>
+nnoremap gb :action Back<CR>
+nnoremap gf :action Forward<CR>
+
+""" Running and Debugging
+nnoremap ,r :action ContextRun<CR>
+nnoremap ,c :action RunClass<CR>
+nnoremap ,f :action ChooseRunConfiguration<CR>
+nnoremap ,t :action ActivateRunToolWindow<CR>
+nnoremap ,u :action Rerun<CR>
+nnoremap ,f :action RerunFailedTests<CR>
+nnoremap ,b :action ToggleLineBreakpoint<CR>
+nnoremap ,d :action ContextDebug<CR>
+nnoremap ,n :action ActivateDebugToolWindow<CR>
+
+
+" Git
+nnoremap <leader>gh :action LocalHistory.ShowHistory<cr>
+
+" Refactor
+nnoremap <leader>R :action Refactorings.QuickListPopupAction<cr>
+nnoremap <leader>L :action ReformatCode<cr>
+nnoremap <leader>ic :action InspectCode<cr>
+nnoremap <leader>rm :action ExtractMethod<cr>
+nnoremap <leader>rn :action RenameElement<cr>
+nnoremap <leader>rf :action RenameFile<cr>
+nnoremap <leader>rv :action IntroduceVariable<cr>
+nnoremap <leader>rs :action ExtractSuperclass<cr>
+nnoremap <leader>ri :action Inline<cr>
+
+" Tool
+nnoremap <leader>fp :action FindInPath<cr>
+nnoremap <leader>fu :action FindUsages<cr>
+nnoremap <leader>su :action ShowUsages<cr>
+nnoremap <leader>ga :action GotoAction<cr>
+nnoremap <leader>lc :action ActivateLogcatToolWindow<cr>
+nnoremap <leader>sh :action ActivateTerminalToolWindow<cr>
+nnoremap [e :action GotoNextError<cr>
+nnoremap ]e :action GotoPreviousError<cr>
+
+" Easy Motion install the IdeaVim-EasyMotion and AceJump plugins
+map <leader>F <Plug>(easymotion-s)
+map <leader>f <Plug>(easymotion-f)
+
+" Nerd Tree
+map <c-t>   :NERDTree<CR>
+
+" argtextobj
+let g:argtextobj_pairs="[:],(:),<:>"

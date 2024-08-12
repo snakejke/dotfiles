@@ -1,0 +1,29 @@
+[Added Associations]
+image/gif=nsxiv.desktop;feh.desktop;gimp.desktop;firefox.desktop;google-chrome.desktop;engineer.atlas.Nyxt.desktop;
+image/jpeg=nsxiv.desktop;google-chrome.desktop;firefox.desktop;gimp.desktop;feh.desktop;
+image/png=google-chrome.desktop;nsxiv.desktop;nsxiv-2.desktop;gimp.desktop;engineer.atlas.Nyxt.desktop;feh.desktop;firefox.desktop;
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+image/avif=nsxiv.desktop;
+inode/socket=emacsclient.desktop;
+text/plain=emacsclient.desktop;
+application/x-shellscript=emacsclient.desktop;
+application/xml=emacsclient.desktop;
+application/pdf=org.pwmt.zathura-pdf-mupdf.desktop;
+application/postscript=org.pwmt.zathura-ps.desktop;
+
+[Default Applications]
+image/gif=nsxiv.desktop;
+image/jpeg=nsxiv.desktop;
+image/png=nsxiv.desktop;
+text/html=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+inode/socket=emacsclient.desktop
+text/plain=emacsclient.desktop
+x-scheme-handler/eclipse+command=_usr_lib_dbeaver_.desktop
+application/xml=emacsclient.desktop
+application/pdf=org.pwmt.zathura-pdf-mupdf.desktop
+
+[Removed Associations]
+image/jpeg=engineer.atlas.Nyxt.desktop;

@@ -1,0 +1,4 @@
+#!/bin/sh
+#xseticon -id 0x2400003 /usr/share/icons/hicolor/48x48/apps/obsidian.png
+/usr/bin/xseticon -id 0x2400003 /usr/share/icons/hicolor/48x48/apps/obsidian.png
+exec /opt/Obsidian/obsidian %U

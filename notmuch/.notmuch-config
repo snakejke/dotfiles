@@ -1,0 +1,22 @@
+[database]
+path=/home/snake/Mail/
+hook_dir=/home/snake/config/notmuch/hooks/
+backup_dir=/home/snake/Mail/
+#
+[user]
+name=Artem Bliznetsov
+primary_email=snake05865@gmail.com
+other_email=snake05865@mail.ru;tabularise111@yandex.ru;
+#
+[new]
+tags=INBOX
+#tags=unread;inbox;sent;
+#
+[search]
+#exclude_tags=
+#exclude_tags=deleted;spam;
+#
+[maildir]
+#synchronize_flags=true
+#[crypto]
+#gpg_path=gpg

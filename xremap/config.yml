@@ -1,0 +1,4 @@
+modmap:
+  - name: Global
+    remap:
+      F4: KEY_2 

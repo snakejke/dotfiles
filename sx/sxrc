@@ -1,0 +1,30 @@
+#!/bin/bash 
+
+userresources=$HOME/.config/sx/.Xresources
+#usermodmap=/home/snake/.config/sx/Xmodmap
+
+
+if [ -f "$userresources" ]; then
+  xrdb -merge "$userresources"
+fi
+
+# if [ -f "$usermodmap" ]; then
+#   xmodmap "$usermodmap"
+# fi
+
+xset -b # чтобы не пиликал
+xset r rate 300 50
+setxkbmap -option 'ctrl:nocaps'
+picom --config ~/.config/picom/picom.conf &
+#feh --no-fehbg --bg-scale ~/Documents/Pictures/wallpapers/wall.jpg &
+wmname LG3D &
+
+dbus-run-session pipewire &
+#exec startplasma-x11
+case $XDG_VTNR in
+    1) exec startxfce4 ;;
+    2) exec startkde ;;
+    3) exec fvwm3 ;;
+esac
+#exec startxfce4
+#exec i3

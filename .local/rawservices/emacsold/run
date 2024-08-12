@@ -1,0 +1,10 @@
+#!/bin/bash
+export USER=snake
+export HOME=/home/$USER
+export PATH=$HOME/.local/bin:$PATH
+# .. any other variables you need can go here ..
+
+export XDG_RUNTIME_DIR=/run/user/$(id -g $USER)
+cd $HOME
+#exec /usr/bin/emacs --daemon
+exec /usr/local/bin/emacs --fg-daemon=cha

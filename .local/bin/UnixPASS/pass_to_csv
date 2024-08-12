@@ -1,0 +1,141 @@
+#!/usr/bin/env -S denim
+/* Cargo.toml
+[package]
+name = "pass_to_csv"
+version = "0.1.0"
+authors = ["Jakub Pastuszek"]
+edition = "2021"
+
+[dependencies]
+cotton = "0.1.0"
+csv = "1.1"
+serde = { version = "1", features = ["derive"] }
+*/
+use cotton::prelude::*;
+use std::time::SystemTime;
+use serde::Serialize;
+use csv::Writer;
+
+const MAX_NOTES_LEN: usize = 20000;
+
+/// Export passwords from pass command to CSV suitable for KeePassXC import
+#[derive(Parser)]
+struct Cli {
+    #[command(flatten)]
+    logging: ArgsLogger,
+
+    /// List of .gpg files to decrypt and export
+    #[arg()]
+    files: Vec<PathBuf>,
+}
+
+#[derive(Debug, Serialize)]
+struct Entry<'i> {
+    group: String,
+    title: String,
+    username: Option<&'i str>,
+    password: Option<&'i str>,
+    url: Option<&'i str>,
+    notes: Option<String>,
+    icon: Option<u32>,
+    totp: Option<String>,
+    modified: String,
+    created: String,
+}
+
+#[derive(Debug, Default)]
+struct EntryContent<'i> {
+    password: Option<&'i str>,
+    username: Option<&'i str>,
+    url: Option<&'i str>,
+    notes: Option<String>,
+}
+
+fn parse_content<'i>(mut lines: impl Iterator<Item = &'i str>) -> EntryContent<'i> {
+    let mut entry = EntryContent::default();
+    let mut notes = Vec::new();
+
+    entry.password = lines.next();
+
+    for line in lines {
+        if let Some((key, value)) = line.splitn(2, ": ").collect_tuple() {
+            match key {
+                "login" | "username" | "attachments" => entry.username = Some(value),
+                "url" => entry.url = Some(value),
+                "comments" => notes.push(value),
+                "icon" | "autotype_enabled" => warn!("dropping line: {}", line),
+                _ => notes.push(line),
+            }
+        } else {
+            notes.push(line);
+        }
+    }
+
+    entry.notes = if notes.is_empty() {
+        None
+    } else {
+        Some(notes.join("\n"))
+    };
+
+    entry
+}
+
+fn to_ts(sys: SystemTime) -> PResult<String> {
+    let ts = sys.duration_since(SystemTime::UNIX_EPOCH)?;
+    let dt = NaiveDateTime::from_timestamp_opt(ts.as_secs().try_into()?, 0)
+        .ok_or_problem("making date/time from timestamp")?;
+    Ok(DateTime::<Utc>::from_local(dt, Utc).format("%+").to_string())
+}
+
+fn main() -> FinalResult {
+    let Cli {
+        logging,
+        files,
+    } = Cli::parse();
+    setup_logger(logging, vec![module_path!()]);
+
+    let mut out = Writer::from_writer(stdout());
+
+    for file in files {
+        info!("Reading {:?}", file);
+        let data: Result<StdoutUntrimmed, _> = run_result!(["gpg", "--decrypt", &file.to_str().ok_or_problem("bad path")?]);
+        if let Some(StdoutUntrimmed(data)) = data.ok() {
+            debug!("{}", data);
+
+            let content = parse_content(data.lines());
+
+            let meta = file.metadata()?;
+
+            let group = file.parent().ok_or_problem("bad parent")?.to_string_lossy().to_string();
+
+            let entry = Entry {
+                title: file.file_stem().ok_or_problem("bad stem")?.to_string_lossy().to_string(),
+                group: if group.is_empty() { "Root".to_string() } else { group },
+                created: to_ts(meta.created()?)?,
+                modified: to_ts(meta.modified()?)?,
+                password: content.password,
+                username: content.username,
+                url: content.url,
+                notes: content.notes,
+                icon: None,
+                totp: None,
+            };
+            debug!("{:#?}", entry);
+
+            if let Some(len) = entry.notes.as_ref().map(|n| n.len()) {
+                if len > MAX_NOTES_LEN {
+                    error!("Notes are too long: {}! Skipping!", len);
+                    continue
+                }
+            }
+
+            out.serialize(&entry)?;
+        } else {
+            error!("Error reading {:?} as UTF-8 string", file);
+        }
+    }
+
+    Ok(())
+}
+
+// vim: ft=rust

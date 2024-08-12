@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Set the location to save screenshots
+SCREENSHOT_DIR="$HOME/Documents/Pictures/Screenshots"
+
+# Take a screenshot with maim
+maim -s | tee >(xclip -selection clipboard -t image/png) > "$SCREENSHOT_DIR/screenshot-$(date +%Y-%m-%d-%H-%M-%S).jpg"
+
+# Notify the user that the screenshot was saved
+#notify-send "Screenshot saved to $SCREENSHOT_DIR"

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export USER="snake"
+export HOME="/home/snake"
+
+groups="$(id -Gn "$USER" | tr ' ' ':')"
+svdir="$HOME/services"
+
+exec chpst -u "$USER:$groups" runsvdir "$svdir"
+

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+PINENTRY_USER_DATA=gtk /usr/bin/passmenu "$@"

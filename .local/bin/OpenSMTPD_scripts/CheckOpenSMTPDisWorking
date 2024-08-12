@@ -1,0 +1,8 @@
+#!/bin/bash
+recipient="snake05865@gmail.com"
+subject="Test Messageeeee"
+from="snake05865@mail.ru"
+body="This is a test message sent from OpenSMTPDDDDD."
+
+echo -e "Subject: $subject\nFrom: $from\nTo: $recipient\n\n$body" | sendmail -t -v
+
