@@ -11,6 +11,12 @@ application/x-shellscript=emacsclient.desktop;
 application/xml=emacsclient.desktop;
 application/pdf=org.pwmt.zathura-pdf-mupdf.desktop;
 application/postscript=org.pwmt.zathura-ps.desktop;
+text/x-chdr=emacsclient.desktop;
+application/x-desktop=emacsclient.desktop;
+image/svg+xml=org.inkscape.Inkscape.desktop;nvim.desktop;emacsclient.desktop;gimp.desktop;nsxiv.desktop;
+application/x-zerosize=emacsclient.desktop;
+application/octet-stream=nvim.desktop;
+image/webp=nsxiv.desktop;
 
 [Default Applications]
 image/gif=nsxiv.desktop;
@@ -24,6 +30,9 @@ text/plain=emacsclient.desktop
 x-scheme-handler/eclipse+command=_usr_lib_dbeaver_.desktop
 application/xml=emacsclient.desktop
 application/pdf=org.pwmt.zathura-pdf-mupdf.desktop
+text/x-chdr=emacsclient.desktop
+image/svg+xml=nsxiv.desktop
+application/x-zerosize=emacsclient.desktop
 
 [Removed Associations]
 image/jpeg=engineer.atlas.Nyxt.desktop;

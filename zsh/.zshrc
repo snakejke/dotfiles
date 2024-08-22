@@ -4,10 +4,15 @@ PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magent
 
 export GPG_TTY=$(tty)
 gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1
+
 bindkey -e
+bindkey '^ ' autosuggest-accept
 
 #if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
 #    tmux attach -t default || tmux new -s default
+#fi
+#if [ -n "$GNOME_KEYRING_PID" ]; then
+#    export SSH_AUTH_SOCK=$(find /run/user/$UID -type s -name 'ssh*')
 #fi
 
 zstyle :compinstall filename "$ZDOTDIR/.zshrc"
@@ -20,6 +25,7 @@ compinit
 . "$ZDOTDIR/aliases"
 . "$ZDOTDIR/.functions"
 . "$ZDOTDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
+. "/usr/share/fzf/key-bindings.zsh"
 
 setopt append_history     
 setopt inc_append_history

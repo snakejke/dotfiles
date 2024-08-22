@@ -1,3 +1,8 @@
+#+TITLE: Bootstrap script for Void Linux. 
+#+property: header-args :tangle ~/.local/bin/BOOTSTRAP/last.sh 
+
+
+#+begin_src bash
 #!/bin/bash
 
 # Проверка привилегий
@@ -8,21 +13,31 @@ check_privileges() {
     fi
 }
 
+#+end_src
+
+#+begin_src bash
 # Цвета для вывода
 green='\033[0;32m'
 red='\033[0;31m'
 nc='\033[0m'
+#+end_src
 
+#+begin_src bash
 # Функция для вывода сообщений
 print_msg() {
     echo -e "${green}$1${nc}"
 }
+#+end_src
 
+#+begin_src bash
 # Функция для вывода ошибок
 print_error() {
     echo -e "${red}$1${nc}"
 }
 
+#+end_src
+
+#+begin_src bash
 # Проверка наличия btrfs-progs
 check_btrfs_progs() {
     if ! command -v btrfs &> /dev/null; then
@@ -31,6 +46,9 @@ check_btrfs_progs() {
     fi
 }
 
+#+end_src
+
+#+begin_src bash
 # Получение информации о дисках
 get_disk_info() {
     print_msg "Доступные диски:"
@@ -39,6 +57,9 @@ get_disk_info() {
     disk="/dev/$diskname"
 }
 
+#+end_src
+
+#+begin_src bash
 # Разметка диска с использованием fdisk
 partition_disk() {
     print_msg "Разметка диска $disk..."
@@ -57,14 +78,18 @@ partition_disk() {
         echo w # Записать изменения и выйти
     ) | fdisk "$disk"
 }
+#+end_src
 
+#+begin_src bash
 # Форматирование разделов
 format_partitions() {
     print_msg "Форматирование разделов..."
     mkfs.vfat "${disk}1"
     mkfs.btrfs "${disk}2"
 }
+#+end_src
 
+#+begin_src bash
 # Монтирование и создание subvolumes
 mount_and_create_subvolumes() {
     print_msg "Монтирование корневого subvolume..."
@@ -92,26 +117,34 @@ mount_and_create_subvolumes() {
     mount -o noatime,$mount_opts,subvol=@docker "${disk}2" /mnt/var/lib/docker
     mount -o $mount_opts,subvol=@.snapshots "${disk}2" /mnt/.snapshots
 }
+#+end_src
 
+#+begin_src bash
 # Монтирование раздела /boot
 mount_boot() {
     print_msg "Монтирование раздела /boot..."
     mkdir -p /mnt/boot/efi
     mount "${disk}1" /mnt/boot/efi
 }
+#+end_src
 
+#+begin_src bash
 # Монтирование основного btrfs пула
 mount_btrfs_pool() {
     print_msg "Монтирование основного btrfs пула..."
     mkdir -p /mnt/mnt/btr_pool
     mount -o $mount_opts,subvolid=5 "${disk}2" /mnt/mnt/btr_pool
 }
+#+end_src
 
+#+begin_src bash
 # Функция для выполнения команд в chroot окружении
 run_in_chroot() {
     chroot /mnt /bin/bash -c "$1"
 }
+#+end_src
 
+#+begin_src bash
 # Установка Void Linux
 install_void_linux() {
     repo=https://repo-default.voidlinux.org/current
@@ -121,6 +154,9 @@ install_void_linux() {
     XBPS_ARCH=$arch xbps-install -Sy -r /mnt -R "$repo" base-system
 }
 
+#+end_src
+
+#+begin_src bash
 # Монтирование системных каталогов
 mount_system_dirs() {
     for dir in dev proc sys run; do
@@ -129,15 +165,24 @@ mount_system_dirs() {
     done
 }
 
+#+end_src
+
+#+begin_src bash
 # Копирование DNS настроек
 copy_dns_settings() {
     cp /etc/resolv.conf /mnt/etc/
 }
 
+#+end_src
+
+#+begin_src bash
 pause_for_confirmation() {
     read -p "Press Enter to continue after the $1 step or Ctrl+C to cancel..." dummy
 }
 
+#+end_src
+
+#+begin_src bash
 # Первый этап внутри chroot
 chroot_stage1() {
     run_in_chroot '
@@ -154,6 +199,9 @@ chroot_stage1() {
   '  
 }
 
+#+end_src
+
+#+begin_src bash
 # Второй этап внутри chroot
 chroot_stage2() {
     run_in_chroot '
@@ -168,6 +216,9 @@ DRACUT
 '
 }
 
+#+end_src
+
+#+begin_src bash
 # Третий этап внутри chroot
 chroot_stage3() {
     run_in_chroot '
@@ -188,22 +239,36 @@ UUID=$boot_uuid /boot/efi vfat defaults 0 2
 proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0
 tmpfs /tmp tmpfs nosuid,nodev,noexec,strictatime,mode=1777 0 0
 FSTAB
+#+end_src
 
+#+begin_src bash
 # Изменение пароля для root
 echo "Изменение пароля для root..."
 passwd root
 
+#+end_src
+
+#+begin_src bash
 # Создание нового пользователя
 read -p "Enter name new user: " newuser
 useradd -m -G wheel,floppy,audio,cdrom,optical,kvm,input,xbuilder -s /bin/bash "$newuser"
 
+#+end_src
+
+#+begin_src bash
 # Изменение пароля для нового пользователя
 echo "Change password for $newuser..."
 passwd "$newuser"
 
+#+end_src
+
+#+begin_src bash
 #wheel 
 echo "%wheel ALL=(ALL:ALL) ALL" >/etc/sudoers.d/wheel-can-sudo
 
+#+end_src
+
+#+begin_src bash
 xbps-install -Sy grub-x86_64-efi refind
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Void"
 
@@ -211,7 +276,9 @@ refind-install
 
 '
 }
+#+end_src
 
+#+begin_src bash
 chroot_stage4_install_apps() {
     run_in_chroot '
   apps=(
@@ -281,7 +348,10 @@ chroot_stage4_install_apps() {
 
 '
 }
+#+end_src
 
+
+#+begin_src bash
 # Основная функция
 main() {
     check_privileges
@@ -309,3 +379,5 @@ main() {
 
 # Запуск основной функции
 main
+#+end_src
+

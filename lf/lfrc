@@ -5,7 +5,7 @@ set icons
 set ignorecase true
 set shellopts '-eu'
 set ifs "\n"
-set previewer testimg
+set previewer lfpreviewer
 set cleaner lfcleaner
 #set previewer scope
 # leave some space at the top and the bottom of the screen

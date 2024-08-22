@@ -6,11 +6,13 @@
 # server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
 
 server_names = ['dct-ru', 'cs-lv', 'controld-unfiltered', 'sth-dsncrypyt-se', 'nextdns'] 
+#server_names = ['dct-ru'] 
 #cs-lv                 
 #controld-unfiltered  
 #sth-dnscrypt-se   
 #sth-doh-se  
 #nextdns
+
 
 ## List of local addresses and ports to listen to. Can be IPv4 and/or IPv6.
 ## Example with both IPv4 and IPv6:
@@ -552,6 +554,11 @@ fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familys
 
 [anonymized_dns]
 
+# routes = [
+#     { server_name='dct-ru', via=['anon-cs-london', 'anon-digitalprivacy.diy-ipv4', 'anon-cs-fr'] }
+#     # { server_name='cs-lv', via=['anon-dnscrypt.uk-ipv4'] },
+#     # { server_name='nextdns', via=['anon-cs-serbia'] }
+# ]
 
 skip_incompatible = false
 

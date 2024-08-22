@@ -7,11 +7,11 @@
 ! Xft.lcdfilter: lcddefault
 !Xft.autohint: 0 ????
 !Xft.dpi: 96 ??
-st.font: JetBrainsMono Nerd Font :style:medium:pixelsize=20;
+st.font: JetBrainsMono Nerd Font :style:medium:pixelsize=20, xft:Noto Color Emoji
+
 !st.borderpx: 0
 
-xft:Noto Color Emoji
-
+Xcursor.theme: Bibata-Modern-Classic
 ! Ayu Color Palette
 *.foreground: #e6e1cf
 *.background: #0f1419
@@ -24,7 +24,7 @@ xft:Noto Color Emoji
 *.color5: #f07178
 *.color6: #95e6cb
 *.color7: #e6e1cf
-*.color8: #323232
+!*.color8: #323232
 *.color9: #ff6565
 *.color10: #eafe84
 *.color11: #fff779

@@ -6,11 +6,11 @@ if (get_window_name() == "Mozilla Firefox") then
 end
 
 if (get_window_name() == "st") then
-  set_window_geometry(131, 214, 1630, 600);
+  set_window_geometry(53, 202, 1816, 770);
 end
 
 if (get_application_name() == "emacs") then
-  set_window_geometry(142, 127, 1612, 899);
+  set_window_geometry(149, 93, 1579, 836);
 end
 
 if (get_window_name() == "passwords.kdbx [Locked] - KeePassXC") then

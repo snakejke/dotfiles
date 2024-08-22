@@ -11,3 +11,4 @@ alias tmc="flatpak run fi.mooc.tmc.tmc-cli-rust"
 alias du=dust
 alias ip='ip -c=always'
 alias ls='ls --color=auto'
+alias lf=lfrun

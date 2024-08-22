@@ -279,9 +279,9 @@
   "d" 'delete-frame
   "Q" 'kill-emacs)
 
-(+general-global-menu! "searchhh" "s"
-  "b" 'consult-line
-  "p" 'consult-ripgrep)
+ (+general-global-menu! "searchhh" "s"
+   "b" 'consult-line
+   "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
   "i" 'insert-char
@@ -400,6 +400,8 @@
   (enable-recursive-minibuffers t "Allow minibuffer commands in minibuffer")
   (frame-title-format '(buffer-file-name "%f" ("%b"))
                       "Make frame title current file's name.")
+  (frame-resize-pixelwise t) ;; fvwm3 
+
   (find-library-include-other-files nil)
   (indent-tabs-mode nil "Use spaces, not tabs")
   (inhibit-startup-screen t)
@@ -523,7 +525,7 @@ unreadable. Returns the names of envvars that were changed."
         (t . (variable-pitch 1)) 
 
     ))
-    (set-face-attribute 'default nil :height 170)
+    (set-face-attribute 'default nil :height 190)
     (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif" :height 1.0 :weight 'medium)
     (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
     (setq modus-themes-common-palette-overrides
@@ -1634,16 +1636,16 @@ Examples:
    "MariaDB-db-connection"
    :dependencies [[org.mariadb.jdbc/mariadb-java-client "2.6.0"]]
    :classname "org.mariadb.jdbc.Driver"
-   :connection-uri "jdbc:mariadb://localhost:3306/mydb"
+   :connection-uri "jdbc:mariadb://localhost:3306/sqlstepik"
    :user "root"
    :password "root"
    
    )
 )
 
-;; (use-feature sql
-;;    :config
-;;    (+eglot-register '(sql-mode) "sqls"))
+  ;; (use-feature sql
+  ;;    :config
+  ;;    (+eglot-register '(sql-mode) "sqls"))
 
 (use-package flycheck
   :commands (flycheck-mode)
@@ -2289,10 +2291,10 @@ Speeds up `org-agenda' remote operations."
   :custom
   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
 
-(use-package doom-snippets
-:ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
-;;:load-path "~/.config/vanilla/snippets"
-:after yasnippet)
+  (use-package doom-snippets
+  :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
+  ;;:load-path "~/.config/vanilla/snippets"
+  :after yasnippet)
 
 (use-feature tramp
   :defer t
@@ -2753,7 +2755,7 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
-(use-feature notmuch
+ (use-feature notmuch
   :commands (notmuch)
   :defer t
   :general

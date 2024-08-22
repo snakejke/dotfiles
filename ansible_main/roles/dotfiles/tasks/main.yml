@@ -23,7 +23,6 @@
     - { name: 'ansible/ansible.cfg',is_dir: False  }
     - { name: 'alacritty', is_dir: True }
     - { name: 'com.github.johnfactotum.Foliate', is_dir: True }
-    - { name: 'cwm', is_dir: True }
     - { name: 'devilspie2', is_dir: True }
     - { name: 'doom', is_dir: True }
     - { name: 'dunst', is_dir: True }
@@ -36,7 +35,6 @@
     - { name: 'fdm', is_dir: True }
     - { name: 'fvwm', is_dir: True }
     - { name: 'git', is_dir: True }
-    - { name: 'i3', is_dir: True }
     - { name: 'ideavimrc', is_dir: True }
     - { name: 'lf', is_dir: True }
     - { name: 'mpv', is_dir: True }

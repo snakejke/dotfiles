@@ -702,6 +702,8 @@ Shows match counts in mode line.
   (enable-recursive-minibuffers t "Allow minibuffer commands in minibuffer")
   (frame-title-format '(buffer-file-name "%f" ("%b"))
                       "Make frame title current file's name.")
+  (frame-resize-pixelwise t) ;; fvwm3 
+
   (find-library-include-other-files nil)
   (indent-tabs-mode nil "Use spaces, not tabs")
   (inhibit-startup-screen t)
@@ -846,7 +848,7 @@ unreadable. Returns the names of envvars that were changed."
         (t . (variable-pitch 1)) 
 
     ))
-    (set-face-attribute 'default nil :height 170)
+    (set-face-attribute 'default nil :height 190)
     (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif" :height 1.0 :weight 'medium)
     (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
     (setq modus-themes-common-palette-overrides
@@ -2719,7 +2721,7 @@ HTDP + SICP
 
 * ejc-sql 
 Работает. 
-#+begin_src emacs-lisp :lexical t :tangle-no
+#+begin_src emacs-lisp :lexical t :tangle yes
 (use-package ejc-sql
   :defer t
   :commands ejc-sql-mode ejc-connect
@@ -2742,7 +2744,7 @@ HTDP + SICP
    "MariaDB-db-connection"
    :dependencies [[org.mariadb.jdbc/mariadb-java-client "2.6.0"]]
    :classname "org.mariadb.jdbc.Driver"
-   :connection-uri "jdbc:mariadb://localhost:3306/mydb"
+   :connection-uri "jdbc:mariadb://localhost:3306/sqlstepik"
    :user "root"
    :password "root"
    
