@@ -14,6 +14,7 @@
     - 'devilspie2'
     - 'doom'
     - 'dunst'
+    - 'dicord'
     - 'fdm'
     - 'fvwm'
     - 'git'
@@ -53,6 +54,7 @@
     - { name: 'com.github.johnfactotum.Foliate', is_dir: True }
     - { name: 'cwm', is_dir: True }
     - { name: 'devilspie2', is_dir: True }
+    - { name: 'discord/settings.json', is_dir: False }
     - { name: 'doom', is_dir: True }
     - { name: 'dunst', is_dir: True }
     - { name: 'emacs/early-init.el', is_dir: False }

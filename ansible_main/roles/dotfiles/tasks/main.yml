@@ -7,6 +7,7 @@
   loop:
     - 'ansible'
     - 'emacs'
+    - 'discord'
     - 'emacs/.local'
     - 'emacs/dict'
     - 'npm'
@@ -24,6 +25,7 @@
     - { name: 'alacritty', is_dir: True }
     - { name: 'com.github.johnfactotum.Foliate', is_dir: True }
     - { name: 'devilspie2', is_dir: True }
+    - { name: 'discord/settings.json', is_dir: False }
     - { name: 'doom', is_dir: True }
     - { name: 'dunst', is_dir: True }
     - { name: 'emacs/early-init.el', is_dir: false }
