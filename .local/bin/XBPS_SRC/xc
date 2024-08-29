@@ -14,17 +14,38 @@ install_updates() {
     ./xbps-src update-sys
 }
 
+install_packages() {
+    cd "$VOID_PACKAGES_DIR" || return
+    for package in "$@"; do
+        ./xbps-src pkg "$package"
+    done
+    xi "$@"
+}
+
 while getopts "ui" opt; do
     case $opt in
-        u) update_packages ;;
-        i) install_updates ;;
-        *) echo "Неверный параметр: -$OPTARG" >&2 ; exit 1 ;;
+        u)
+            update_packages
+            ;;
+        i)
+            shift $((OPTIND-1))
+            if [ $# -eq 0 ]; then
+                install_updates
+            else
+                install_packages "$@"
+            fi
+            exit 0
+            ;;
+        *)
+            echo "Неверный параметр: -$OPTARG" >&2
+            exit 1
+            ;;
     esac
 done
 
 if [ $# -eq 0 ]; then
-    echo "Использование: xc [-u] [-i]"
+    echo "Использование: xc [-u] [-i [package1 package2 ...]]"
     echo "  -u: Обновить пакеты (git pull, bootstrap-update, show-sys-updates)"
-    echo "  -i: Установить обновления (update-sys)"
+    echo "  -i: Установить обновления (update-sys) или указанные пакеты"
     exit 1
 fi

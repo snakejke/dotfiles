@@ -86,25 +86,6 @@ AddToFunc   ViewManPage
 + I Exec exec $[infostore.terminal] -g 80x40 \
   -n "Manual Page - $0" -T "Manual Page - $0" -e man "$0"
 
-# Function: SetBG $0
-#
-# SetBG is used with the background menu to set the background
-# image and configure it to be loaded the next time fvwm is run.
-# Note, fvwm-root can't use .jpeg or resize images. Use something
-# like display, feh, etc.
-DestroyFunc SetBG
-AddToFunc   SetBG
-+ I Test (f $[FVWM_USERDIR]/images/background/$0) \
-    Exec exec fvwm-root $[FVWM_USERDIR]/images/background/$0
-+ I TestRc (Match) Exec exec ln -fs images/background/$0 \
-    $[FVWM_USERDIR]/.BGdefault
-+ I TestRc (Match) Break
-+ I Test (!f $[FVWM_DATADIR]/default-config/images/background/$0) Break
-+ I Exec exec fvwm-root $[FVWM_DATADIR]/default-config/images/background/$0
-+ I Exec exec ln -fs $[FVWM_DATADIR]/default-config/images/background/$0 \
-    $[FVWM_USERDIR]/.BGdefault
-
-
 # Function: IconManClick
 #
 # This function is run from FvwmIconMan when the button is clicked.
@@ -162,17 +143,18 @@ DesktopSize 1x1
 Style * CursorStyle Bibata-Modern-Classic
 Style xfce4-panel NoTitle, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
 Style "Whisker Menu" NoTitle, !Borders
-
+#fix focus menu 
+Style jetbrains-idea FPLenient
 # EdgeScroll will move the view port between the Pages when the mouse
 # moves to the edge of the screen. This set the amount of distance to
 # scroll at 100% (full page) and the EdgeResistance which is a timer
 # for how long the mouse as at the edge before it scrolls.
 #
-# Set EdgeScroll 0 0 and/or EdgeResistance -1 to disable.
+# Set EdgeScroll 0 0 and/or EdgeResistance -1 to disable.(default 450)
 EdgeScroll 100 100
-EdgeResistance 450
+EdgeResistance -1
 EdgeThickness 1
-Style * EdgeMoveDelay 350, EdgeMoveResistance 350
+Style * EdgeMoveDelay 30, EdgeMoveResistance 30
 
 # EwmhBaseStruts [screen name] [left] [right] [top] [bottom]
 # Резервирование пустого места под xfce4-panel
@@ -196,7 +178,7 @@ Style * MinOverlapPlacement, GrabFocusOff, !UsePPosition
 # Sets all windows to OpaqueMove (vs a wired frame) and  windows will
 # snap to each other and the edge of the screen.
 OpaqueMoveSize unlimited
-Style * ResizeOpaque, SnapAttraction 15 SameType ScreenAll, SnapGrid
+Style * ResizeOpaque, SnapAttraction 1 SameType ScreenAll, SnapGrid
 
 # Transient Windows (such as open file windows)
 Style * DecorateTransient, StackTransientParent
@@ -257,7 +239,6 @@ Style FvwmIdent WindowListSkip
 #      13 - FvwmPager Active Page
 #      14 - FvwmIconMan Iconified Button
 ###########
-# Art-Deco theme (Blue)
 Colorset 0  fg #000000, bg #fefcff, hi, sh, Plain, NoShape
 Colorset 1  fg #000000, bg #fefcff, hi, sh, Plain, NoShape
 Colorset 2  fg #000000, bg #fefcff, hi, sh, Plain, NoShape
@@ -322,22 +303,6 @@ ButtonStyle 4 Pixmap window-maximize-symbolic.svg -- Flat
 # свернуть 
 ButtonStyle 6 Pixmap window-minimize-symbolic.svg -- Flat
 
-#ButtonStyle All ActiveDown window-minimize-symbolic.svg -- !Flat
-
-
-
-# Vertex title buttons
-# ButtonStyle All Pixmap v_button.png -- Flat
-# ButtonStyle 1 ActiveDown Pixmap v_button_close.png -- Flat
-# ButtonStyle 3 ActiveDown Pixmap v_button_iconify.png -- Flat
-# ButtonStyle 5 ActiveDown Pixmap v_button_maximize.png -- Flat
-
-# Mirror title buttons
-# ButtonStyle All ActiveUp Pixmap test.png -- Flat
-# ButtonStyle All ActiveDown Pixmap m_button_press.png -- Flat
-# ButtonStyle All Inactive Pixmap m_button_unfocus.png -- Flat
-
-
 #######
 # 4: Menus
 ###########
@@ -378,14 +343,9 @@ PipeRead "fvwm-menu-desktop -e"
 # lines as this is only to help make this menu portable.
 DestroyMenu MenuPrograms
 AddToMenu   MenuPrograms "$[gt.Programs]" Title
-Test (x chromium) + "Chromium" Exec exec chromium
-Test (x firefox) + "Firefox" Exec exec firefox
 Test (x google-chrome-stable) + "Google-Chrome" Exec exec google-chrome-stable
-Test (x gvim) + "gVim" Exec exec gvim
 Test (x st) + "st" Exec exec st
 Test (x emacs) + "Emacs" Exec exec emacs
-Test (x gimp) + "Gimp" Exec exec gimp
-Test (x vlc) + "VLC" Exec exec vlc
 
 # Background Menu
 #

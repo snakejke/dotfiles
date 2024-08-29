@@ -4,13 +4,17 @@
   "IS_MAXIMIZED": true,
   "IS_MINIMIZED": false,
   "WINDOW_BOUNDS": {
-    "x": 58,
-    "y": 52,
-    "width": 1783,
-    "height": 910
+    "x": 119,
+    "y": 122,
+    "width": 1674,
+    "height": 845
   },
   "MIN_WIDTH": 940,
   "MIN_HEIGHT": 500,
   "OPEN_ON_STARTUP": false,
-  "SKIP_HOST_UPDATE": true
+  "SKIP_HOST_UPDATE": true,
+  "openasar": {
+    "setup": true
+  },
+  "trayBalloonShown": true
 }

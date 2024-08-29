@@ -1,24 +1,21 @@
-debug_print("Application: " .. get_application_name())
-debug_print("Window: " .. get_window_name());
+local window_name = get_window_name()
+local app_name = get_application_name()
 
-if (get_window_name() == "Mozilla Firefox") then
-  set_window_geometry(50, 100, 800, 600);
+debug_print("Application: " .. app_name)
+debug_print("Window: " .. window_name)
+
+if window_name == "Mozilla Firefox" then
+  set_window_geometry(50, 100, 800, 600)
 end
 
-if (get_window_name() == "st") then
-  set_window_geometry(53, 202, 1816, 770);
+if window_name == "st" then
+  set_window_geometry(53, 202, 1816, 770)
 end
 
-if (get_application_name() == "emacs") then
-  set_window_geometry(149, 93, 1579, 836);
+if app_name == "emacs" or app_name == "emacs-30-0-50" then
+  set_window_geometry(149, 93, 1579, 836)
 end
 
-if (get_window_name() == "passwords.kdbx [Locked] - KeePassXC") then
-  os.execute("xdotool mousemove 1208 645 click 1");
+if window_name == "passwords.kdbx [Locked] - KeePassXC" then
+  os.execute("xdotool mousemove 1208 645 click 1")
 end
-
-
--- if (get_window_name() == "Mozilla Firefox") then
---   set_window_geometry(50, 100, 800, 600);
--- end
-

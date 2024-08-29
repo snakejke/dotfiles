@@ -48,7 +48,7 @@
     (load "./elpaca-autoloads")))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
-;;(setq elpaca-queue-limit 30);; зачем ?
+(setq elpaca-queue-limit 30)
 
 (defmacro use-feature (name &rest args)
   "Like `use-package' but accounting for asynchronous installation.
@@ -93,6 +93,7 @@
 (add-hook 'server-after-make-frame-hook #'+terminal)
 
 (use-package general
+  :ensure (:wait t)
   :demand t
   :config
   (general-override-mode)
@@ -110,7 +111,7 @@
   :keymaps '+prefix-map)
 
 (global-definer
-  "SPC" '(projectile-find-file :wk "Find file in project")
+  "SPC" '(project-find-file :wk "Find file in project")
   ;;"/"   'occur
   "!"   'shell-command
   ";"   'pp-eval-expression
@@ -263,7 +264,7 @@
   ;; "i"
   ;; "k"
   ;; "o"
-  "p" 'projectile-switch-project
+  "p" 'project-switch-project
   ;; "r"
   ;; "R"
   ;; "s"
@@ -279,9 +280,9 @@
   "d" 'delete-frame
   "Q" 'kill-emacs)
 
- (+general-global-menu! "searchhh" "s"
-   "b" 'consult-line
-   "p" 'consult-ripgrep)
+(+general-global-menu! "searchhh" "s"
+  "b" 'consult-line
+  "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
   "i" 'insert-char
@@ -334,8 +335,6 @@
 (general-create-definer completion-def
   :prefix "C-x")
 )
-
-(elpaca-wait)
 
 (use-package evil
   :demand t
@@ -413,6 +412,7 @@
   (column-numbes-mode t);;
   (truncate-lines t) ;; убрать перенос " ↪ " 
   (line-numbers-mode t) ;; строки и колоки(882,44)
+  (column-number-mode t)
   (use-short-answers t) ;; yes-no to y-n
   (completion-styles '(flex basic partial-completion emacs22))
   ;; c corfu. если не будет работать. положить в init
@@ -429,7 +429,7 @@
   ;; don't want ESC as a modifier. 
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ;; переделать
   (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
-
+  
 
   ;; (setq display-buffer-alist
   ;;       `((,(rx bos (or "*Apropos*" "*Help*" "*helpful" "*info*" "*Summary*") (0+ not-newline))
@@ -438,6 +438,9 @@
   ;;          (mode apropos-mode help-mode helpful-mode Info-mode Man-mode))))
   
   )
+
+;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
 (use-package which-key
   :demand t
@@ -501,6 +504,13 @@ unreadable. Returns the names of envvars that were changed."
   (my-load-envvars-file my-env-file))
 ;;; Code to replace exec-path-from-shell
 
+(use-feature elec-pair
+  :defer t
+  :hook (prog-mode . electric-pair-mode)
+  ;; :config
+  ;; (electric-pair-mode t)
+  )
+
 ;; Adapted from: rougier/nano-emacs
 (defun +what-faces (pos)
   "Get the font faces at POS."
@@ -525,14 +535,67 @@ unreadable. Returns the names of envvars that were changed."
         (t . (variable-pitch 1)) 
 
     ))
+    ;;fonts
     (set-face-attribute 'default nil :height 190)
     (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif" :height 1.0 :weight 'medium)
     (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
+    
     (setq modus-themes-common-palette-overrides
-      '((fringe unspecified)
+      '(
+        (fringe unspecified)
         (border-mode-line-active unspecified)
         (border-mode-line-inactive unspecified)
-;;     (setq modus-themes-common-palette-overrides '((constant "#bcbec4")))
+
+        (constant "#bcbec4")
+        (fnname "#57aaf7")
+        (keyword "#fa8072") ;; light salmon 
+        (string "#6AAB73")
+        (type "#BCBEC4")
+        (variable "#bcbec4")
+        ;;rainbow-delimiters
+        (rainbow-0 "#E8BA36")
+        (rainbow-1 "#54A857")
+        (rainbow-2 "#359FF4")
+        (rainbow-3 "#6E7ED9")
+        (rainbow-4 "#179387")
+        (rainbow-5 "#A5BE00")
+        (rainbow-6 "#005FA3")
+        (rainbow-7 "#DB7100")
+        (rainbow-8 "#FFC666")
+        (rainbow-9 "#38FF91")
+        )
+      )
+    ;; Make line numbers less intense
+;; (setq modus-themes-common-palette-overrides
+;;       '((fg-line-number-inactive "gray50")
+;;         (fg-line-number-active fg-main)
+;;         (bg-line-number-inactive unspecified)
+;;         (bg-line-number-active unspecified)))
+;;TODO
+(setq modus-themes-vivendi-palette-overrides
+      '((fg-line-number-inactive "gray50")
+        (fg-line-number-active fg-main)
+        (bg-line-number-inactive unspecified)
+        (bg-line-number-active unspecified)))
+;;TODO
+(defun my-modus-themes-invisible-dividers (&rest _)
+  "Make window dividers for THEME invisible."
+  (let ((bg (face-background 'default)))
+    (custom-set-faces
+     `(fringe ((t :background ,bg :foreground ,bg)))
+     `(window-divider ((t :background ,bg :foreground ,bg)))
+     `(window-divider-first-pixel ((t :background ,bg :foreground ,bg)))
+     `(window-divider-last-pixel ((t :background ,bg :foreground ,bg))))))
+
+(add-hook 'enable-theme-functions #'my-modus-themes-invisible-dividers)
+
+    (setq modus-vivendi-palette-overrides
+        '((bg-main  "#1e1f22");;idea
+          (fg-main "#bcbec4")
+         )) ;; idea
+    (load-theme 'modus-vivendi t))
+
+    ;;  (setq modus-themes-common-palette-overrides '((constant "#bcbec4")))
         ;;;;; font-lock
     ;; `(font-lock-builtin-face ((,c :inherit modus-themes-bold :foreground ,builtin)))
     ;; `(font-lock-comment-delimiter-face ((,c :inherit font-lock-comment-face)))
@@ -550,48 +613,6 @@ unreadable. Returns the names of envvars that were changed."
     ;; `(font-lock-type-face ((,c :inherit modus-themes-bold :foreground ,type)))
     ;; `(font-lock-variable-name-face ((,c :foreground ,variable)))
     ;; `(font-lock-warning-face ((,c :inherit modus-themes-bold :foreground ,warning)))
-
-        ;; (fg-heading-1 green-faint)
-        ;; (fg-heading-2 red-faint)
-        ;; (fg-heading-3 cyan-faint)
-        
-        ;;font-lock
-        ;;font-lock-builtin-face
-        ;; (builtin green-cooler)
-        ;;
-        ;; (comment yellow-faint)
-        (constant "#bcbec4")
-        (fnname "#57aaf7")
-        (keyword "#fa8072") ;; light salmon 
-        ;; (preprocessor red-warmer)
-        ;; (docstring cyan-faint)
-        (string "#6AAB73")
-        (type "#BCBEC4")
-        (variable "#bcbec4")
-
-        ;;rainbow-delimiters
-
-        (rainbow-0 "#E8BA36")
-        (rainbow-1 "#54A857")
-        (rainbow-2 "#359FF4")
-        (rainbow-3 "#6E7ED9")
-        (rainbow-4 "#179387")
-        (rainbow-5 "#A5BE00")
-        (rainbow-6 "#005FA3")
-        (rainbow-7 "#DB7100")
-        (rainbow-8 "#FFC666")
-        (rainbow-9 "#38FF91")
-        ;;
-         ;; (org-checkbox                 :inherit 'org-todo)
-         ;; (org-checkbox-statistics-done :inherit 'org-done)
-         ;; (org-checkbox-statistics-todo :inherit 'org-todo)
-        
-        ))
-    (setq modus-vivendi-palette-overrides
-        '((bg-main  "#1e1f22");;idea
-          (fg-main "#bcbec4")
-         )) ;; idea
-    (load-theme 'modus-vivendi t))
 
 (use-feature dired
   :commands dired-jump ;; или просто dired ?
@@ -1237,7 +1258,7 @@ unreadable. Returns the names of envvars that were changed."
 
 (c-add-style "intellij" intellij-java-style)
 (customize-set-variable 'c-default-style
-                        '((java-mode . "intellij")
+                        '((java-ts-mode . "intellij")
                           (awk-mode . "awk")
                           (other . "gnu")))
 
@@ -1310,23 +1331,9 @@ unreadable. Returns the names of envvars that were changed."
 (setq lsp-sqls-connections
     '(
        ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
-      
       ))
 
-(use-feature nxml-mode
-  :mode "\\.xml\\'"
-  :config
-  (+eglot-register '(nxml-mode xml-mode) "lemminx"))
-
-(use-feature eglot
-  ;;:bind (:map eglot-mode-map
-  ;;            ("C-c <tab>" . company-complete)
-  ;;           ("C-c e f n" . flymake-goto-next-error)
-  ;;            ("C-c e f p" . flymake-goto-prev-error)
-  ;;            ("C-c e r" . eglot-rename)
-  ;;            ("C-c e f r" . eglot-format)
-  ;;            ("C-c e f b" . eglot-format-buffer)
-  ;;            ("C-c e a" . eglot-code-actions))
+(use-package eglot
   :hook
   (
    ;;(python-mode . eglot-ensure)
@@ -1342,10 +1349,10 @@ unreadable. Returns the names of envvars that were changed."
   :init
   (defun +eglot-register (modes &rest servers)
     "Register MODES with LSP SERVERS.
-Examples:
-  (+eglot-register 'vhdl-mode \"vhdl_ls\")
-  (+eglot-register 'lua-mode \"lua-language-server\" \"lua-lsp\")
-  (+eglot-register '(c-mode c++-mode) '(\"clangd\" \"--clang-tidy\" \"-j=12\") \"ccls\")"
+     Examples:
+     (+eglot-register 'vhdl-mode \"vhdl_ls\")
+     (+eglot-register 'lua-mode \"lua-language-server\" \"lua-lsp\")
+     (+eglot-register '(c-mode c++-mode) '(\"clangd\" \"--clang-tidy\" \"-j=12\") \"ccls\")"
     (declare (indent 0))
     (with-eval-after-load 'eglot
       (add-to-list
@@ -1358,73 +1365,32 @@ Examples:
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
   :custom
-  (eglot-java-eclipse-jdt-args '("-XX:+UseAdaptiveSizePolicy" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Xmx8G" "-Xms2G"))
+  (eglot-java-eclipse-jdt-args
+   '("-XX:+UseAdaptiveSizePolicy"
+     "-XX:GCTimeRatio=4"
+     "-XX:AdaptiveSizePolicyWeight=90"
+     "-Xmx8G"
+     "-Xms2G"
+     ;; "-Djava.format.settings.url=file:///home/snake/.config/emacs/eclipse-format.xml"
+     ;; "-Djava.format.settings.profile=myown"
+
+     ))
   :config
   (defun eglot-java-run-main-fork ()
-  "Run a main class."
-  (interactive)
-  (let* ((fqcn (eglot-java--class-fqcn))
-         (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
-    (if fqcn
-        (compile
-         (concat "java -cp "
-                 (mapconcat #'identity cp path-separator)
-                 " "
-                 fqcn)
-         t)
-      (user-error "No main method found in this file! Is the file saved?!"))))
+    "Run a main class."
+    (interactive)
+    (let* ((fqcn (eglot-java--class-fqcn))
+           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
+      (if fqcn
+          (compile
+           (concat "java -cp "
+                   (mapconcat #'identity cp path-separator)
+                   " "
+                   fqcn)
+           t)
+        (user-error "No main method found in this file! Is the file saved?!"))))
   :hook (java-ts-mode . eglot-java-mode)
   )
-
-;;(use-feature java-ts-mode
-
-  ;;:hook ((java-ts-mode . jmt-mode))
-;;  )
-
-  ;; :init
-  ;; (defvar lsp-java-workspace-dir (expand-file-name "lsp/workspace/data" my/local-dir) "LSP data directory for Java")
-
-  ;; (defvar java-home "/home/iocanel/.sdkman/candidates/java/current" "The home dir of the jdk")
-  ;; (defvar java-bin (format "%s/bin/java" java-home) "The path to the java binary")
-  ;; (defvar jdtls-home "/opt/eclipse.jdt.ls" "The path to eclipse.jdt.ls installation")
-
-  ;; (defvar jdtls-config (format "%s/config_linux" jdtls-home) "The path to eclipse.jdt.ls installation")
-  ;; (defvar jdtls-jar (replace-regexp-in-string "\n\\'" "" (shell-command-to-string (format "find %s/plugins -iname '*launcher_*.jar'" jdtls-home)) "The jar file that starts jdtls"))
-
-  ;; (defun my/jdtls-start-command (arg)
-  ;;   "Creates the command to start jdtls"
-  ;;   `(,java-bin "-jar" ,jdtls-jar "-data" ,(format "/home/iocanel/.cache/lsp/project/%s" (project-name (project-current))) "-configuration" ,jdtls-config
-  ;;    "--add-modules=ALL-SYSTEM" 
-  ;;    "--add-opens java.base/java.util=ALL-UNNAMED" 
-  ;;    "--add-opens java.base/java.lang=ALL-UNNAMED" 
-  ;;    "-XX:+UseAdaptiveSizePolicy" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Xmx8G" "-Xms2G" "-Xverify:none"))
-
-  ;; (defun my/java-setup-project-workspace ()
-  ;;   "Setup a local java workspace for the current project."
-  ;;   (interactive)
-  ;;   (let* ((project-root (project-root (project-current)))
-  ;;          (file-path (concat project-root ".dir-locals.el"))
-  ;;          (data-dir (concat (project-root (project-current)) ".lsp/workspace/data"))
-  ;;          (cache-dir (concat (project-root (project-current)) ".lsp/workspace/cache"))
-  ;;          (content '((java-mode
-  ;;                      (eval . (progn
-  ;;                                (setq lsp-session-file (concat (project-root (project-current)) ".lsp/session")
-  ;;                                      lsp-java-workspace-dir (concat (project-root (project-current)) ".lsp/workspace/data")
-  ;;                                      lsp-java-workspace-cache-dir (concat (project-root (project-current)) ".lsp/workspace/cache"))))))))
-  ;;     (make-directory data-dir t)
-  ;;     (make-directory cache-dir t)
-  ;;     (with-temp-buffer
-  ;;       (setq-local enable-local-variables :all)
-  ;;       (insert (format "%s\n" (pp-to-string content)))
-  ;;       (write-file file-path))))
-
-  ;; (defun my/java-clear-project-workspace ()
-  ;;   "Setup a local java workspace for the current project."
-  ;;   (interactive)
-  ;;   (let ((directory lsp-java-workspace-dir))
-  ;;     (when (file-exists-p directory)
-  ;;       (delete-directory directory 'recursive))
-  ;;     (make-directory directory t))))
 
 
 
@@ -1438,6 +1404,11 @@ Examples:
   (global-treesit-auto-mode))
 
 (use-package jsonrpc)
+
+(use-feature nxml-mode
+  :mode "\\.xml\\'"
+  :config
+  (+eglot-register '(nxml-mode xml-mode) "lemminx"))
 
 (use-package racket-mode
   :defer t
@@ -1643,9 +1614,9 @@ Examples:
    )
 )
 
-  ;; (use-feature sql
-  ;;    :config
-  ;;    (+eglot-register '(sql-mode) "sqls"))
+;; (use-feature sql
+;;    :config
+;;    (+eglot-register '(sql-mode) "sqls"))
 
 (use-package flycheck
   :commands (flycheck-mode)
@@ -1706,10 +1677,6 @@ Examples:
 
 (use-package treemacs-evil
   :after (treemacs evil)
-  )
-
-(use-package treemacs-projectile
-  :after (treemacs projectile)
   )
 
 (use-package treemacs-nerd-icons
@@ -2291,10 +2258,10 @@ Speeds up `org-agenda' remote operations."
   :custom
   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
 
-  (use-package doom-snippets
-  :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
-  ;;:load-path "~/.config/vanilla/snippets"
-  :after yasnippet)
+(use-package doom-snippets
+:ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
+;;:load-path "~/.config/vanilla/snippets"
+:after yasnippet)
 
 (use-feature tramp
   :defer t
@@ -2343,31 +2310,15 @@ Speeds up `org-agenda' remote operations."
   :defer 1
   :config (show-paren-mode))
 
-(use-package projectile
-  :after (general)
-  :general
-  (+general-global-project
-    "!" 'projectile-run-shell-command-in-root
-    "%" 'projectile-replace-regexp
-    "&" 'projectile-run-async-shell-command-in-root
-    "A" 'projectile-toggle-between-implementation-and-test
-    "bn" 'projectile-next-project-buffer
-    "bp" 'projectile-previous-project-buffer
-    "c" 'projectile-compile-project
-    "D" 'projectile-dired
-    "e" 'projectile-edit-dir-locals
-    "g" 'projectile-find-tag
-    "G" 'projectile-regenerate-tags
-    "I" 'projectile-invalidate-cache
-    "k" 'projectile-kill-buffers
-    "R" 'projectile-replace
-    "s" 'projectile-save-project-buffers
-    "T" 'projectile-test-project
-    "v" 'projectile-vc)
+(use-package project
   :config
-  (add-to-list 'projectile-globally-ignored-directories "*node_modules")
-  (add-to-list 'projectile-project-root-files "build.sbt")
-  (projectile-mode))
+  (add-to-list 'project-switch-commands '(+project-magit-status "Magit" "m"))
+  (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep" "F"))
+  :init
+  (defun +project-magit-status ()
+  (interactive)
+  (magit-status (project-root (project-current))))
+)
 
 ;; (use-package image-roll
 ;;   :ensure (image-roll :host github :repo "dalanicolai/image-roll.el")
@@ -2755,7 +2706,7 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
- (use-feature notmuch
+(use-feature notmuch
   :commands (notmuch)
   :defer t
   :general
@@ -2820,7 +2771,12 @@ append it to ENTRY."
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-code-indent-offset 2))
 
-(use-feature xref
+(use-package ws-butler
+  :ensure (ws-butler :host github :repo "hlissner/ws-butler")
+  :hook ((text-mode . ws-butler-mode)
+         (prog-mode . ws-butler-mode)))
+
+(use-package xref
 ;    :bind
 ;   ;; Mimic VSCode
 ;;   ("s-<mouse-1>" . xref-find-definitions-at-mouse)
