@@ -673,7 +673,7 @@ unreadable. Returns the names of envvars that were changed."
         mouse-wheel-scroll-amount-horizontal 1
         mouse-wheel-progressive-speed nil))
 (setq scroll-step 1
-      scroll-margin 0
+      scroll-margin 1 ;; default 0
       auto-window-vscroll nil
       scroll-preserve-screen-position t)
 (pixel-scroll-precision-mode t)
@@ -698,6 +698,7 @@ unreadable. Returns the names of envvars that were changed."
           "\\*Async Shell Command\\*"
           "\\*eldoc\\*"
           "\\*compilation\\*"
+          "\\*Warnings\\*"
           "^\\*eshell.*\\*.*$" eshell-mode
           "^\\*shell.*\\*.*$"  shell-mode
           "^\\*terminal.*\\*.*$" term-mode
@@ -810,7 +811,9 @@ unreadable. Returns the names of envvars that were changed."
   :custom
   (compilation-scroll-output 'first-error)
   (compilation-always-kill t)
+  (compilation-ask-about-save nil);;autosave + compile 
   :config
+
   (defun +compilation-colorize ()
     "Colorize from `compilation-filter-start' to `point'."
     (require 'ansi-color)
@@ -1170,6 +1173,65 @@ unreadable. Returns the names of envvars that were changed."
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
 
+(use-package lsp-mode
+  :hook ((c-mode . lsp)
+         (c++-mode . lsp)
+         (c-or-c++-mode . lsp)
+         (js-mode . lsp)
+         (js-jsx-mode . lsp)
+         (typescript-mode . lsp)
+         (python-ts-mode . lsp)
+         (web-mode . lsp)
+         (haskell-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  ;; . lsp-deferred
+  ;;:commands lsp
+  :custom
+  (lsp-completion-provider :none) 
+  (lsp-completion-show-kind nil)
+  (lsp-completion-show-detail nil)
+  :init
+    (setq lsp-enabled-clients '(jedi 
+                              sqls 
+                              ))
+  :config
+  (setq lsp-auto-guess-root t)
+  ;; (setq lsp-log-io nil)
+  (setq lsp-restart 'auto-restart)
+  ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
+  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
+  ;; (setq lsp-enable-on-type-formatting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+  ;; (setq lsp-signature-render-documentation nil)
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-modeline-code-actions-enable nil)
+  ;; (setq lsp-modeline-diagnostics-enable nil)
+  ;; (setq lsp-headerline-breadcrumb-enable nil)
+  ;; (setq lsp-semantic-tokens-enable nil)
+  ;; (setq lsp-enable-folding nil)
+  ;; (setq lsp-enable-imenu nil)
+  ;; (setq lsp-enable-snippet nil)
+  (setq read-process-output-max (* 1024 1024)) ;; 1MB
+  (setq lsp-idle-delay 0.5))
+
+(use-package lsp-ui
+  :after lsp
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-doc-header t)
+  (setq lsp-ui-doc-include-signature t)
+  (setq lsp-ui-doc-border (face-foreground 'default))
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-delay 0.05))
+
+(use-package lsp-jedi
+  :after lsp-mode
+  :config
+  (add-to-list 'lsp-disabled-clients 'pyls)
+  (add-to-list 'lsp-disabled-clients 'pylsp)
+  (add-to-list 'lsp-enabled-clients 'jedi))
+
 ;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
 (defun my/point-in-defun-declaration-p ()
   (let ((bod (save-excursion (c-beginning-of-defun)
@@ -1262,76 +1324,17 @@ unreadable. Returns the names of envvars that were changed."
                           (awk-mode . "awk")
                           (other . "gnu")))
 
-(use-package lsp-mode
-  :hook ((c-mode . lsp)
-         (c++-mode . lsp)
-         (c-or-c++-mode . lsp)
-         (js-mode . lsp)
-         (js-jsx-mode . lsp)
-         (typescript-mode . lsp)
-         (python-ts-mode . lsp)
-         (web-mode . lsp)
-         (haskell-mode . lsp)
-         (lsp-mode . lsp-enable-which-key-integration))
-  ;; . lsp-deferred
-  ;;:commands lsp
-  :custom
-  (lsp-completion-provider :none) 
-  (lsp-completion-show-kind nil)
-  (lsp-completion-show-detail nil)
-  :init
-    (setq lsp-enabled-clients '(jedi 
-                              sqls 
-                              ))
-  :config
-  (setq lsp-auto-guess-root t)
-  ;; (setq lsp-log-io nil)
-  (setq lsp-restart 'auto-restart)
-  ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
-  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
-  ;; (setq lsp-enable-on-type-formatting nil)
-  ;; (setq lsp-signature-auto-activate nil)
-  ;; (setq lsp-signature-render-documentation nil)
-  ;; (setq lsp-eldoc-hook nil)
-  ;; (setq lsp-modeline-code-actions-enable nil)
-  ;; (setq lsp-modeline-diagnostics-enable nil)
-  ;; (setq lsp-headerline-breadcrumb-enable nil)
-  ;; (setq lsp-semantic-tokens-enable nil)
-  ;; (setq lsp-enable-folding nil)
-  ;; (setq lsp-enable-imenu nil)
-  ;; (setq lsp-enable-snippet nil)
-  (setq read-process-output-max (* 1024 1024)) ;; 1MB
-  (setq lsp-idle-delay 0.5))
-
-(use-package lsp-ui
-  :after lsp
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-ui-doc-header t)
-  (setq lsp-ui-doc-include-signature t)
-  (setq lsp-ui-doc-border (face-foreground 'default))
-  (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-sideline-delay 0.05))
-
-(use-package lsp-jedi
-  :after lsp-mode
-  :config
-  (add-to-list 'lsp-disabled-clients 'pyls)
-  (add-to-list 'lsp-disabled-clients 'pylsp)
-  (add-to-list 'lsp-enabled-clients 'jedi))
-
-(use-package dap-mode
-  :after lsp-mode
-  :config
-  (dap-mode t))
-
 (add-hook 'sql-mode-hook 'lsp)
 (setq lsp-sqls-workspace-config-path nil)
 (setq lsp-sqls-connections
     '(
        ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
       ))
+
+(use-package dap-mode
+  :after lsp-mode
+  :config
+  (dap-mode t))
 
 (use-package eglot
   :hook
@@ -1346,6 +1349,8 @@ unreadable. Returns the names of envvars that were changed."
    ;(eglot-ignored-server-capabilities '(:documentLinkProvider
    ;:documentOnTypeFormattingProvider))
   (eglot-autoshutdown t)
+  :config
+  (cl-callf plist-put eglot-events-buffer-config :size 0)
   :init
   (defun +eglot-register (modes &rest servers)
     "Register MODES with LSP SERVERS.
@@ -1392,9 +1397,11 @@ unreadable. Returns the names of envvars that were changed."
   :hook (java-ts-mode . eglot-java-mode)
   )
 
+(use-package eglot-booster
+  :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
 
-
-
+	:after eglot
+	:config	(eglot-booster-mode))
 
 (use-package treesit-auto
   :custom
@@ -1413,6 +1420,8 @@ unreadable. Returns the names of envvars that were changed."
 (use-package racket-mode
   :defer t
   :hook (racket-mode . racket-xp-mode)
+ ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
+ ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
   )
 
 (use-package geiser
@@ -1445,8 +1454,6 @@ unreadable. Returns the names of envvars that were changed."
   ;;   "m" '(macrostep-expand :wk "Expand macro")
   ;;   "M" #'macrostep-geiser-expand-all)
   )
-
-
 
 (use-package sly
   :hook ((lisp-mode-local-vars . sly-editing-mode))
@@ -1673,7 +1680,26 @@ unreadable. Returns the names of envvars that were changed."
         ("C-x t d"   . treemacs-select-directory)
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
+        ("C-x t M-t" . treemacs-find-tag))
+  :init
+  ;; from doom
+  (defun +treemacs/toggle ()
+  "Initialize or toggle treemacs.
+
+Ensures that only the current project is present and all other projects have
+been removed.
+
+Use `treemacs' command for old functionality."
+  (interactive)
+  (require 'treemacs)
+  (pcase (treemacs-current-visibility)
+    (`visible (delete-window (treemacs-get-local-window)))
+    (_ (let ((project (treemacs--find-current-user-project)))
+         (if (and project (not (file-equal-p project "~")))
+             (treemacs-add-and-display-current-project-exclusively)
+           (message "No valid project in current buffer; opening last treemacs session")
+           (treemacs))))))
+  )
 
 (use-package treemacs-evil
   :after (treemacs evil)
@@ -2770,11 +2796,6 @@ append it to ENTRY."
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-code-indent-offset 2))
-
-(use-package ws-butler
-  :ensure (ws-butler :host github :repo "hlissner/ws-butler")
-  :hook ((text-mode . ws-butler-mode)
-         (prog-mode . ws-butler-mode)))
 
 (use-package xref
 ;    :bind

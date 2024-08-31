@@ -1054,7 +1054,7 @@ scroll-conservatively  101 или 10000 ?
         mouse-wheel-scroll-amount-horizontal 1
         mouse-wheel-progressive-speed nil))
 (setq scroll-step 1
-      scroll-margin 0
+      scroll-margin 1 ;; default 0
       auto-window-vscroll nil
       scroll-preserve-screen-position t)
 (pixel-scroll-precision-mode t)
@@ -1180,6 +1180,7 @@ Signals an error at buffer boundaries unless NOERROR is non-nil."
           "\\*Async Shell Command\\*"
           "\\*eldoc\\*"
           "\\*compilation\\*"
+          "\\*Warnings\\*"
           "^\\*eshell.*\\*.*$" eshell-mode
           "^\\*shell.*\\*.*$"  shell-mode
           "^\\*terminal.*\\*.*$" term-mode
@@ -1454,7 +1455,9 @@ https://github.com/jorgenschaefer/emacs-buttercup
   :custom
   (compilation-scroll-output 'first-error)
   (compilation-always-kill t)
+  (compilation-ask-about-save nil);;autosave + compile 
   :config
+
   (defun +compilation-colorize ()
     "Colorize from `compilation-filter-start' to `point'."
     (require 'ansi-color)
@@ -2078,8 +2081,95 @@ default lsp-passthrough."
          ("C-c X"  . quickrun)))
 #+end_src
 
-* TODO lsp
-** TODO Настройка индентов
+* TODO Emacs-lsp
+** lsp-mode
+#+begin_src emacs-lisp :lexical t 
+(use-package lsp-mode
+  :hook ((c-mode . lsp)
+         (c++-mode . lsp)
+         (c-or-c++-mode . lsp)
+         (js-mode . lsp)
+         (js-jsx-mode . lsp)
+         (typescript-mode . lsp)
+         (python-ts-mode . lsp)
+         (web-mode . lsp)
+         (haskell-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  ;; . lsp-deferred
+  ;;:commands lsp
+  :custom
+  (lsp-completion-provider :none) 
+  (lsp-completion-show-kind nil)
+  (lsp-completion-show-detail nil)
+  :init
+    (setq lsp-enabled-clients '(jedi 
+                              sqls 
+                              ))
+  :config
+  (setq lsp-auto-guess-root t)
+  ;; (setq lsp-log-io nil)
+  (setq lsp-restart 'auto-restart)
+  ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
+  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
+  ;; (setq lsp-enable-on-type-formatting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+  ;; (setq lsp-signature-render-documentation nil)
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-modeline-code-actions-enable nil)
+  ;; (setq lsp-modeline-diagnostics-enable nil)
+  ;; (setq lsp-headerline-breadcrumb-enable nil)
+  ;; (setq lsp-semantic-tokens-enable nil)
+  ;; (setq lsp-enable-folding nil)
+  ;; (setq lsp-enable-imenu nil)
+  ;; (setq lsp-enable-snippet nil)
+  (setq read-process-output-max (* 1024 1024)) ;; 1MB
+  (setq lsp-idle-delay 0.5))
+#+end_src
+** lsp-ui
+#+begin_src emacs-lisp :lexical t :tangle yes
+(use-package lsp-ui
+  :after lsp
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-doc-header t)
+  (setq lsp-ui-doc-include-signature t)
+  (setq lsp-ui-doc-border (face-foreground 'default))
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-delay 0.05))
+#+end_src
+** lsp-jedi
+#+begin_src emacs-lisp :lexical t
+(use-package lsp-jedi
+  :after lsp-mode
+  :config
+  (add-to-list 'lsp-disabled-clients 'pyls)
+  (add-to-list 'lsp-disabled-clients 'pylsp)
+  (add-to-list 'lsp-enabled-clients 'jedi))
+#+end_src
+** lsp-java
+#+begin_src emacs-lisp :lexical t :tangle no 
+(use-package lsp-java
+  :after lsp)
+#+end_src
+
+** lsp-treemacs
+#+begin_src emacs-lisp :lexical t :tangle no
+(use-package lsp-treemacs
+  :after (lsp-mode)
+  :init
+  (lsp-treemacs-sync-mode 1))
+#+end_src
+
+** python lsp-pyright
+#+begin_src emacs-lisp :lexical t :tangle no
+(use-package lsp-pyright
+  :hook (python-mode . (lambda () (require 'lsp-pyright)))
+  :init (when (executable-find "python3")
+          (setq lsp-pyright-python-executable-cmd "python3")))
+#+end_src
+* TODO Настройка индентов
+** test
 Это не работает.
 #+begin_src emacs-lisp :lexical t
 ;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
@@ -2174,101 +2264,7 @@ default lsp-passthrough."
                           (awk-mode . "awk")
                           (other . "gnu")))
 #+end_src
-** emacs-lsp
-*** lsp-mode
-#+begin_src emacs-lisp :lexical t 
-(use-package lsp-mode
-  :hook ((c-mode . lsp)
-         (c++-mode . lsp)
-         (c-or-c++-mode . lsp)
-         (js-mode . lsp)
-         (js-jsx-mode . lsp)
-         (typescript-mode . lsp)
-         (python-ts-mode . lsp)
-         (web-mode . lsp)
-         (haskell-mode . lsp)
-         (lsp-mode . lsp-enable-which-key-integration))
-  ;; . lsp-deferred
-  ;;:commands lsp
-  :custom
-  (lsp-completion-provider :none) 
-  (lsp-completion-show-kind nil)
-  (lsp-completion-show-detail nil)
-  :init
-    (setq lsp-enabled-clients '(jedi 
-                              sqls 
-                              ))
-  :config
-  (setq lsp-auto-guess-root t)
-  ;; (setq lsp-log-io nil)
-  (setq lsp-restart 'auto-restart)
-  ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
-  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
-  ;; (setq lsp-enable-on-type-formatting nil)
-  ;; (setq lsp-signature-auto-activate nil)
-  ;; (setq lsp-signature-render-documentation nil)
-  ;; (setq lsp-eldoc-hook nil)
-  ;; (setq lsp-modeline-code-actions-enable nil)
-  ;; (setq lsp-modeline-diagnostics-enable nil)
-  ;; (setq lsp-headerline-breadcrumb-enable nil)
-  ;; (setq lsp-semantic-tokens-enable nil)
-  ;; (setq lsp-enable-folding nil)
-  ;; (setq lsp-enable-imenu nil)
-  ;; (setq lsp-enable-snippet nil)
-  (setq read-process-output-max (* 1024 1024)) ;; 1MB
-  (setq lsp-idle-delay 0.5))
-#+end_src
-*** lsp-ui
-#+begin_src emacs-lisp :lexical t :tangle yes
-(use-package lsp-ui
-  :after lsp
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-ui-doc-header t)
-  (setq lsp-ui-doc-include-signature t)
-  (setq lsp-ui-doc-border (face-foreground 'default))
-  (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-sideline-delay 0.05))
-#+end_src
-*** lsp-jedi
-#+begin_src emacs-lisp :lexical t
-(use-package lsp-jedi
-  :after lsp-mode
-  :config
-  (add-to-list 'lsp-disabled-clients 'pyls)
-  (add-to-list 'lsp-disabled-clients 'pylsp)
-  (add-to-list 'lsp-enabled-clients 'jedi))
-#+end_src
-*** lsp-java
-#+begin_src emacs-lisp :lexical t :tangle no 
-(use-package lsp-java
-  :after lsp)
-#+end_src
-
-*** lsp-treemacs
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package lsp-treemacs
-  :after (lsp-mode)
-  :init
-  (lsp-treemacs-sync-mode 1))
-#+end_src
-
-*** python lsp-pyright
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package lsp-pyright
-  :hook (python-mode . (lambda () (require 'lsp-pyright)))
-  :init (when (executable-find "python3")
-          (setq lsp-pyright-python-executable-cmd "python3")))
-#+end_src
-** dap-mode
-#+begin_src emacs-lisp :lexical t
-(use-package dap-mode
-  :after lsp-mode
-  :config
-  (dap-mode t))
-#+end_src
-** sql
+* sql
 #+begin_src emacs-lisp :lexical t
 (add-hook 'sql-mode-hook 'lsp)
 (setq lsp-sqls-workspace-config-path nil)
@@ -2277,7 +2273,26 @@ default lsp-passthrough."
        ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
       ))
 #+end_src
-** eglot
+* dap-mode
+#+begin_src emacs-lisp :lexical t
+(use-package dap-mode
+  :after lsp-mode
+  :config
+  (dap-mode t))
+#+end_src
+* eldoc
+#+begin_src emacs-lisp :lexical t :tangle no
+(use-package eldoc
+  :preface
+  (unload-feature 'eldoc t)
+  (setq custom-delayed-init-variables '())
+  (defvar global-eldoc-mode nil)
+  :config
+  (global-eldoc-mode))
+#+end_src
+
+* eglot
+** general 
 #+begin_src emacs-lisp :lexical t 
 (use-package eglot
   :hook
@@ -2292,6 +2307,8 @@ default lsp-passthrough."
    ;(eglot-ignored-server-capabilities '(:documentLinkProvider
    ;:documentOnTypeFormattingProvider))
   (eglot-autoshutdown t)
+  :config
+  (cl-callf plist-put eglot-events-buffer-config :size 0)
   :init
   (defun +eglot-register (modes &rest servers)
     "Register MODES with LSP SERVERS.
@@ -2342,93 +2359,13 @@ default lsp-passthrough."
   )
 #+end_src
 
-** eldoc
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package eldoc
-  :preface
-  (unload-feature 'eldoc t)
-  (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil)
-  :config
-  (global-eldoc-mode))
-#+end_src
+** eglot-booster
+#+begin_src emacs-lisp :lexical t :tangle yes
+(use-package eglot-booster
+  :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
 
-** java-mode
-#+begin_src emacs-lisp :lexical t :tangle no
-;;(use-feature java-ts-mode
-
-  ;;:hook ((java-ts-mode . jmt-mode))
-;;  )
-
-  ;; :init
-  ;; (defvar lsp-java-workspace-dir (expand-file-name "lsp/workspace/data" my/local-dir) "LSP data directory for Java")
-
-  ;; (defvar java-home "/home/iocanel/.sdkman/candidates/java/current" "The home dir of the jdk")
-  ;; (defvar java-bin (format "%s/bin/java" java-home) "The path to the java binary")
-  ;; (defvar jdtls-home "/opt/eclipse.jdt.ls" "The path to eclipse.jdt.ls installation")
-
-  ;; (defvar jdtls-config (format "%s/config_linux" jdtls-home) "The path to eclipse.jdt.ls installation")
-  ;; (defvar jdtls-jar (replace-regexp-in-string "\n\\'" "" (shell-command-to-string (format "find %s/plugins -iname '*launcher_*.jar'" jdtls-home)) "The jar file that starts jdtls"))
-
-  ;; (defun my/jdtls-start-command (arg)
-  ;;   "Creates the command to start jdtls"
-  ;;   `(,java-bin "-jar" ,jdtls-jar "-data" ,(format "/home/iocanel/.cache/lsp/project/%s" (project-name (project-current))) "-configuration" ,jdtls-config
-  ;;    "--add-modules=ALL-SYSTEM" 
-  ;;    "--add-opens java.base/java.util=ALL-UNNAMED" 
-  ;;    "--add-opens java.base/java.lang=ALL-UNNAMED" 
-  ;;    "-XX:+UseAdaptiveSizePolicy" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Xmx8G" "-Xms2G" "-Xverify:none"))
-
-  ;; (defun my/java-setup-project-workspace ()
-  ;;   "Setup a local java workspace for the current project."
-  ;;   (interactive)
-  ;;   (let* ((project-root (project-root (project-current)))
-  ;;          (file-path (concat project-root ".dir-locals.el"))
-  ;;          (data-dir (concat (project-root (project-current)) ".lsp/workspace/data"))
-  ;;          (cache-dir (concat (project-root (project-current)) ".lsp/workspace/cache"))
-  ;;          (content '((java-mode
-  ;;                      (eval . (progn
-  ;;                                (setq lsp-session-file (concat (project-root (project-current)) ".lsp/session")
-  ;;                                      lsp-java-workspace-dir (concat (project-root (project-current)) ".lsp/workspace/data")
-  ;;                                      lsp-java-workspace-cache-dir (concat (project-root (project-current)) ".lsp/workspace/cache"))))))))
-  ;;     (make-directory data-dir t)
-  ;;     (make-directory cache-dir t)
-  ;;     (with-temp-buffer
-  ;;       (setq-local enable-local-variables :all)
-  ;;       (insert (format "%s\n" (pp-to-string content)))
-  ;;       (write-file file-path))))
-
-  ;; (defun my/java-clear-project-workspace ()
-  ;;   "Setup a local java workspace for the current project."
-  ;;   (interactive)
-  ;;   (let ((directory lsp-java-workspace-dir))
-  ;;     (when (file-exists-p directory)
-  ;;       (delete-directory directory 'recursive))
-  ;;     (make-directory directory t))))
-#+end_src
-
-** tree-sitter
-#+begin_src emacs-lisp :lexical t
-
-#+end_src
-
-** tree-sitter-langs
-#+begin_src emacs-lisp :lexical t
-
-#+end_src
-
-** treesit-auto
-#+begin_src emacs-lisp :lexical t :tangle yes 
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
-#+end_src
-
-** jsonrpc
-#+begin_src emacs-lisp :lexical t
-(use-package jsonrpc)
+	:after eglot
+	:config	(eglot-booster-mode))
 #+end_src
 
 ** пример Eglot, corfu, cape, temple, eglot-tempel
@@ -2480,6 +2417,21 @@ default lsp-passthrough."
   :straight (eglot-tempel :host github :repo "fejfighter/eglot-tempel"))
 #+end_src
 
+* treesit-auto
+#+begin_src emacs-lisp :lexical t :tangle yes 
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+#+end_src
+
+* jsonrpc
+#+begin_src emacs-lisp :lexical t
+(use-package jsonrpc)
+#+end_src
+
 * nxml-mode
 #+begin_src emacs-lisp :lexical t 
 (use-feature nxml-mode
@@ -2494,6 +2446,8 @@ HTDP + SICP
 (use-package racket-mode
   :defer t
   :hook (racket-mode . racket-xp-mode)
+ ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
+ ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
   )
 #+end_src
 
@@ -2538,10 +2492,6 @@ HTDP + SICP
   ;;   "m" '(macrostep-expand :wk "Expand macro")
   ;;   "M" #'macrostep-geiser-expand-all)
   )
-#+end_src
-
-#+begin_src emacs-lisp :lexical t 
-
 #+end_src
 
 * TODO sly Common lisp
@@ -2867,21 +2817,32 @@ https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
         ("C-x t d"   . treemacs-select-directory)
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
+        ("C-x t M-t" . treemacs-find-tag))
+  :init
+  ;; from doom
+  (defun +treemacs/toggle ()
+  "Initialize or toggle treemacs.
 
-  
+Ensures that only the current project is present and all other projects have
+been removed.
+
+Use `treemacs' command for old functionality."
+  (interactive)
+  (require 'treemacs)
+  (pcase (treemacs-current-visibility)
+    (`visible (delete-window (treemacs-get-local-window)))
+    (_ (let ((project (treemacs--find-current-user-project)))
+         (if (and project (not (file-equal-p project "~")))
+             (treemacs-add-and-display-current-project-exclusively)
+           (message "No valid project in current buffer; opening last treemacs session")
+           (treemacs))))))
+  )
 #+end_src
+
 ** treemacs-evil
 #+begin_src emacs-lisp :lexical t
 (use-package treemacs-evil
   :after (treemacs evil)
-  )
-#+end_src
-
-** treemacs-projectile
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package treemacs-projectile
-  :after (treemacs projectile)
   )
 #+end_src
 
@@ -2893,12 +2854,6 @@ https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
   (treemacs-load-theme "nerd-icons"))
 #+end_src
 
-** treemacs-icons-dired Зачем ?
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  )
-#+end_src
 ** treemacs-magit
 #+begin_src emacs-lisp :lexical t
 (use-package treemacs-magit
@@ -4837,7 +4792,7 @@ https://github.com/joddie/macrostep
 #+end_src
 
 * ws-butler
-#+begin_src emacs-lisp :lexical t :tangle yes
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package ws-butler
   :ensure (ws-butler :host github :repo "hlissner/ws-butler")
   :hook ((text-mode . ws-butler-mode)

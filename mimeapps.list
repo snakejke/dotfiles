@@ -6,7 +6,7 @@ x-scheme-handler/http=google-chrome.desktop
 x-scheme-handler/https=google-chrome.desktop
 image/avif=nsxiv.desktop;
 inode/socket=emacsclient.desktop;
-text/plain=emacsclient.desktop;
+text/plain=nvim.desktop;emacsclient.desktop;
 application/x-shellscript=emacsclient.desktop;
 application/xml=emacsclient.desktop;
 application/pdf=org.pwmt.zathura-pdf-mupdf.desktop;
@@ -17,6 +17,7 @@ image/svg+xml=org.inkscape.Inkscape.desktop;nvim.desktop;emacsclient.desktop;gim
 application/x-zerosize=emacsclient.desktop;
 application/octet-stream=nvim.desktop;
 image/webp=nsxiv.desktop;
+application/x-7z-compressed=emacsclient.desktop;
 
 [Default Applications]
 image/gif=nsxiv.desktop;
