@@ -1,7 +1,7 @@
 #+TITLE: Bootstrap script for Void Linux. 
 #+property: header-args :tangle ~/.local/bin/BOOTSTRAP/last.sh 
 
-
+* Проверка привилегий
 #+begin_src bash
 #!/bin/bash
 
@@ -14,14 +14,14 @@ check_privileges() {
 }
 
 #+end_src
-
+* Цвета для вывода
 #+begin_src bash
 # Цвета для вывода
 green='\033[0;32m'
 red='\033[0;31m'
 nc='\033[0m'
 #+end_src
-
+* 
 #+begin_src bash
 # Функция для вывода сообщений
 print_msg() {
@@ -29,6 +29,7 @@ print_msg() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Функция для вывода ошибок
 print_error() {
@@ -37,6 +38,7 @@ print_error() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Проверка наличия btrfs-progs
 check_btrfs_progs() {
@@ -48,6 +50,7 @@ check_btrfs_progs() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Получение информации о дисках
 get_disk_info() {
@@ -59,6 +62,7 @@ get_disk_info() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Разметка диска с использованием fdisk
 partition_disk() {
@@ -80,6 +84,7 @@ partition_disk() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Форматирование разделов
 format_partitions() {
@@ -89,6 +94,7 @@ format_partitions() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Монтирование и создание subvolumes
 mount_and_create_subvolumes() {
@@ -119,6 +125,7 @@ mount_and_create_subvolumes() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Монтирование раздела /boot
 mount_boot() {
@@ -128,6 +135,7 @@ mount_boot() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Монтирование основного btrfs пула
 mount_btrfs_pool() {
@@ -137,6 +145,7 @@ mount_btrfs_pool() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Функция для выполнения команд в chroot окружении
 run_in_chroot() {
@@ -144,6 +153,7 @@ run_in_chroot() {
 }
 #+end_src
 
+* 
 #+begin_src bash
 # Установка Void Linux
 install_void_linux() {
@@ -156,6 +166,7 @@ install_void_linux() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Монтирование системных каталогов
 mount_system_dirs() {
@@ -167,6 +178,7 @@ mount_system_dirs() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Копирование DNS настроек
 copy_dns_settings() {
@@ -175,6 +187,7 @@ copy_dns_settings() {
 
 #+end_src
 
+* 
 #+begin_src bash
 pause_for_confirmation() {
     read -p "Press Enter to continue after the $1 step or Ctrl+C to cancel..." dummy
@@ -182,6 +195,7 @@ pause_for_confirmation() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Первый этап внутри chroot
 chroot_stage1() {
@@ -201,6 +215,7 @@ chroot_stage1() {
 
 #+end_src
 
+* 
 #+begin_src bash
 # Второй этап внутри chroot
 chroot_stage2() {
@@ -218,6 +233,7 @@ DRACUT
 
 #+end_src
 
+* 
 #+begin_src bash
 # Третий этап внутри chroot
 chroot_stage3() {
@@ -248,6 +264,7 @@ passwd root
 
 #+end_src
 
+* 
 #+begin_src bash
 # Создание нового пользователя
 read -p "Enter name new user: " newuser
@@ -255,6 +272,7 @@ useradd -m -G wheel,floppy,audio,cdrom,optical,kvm,input,xbuilder -s /bin/bash "
 
 #+end_src
 
+* 
 #+begin_src bash
 # Изменение пароля для нового пользователя
 echo "Change password for $newuser..."
@@ -262,12 +280,14 @@ passwd "$newuser"
 
 #+end_src
 
+* Wheel
 #+begin_src bash
 #wheel 
 echo "%wheel ALL=(ALL:ALL) ALL" >/etc/sudoers.d/wheel-can-sudo
 
 #+end_src
 
+* Grub + Refind 
 #+begin_src bash
 xbps-install -Sy grub-x86_64-efi refind
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Void"
@@ -278,6 +298,7 @@ refind-install
 }
 #+end_src
 
+* Установка приложений 
 #+begin_src bash
 chroot_stage4_install_apps() {
     run_in_chroot '
@@ -350,6 +371,7 @@ chroot_stage4_install_apps() {
 }
 #+end_src
 
+* Запуск main
 
 #+begin_src bash
 # Основная функция
@@ -381,3 +403,8 @@ main() {
 main
 #+end_src
 
+* Настройка приложений
+** Подготовка сред для разработки
+*** Python
+pipx ? он по дефолту же вроде
+pipx install jedi-language-server - для lsp 

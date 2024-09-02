@@ -2148,9 +2148,10 @@ default lsp-passthrough."
   (add-to-list 'lsp-enabled-clients 'jedi))
 #+end_src
 ** lsp-java
-#+begin_src emacs-lisp :lexical t :tangle no 
+#+begin_src emacs-lisp :lexical t :tangle yes
 (use-package lsp-java
-  :after lsp)
+  :after lsp
+  :hook (java-ts-mode . lsp-deferred))
 #+end_src
 
 ** lsp-treemacs
@@ -2167,6 +2168,11 @@ default lsp-passthrough."
   :hook (python-mode . (lambda () (require 'lsp-pyright)))
   :init (when (executable-find "python3")
           (setq lsp-pyright-python-executable-cmd "python3")))
+#+end_src
+* Java-ts-mode
+#+begin_src emacs-lisp :lexical t :tangle yes
+(use-package java-ts-mode
+  :mode "\\.java\\'")
 #+end_src
 * TODO Настройка индентов
 ** test
@@ -2327,7 +2333,7 @@ default lsp-passthrough."
 #+end_src
 
 ** eglot-java
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
   :custom
@@ -2337,9 +2343,6 @@ default lsp-passthrough."
      "-XX:AdaptiveSizePolicyWeight=90"
      "-Xmx8G"
      "-Xms2G"
-     ;; "-Djava.format.settings.url=file:///home/snake/.config/emacs/eclipse-format.xml"
-     ;; "-Djava.format.settings.profile=myown"
-
      ))
   :config
   (defun eglot-java-run-main-fork ()

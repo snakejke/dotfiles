@@ -12,6 +12,10 @@ if window_name == "st" then
   set_window_geometry(53, 202, 1816, 770)
 end
 
+if app_name == "mpv" then
+  set_window_geometry(156, 61, 1564, 878)
+end
+
 if app_name == "emacs" or app_name == "emacs-30-0-50" then
   set_window_geometry(149, 93, 1579, 836)
 end

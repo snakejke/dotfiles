@@ -1,19 +1,18 @@
 typeset -U PATH
 export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
 #
-#export FONTCONFIG_FILE=/etc/fonts/fonts.conf
-#export FONTCONFIG_PATH=/etc/fonts/
-#
 export RANGER_LOAD_DEFAULT_RC=FALSE
+
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share" 
 export XDG_CACHE_HOME="$HOME/.cache"
-
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CONFIG_DIRS=/etc/xdg
 export XDG_DATA_DIRS="/usr/share:/usr/local/share:/var/lib/flatpak/exports/share:/home/snake/.local/share/flatpak/exports/share"
+
 export FVWM_USERDIR="$XDG_CONFIG_HOME/fvwm"
+
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 #c vpdau были проблемы. пробуем nvidia
 #export LIBVA_DRIVER_NAME=nvidia
@@ -85,6 +84,9 @@ export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
 export ANSIBLE_GALAXY_CACHE_DIR="$XDG_CACHE_HOME/ansible/galaxy_cache"
 
 export EMACS_SOCKET_NAME="/run/user/1000/emacs/snake-emacsd-vanilla"
+#emacs-lsp
+export LSP_USE_PLISTS=true
+
 export TMUX_CONF=~/.config/tmux/tmux.conf
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc"
 export LYNX_CFG=~/.config/lynx/lynx.cfg

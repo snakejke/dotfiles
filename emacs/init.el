@@ -1232,6 +1232,13 @@ unreadable. Returns the names of envvars that were changed."
   (add-to-list 'lsp-disabled-clients 'pylsp)
   (add-to-list 'lsp-enabled-clients 'jedi))
 
+(use-package lsp-java
+  :after lsp
+  :hook (java-ts-mode . lsp-deferred))
+
+(use-package java-ts-mode
+  :mode "\\.java\\'")
+
 ;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
 (defun my/point-in-defun-declaration-p ()
   (let ((bod (save-excursion (c-beginning-of-defun)
@@ -1365,36 +1372,6 @@ unreadable. Returns the names of envvars that were changed."
        (cons modes (if (length> servers 1)
                        (eglot-alternatives (ensure-list servers))
                      (ensure-list (car servers)))))))
-  )
-
-(use-package eglot-java
-  :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
-  :custom
-  (eglot-java-eclipse-jdt-args
-   '("-XX:+UseAdaptiveSizePolicy"
-     "-XX:GCTimeRatio=4"
-     "-XX:AdaptiveSizePolicyWeight=90"
-     "-Xmx8G"
-     "-Xms2G"
-     ;; "-Djava.format.settings.url=file:///home/snake/.config/emacs/eclipse-format.xml"
-     ;; "-Djava.format.settings.profile=myown"
-
-     ))
-  :config
-  (defun eglot-java-run-main-fork ()
-    "Run a main class."
-    (interactive)
-    (let* ((fqcn (eglot-java--class-fqcn))
-           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
-      (if fqcn
-          (compile
-           (concat "java -cp "
-                   (mapconcat #'identity cp path-separator)
-                   " "
-                   fqcn)
-           t)
-        (user-error "No main method found in this file! Is the file saved?!"))))
-  :hook (java-ts-mode . eglot-java-mode)
   )
 
 (use-package eglot-booster
