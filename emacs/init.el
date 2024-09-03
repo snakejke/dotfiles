@@ -1190,12 +1190,16 @@ unreadable. Returns the names of envvars that were changed."
   (lsp-completion-provider :none) 
   (lsp-completion-show-kind nil)
   (lsp-completion-show-detail nil)
-  :init
-    (setq lsp-enabled-clients '(jedi 
-                              sqls 
-                              ))
+  ;; :init
+  ;;   (setq lsp-enabled-clients '(jedi 
+  ;;                             sqls
+  ;;                             jdtls
+  ;;                             ))
   :config
   (setq lsp-auto-guess-root t)
+  ;; (add-to-list 'lsp-enabled-clients 'jdtls)
+  (setq lsp-enabled-clients '(jdtls jedi))
+  (setq lsp-disabled-clients '(pyls pylsp))
   ;; (setq lsp-log-io nil)
   (setq lsp-restart 'auto-restart)
   ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
@@ -1212,7 +1216,42 @@ unreadable. Returns the names of envvars that were changed."
   ;; (setq lsp-enable-imenu nil)
   ;; (setq lsp-enable-snippet nil)
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
-  (setq lsp-idle-delay 0.5))
+  (setq lsp-idle-delay 0.5)
+
+  ;;emacs-lsp-booster
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+
+  )
 
 (use-package lsp-ui
   :after lsp
@@ -1227,16 +1266,17 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package lsp-jedi
   :after lsp-mode
-  :config
-  (add-to-list 'lsp-disabled-clients 'pyls)
-  (add-to-list 'lsp-disabled-clients 'pylsp)
-  (add-to-list 'lsp-enabled-clients 'jedi))
+  ;; :config
+  ;; (add-to-list 'lsp-disabled-clients 'pyls)
+  ;; (add-to-list 'lsp-disabled-clients 'pylsp)
+  ;; (add-to-list 'lsp-enabled-clients 'jedi))
+  )
 
 (use-package lsp-java
   :after lsp
   :hook (java-ts-mode . lsp-deferred))
 
-(use-package java-ts-mode
+(use-feature java-ts-mode
   :mode "\\.java\\'")
 
 ;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
