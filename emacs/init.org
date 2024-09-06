@@ -1310,6 +1310,8 @@ Signals an error at buffer boundaries unless NOERROR is non-nil."
 #+begin_src emacs-lisp :lexical t
 (use-package anki-editor
   :ensure (anki-editor :host github :repo "orgtre/anki-editor")
+  ;;orgtre/anki-editor
+  ;;anki-editor/anki-editor
   :after (org)
   :commands anki-editor-mode
   :bind (:map org-mode-map
@@ -2083,7 +2085,7 @@ default lsp-passthrough."
 
 * TODO Emacs-lsp
 ** lsp-mode
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package lsp-mode
   :hook ((c-mode . lsp)
          (c++-mode . lsp)
@@ -2165,7 +2167,7 @@ default lsp-passthrough."
   )
 #+end_src
 ** lsp-ui
-#+begin_src emacs-lisp :lexical t :tangle yes
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package lsp-ui
   :after lsp
   :commands lsp-ui-mode
@@ -2178,7 +2180,7 @@ default lsp-passthrough."
   (setq lsp-ui-sideline-delay 0.05))
 #+end_src
 ** lsp-jedi
-#+begin_src emacs-lisp :lexical t
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package lsp-jedi
   :after lsp-mode
   ;; :config
@@ -2188,7 +2190,7 @@ default lsp-passthrough."
   )
 #+end_src
 ** lsp-java
-#+begin_src emacs-lisp :lexical t :tangle yes
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package lsp-java
   :after lsp
   :hook (java-ts-mode . lsp-deferred))
@@ -2211,8 +2213,8 @@ default lsp-passthrough."
 #+end_src
 * Java-ts-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
-(use-feature java-ts-mode
-  :mode "\\.java\\'")
+;; (use-feature java-ts-mode
+;;   :mode "\\.java\\'")
 #+end_src
 * TODO Настройка индентов
 ** test
@@ -2373,7 +2375,7 @@ default lsp-passthrough."
 #+end_src
 
 ** eglot-java
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t 
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
   :custom
@@ -2406,11 +2408,9 @@ default lsp-passthrough."
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package eglot-booster
   :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-
 	:after eglot
 	:config	(eglot-booster-mode))
 #+end_src
-
 ** пример Eglot, corfu, cape, temple, eglot-tempel
 #+begin_src emacs-lisp :lexical t :tangle no
 (leaf eglot
@@ -3094,6 +3094,7 @@ Use `treemacs' command for old functionality."
     "-"   'org-ctrl-c-minus
     "A"   'org-attach)
   :config
+  (setq org-tags-column -120) ;; так лучше 
   (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
   (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ? 
 
@@ -3101,6 +3102,11 @@ Use `treemacs' command for old functionality."
     "Convert region from markdown to org, replacing selection"
     (interactive "r")
     (shell-command-on-region start end "pandoc -f markdown -t org" t t))
+
+   (defun +org-align-all-tags ()
+    "Wrap org-align-tags to be interactive and apply to all"
+    (interactive)
+    (org-align-tags t))
 
   (defun +org-sparse-tree (&optional arg type)
     (interactive)
@@ -3934,7 +3940,6 @@ https://github.com/org-mime/org-mime
  :ensure (org-pandoc-import :host github :repo "tecosaur/org-pandoc-import" :files ("*.el" "filters" "preprocessors"))
  :defer t
  :after (org))
-
 #+end_src
 
 * org-download
@@ -3942,11 +3947,17 @@ https://github.com/org-mime/org-mime
 Странно, что в doom org-download-image-dir работал. Может потому что там setq! как-то хитро настроено.
 [[https://emacs.stackexchange.com/questions/75983/how-to-format-org-downloads-image-saving-directorys][org mode - How to format org-download's image saving directory(s)? - Emacs St...]] это помогло решить. хотя в этом коде есть микро ошибка.
 [[https://github.com/abo-abo/org-download/issues/195][abo-abo/org-download#195 Syntax to create subdirectories for each org file: (...]] не знаю что тут.
+
+#+attr_org: :width 600px
+[[file:/home/snake/.config/emacs/org-download/2024-09-04_18-58-31_screenshot.png]]
+
 #+begin_src emacs-lisp :lexical t
 (use-package org-download
-  :hook ((org-mode . org-download-enable)
-         (org-mode . my-org-download-set-dir)
-         )
+  :after org 
+  ;; :hook (
+  ;;        (org-mode . org-download-enable)
+  ;;        (org-mode . my-org-download-set-dir)
+  ;;        )
   :custom
   (org-download-method 'directory)
   (org-download-image-org-width 600)
@@ -3959,14 +3970,17 @@ https://github.com/org-mime/org-mime
   ;;   "Set `org-download-image-dir` to the directory of the current 
   ;;       buffer's file."
   ;;   (setq-local org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))))
+
   (defun my-org-download-set-dir ()
+    (interactive) ;; TODO temp fix 
     "Set `org-download-image-dir` to an Images subdirectory in the current file's directory."
     (let* ((filename (buffer-file-name))
            (file-dir (file-name-directory filename))
            (file-name (file-name-nondirectory (file-name-sans-extension filename)))
            (images-dir (expand-file-name "Attachments" file-dir)))
       (setq-local org-download-image-dir 
-                  (expand-file-name (concat file-name "-img") images-dir)))))
+                  (expand-file-name (concat file-name "-img") images-dir))))
+  )
   
 #+end_src
 
@@ -4858,7 +4872,10 @@ https://github.com/joddie/macrostep
   :custom
   (disabled-command-function nil "Enable all commands"))
 #+end_src
-
+* extras
+#+begin_src emacs-lisp :lexical t
+(require 'extras)
+#+end_src
 * (provide 'init')
 
 #+begin_src emacs-lisp :lexical t

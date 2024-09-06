@@ -720,6 +720,8 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package anki-editor
   :ensure (anki-editor :host github :repo "orgtre/anki-editor")
+  ;;orgtre/anki-editor
+  ;;anki-editor/anki-editor
   :after (org)
   :commands anki-editor-mode
   :bind (:map org-mode-map
@@ -1173,111 +1175,8 @@ unreadable. Returns the names of envvars that were changed."
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
 
-(use-package lsp-mode
-  :hook ((c-mode . lsp)
-         (c++-mode . lsp)
-         (c-or-c++-mode . lsp)
-         (js-mode . lsp)
-         (js-jsx-mode . lsp)
-         (typescript-mode . lsp)
-         (python-ts-mode . lsp)
-         (web-mode . lsp)
-         (haskell-mode . lsp)
-         (lsp-mode . lsp-enable-which-key-integration))
-  ;; . lsp-deferred
-  ;;:commands lsp
-  :custom
-  (lsp-completion-provider :none) 
-  (lsp-completion-show-kind nil)
-  (lsp-completion-show-detail nil)
-  ;; :init
-  ;;   (setq lsp-enabled-clients '(jedi 
-  ;;                             sqls
-  ;;                             jdtls
-  ;;                             ))
-  :config
-  (setq lsp-auto-guess-root t)
-  ;; (add-to-list 'lsp-enabled-clients 'jdtls)
-  (setq lsp-enabled-clients '(jdtls jedi))
-  (setq lsp-disabled-clients '(pyls pylsp))
-  ;; (setq lsp-log-io nil)
-  (setq lsp-restart 'auto-restart)
-  ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
-  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
-  ;; (setq lsp-enable-on-type-formatting nil)
-  ;; (setq lsp-signature-auto-activate nil)
-  ;; (setq lsp-signature-render-documentation nil)
-  ;; (setq lsp-eldoc-hook nil)
-  ;; (setq lsp-modeline-code-actions-enable nil)
-  ;; (setq lsp-modeline-diagnostics-enable nil)
-  ;; (setq lsp-headerline-breadcrumb-enable nil)
-  ;; (setq lsp-semantic-tokens-enable nil)
-  ;; (setq lsp-enable-folding nil)
-  ;; (setq lsp-enable-imenu nil)
-  ;; (setq lsp-enable-snippet nil)
-  (setq read-process-output-max (* 1024 1024)) ;; 1MB
-  (setq lsp-idle-delay 0.5)
-
-  ;;emacs-lsp-booster
-  (defun lsp-booster--advice-json-parse (old-fn &rest args)
-  "Try to parse bytecode instead of json."
-  (or
-   (when (equal (following-char) ?#)
-     (let ((bytecode (read (current-buffer))))
-       (when (byte-code-function-p bytecode)
-         (funcall bytecode))))
-   (apply old-fn args)))
-(advice-add (if (progn (require 'json)
-                       (fboundp 'json-parse-buffer))
-                'json-parse-buffer
-              'json-read)
-            :around
-            #'lsp-booster--advice-json-parse)
-
-(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
-  "Prepend emacs-lsp-booster command to lsp CMD."
-  (let ((orig-result (funcall old-fn cmd test?)))
-    (if (and (not test?)                             ;; for check lsp-server-present?
-             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
-             lsp-use-plists
-             (not (functionp 'json-rpc-connection))  ;; native json-rpc
-             (executable-find "emacs-lsp-booster"))
-        (progn
-          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
-            (setcar orig-result command-from-exec-path))
-          (message "Using emacs-lsp-booster for %s!" orig-result)
-          (cons "emacs-lsp-booster" orig-result))
-      orig-result)))
-(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
-
-
-  )
-
-(use-package lsp-ui
-  :after lsp
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-ui-doc-header t)
-  (setq lsp-ui-doc-include-signature t)
-  (setq lsp-ui-doc-border (face-foreground 'default))
-  (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-sideline-delay 0.05))
-
-(use-package lsp-jedi
-  :after lsp-mode
-  ;; :config
-  ;; (add-to-list 'lsp-disabled-clients 'pyls)
-  ;; (add-to-list 'lsp-disabled-clients 'pylsp)
-  ;; (add-to-list 'lsp-enabled-clients 'jedi))
-  )
-
-(use-package lsp-java
-  :after lsp
-  :hook (java-ts-mode . lsp-deferred))
-
-(use-feature java-ts-mode
-  :mode "\\.java\\'")
+;; (use-feature java-ts-mode
+;;   :mode "\\.java\\'")
 
 ;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
 (defun my/point-in-defun-declaration-p ()
@@ -1414,9 +1313,35 @@ unreadable. Returns the names of envvars that were changed."
                      (ensure-list (car servers)))))))
   )
 
+(use-package eglot-java
+  :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
+  :custom
+  (eglot-java-eclipse-jdt-args
+   '("-XX:+UseAdaptiveSizePolicy"
+     "-XX:GCTimeRatio=4"
+     "-XX:AdaptiveSizePolicyWeight=90"
+     "-Xmx8G"
+     "-Xms2G"
+     ))
+  :config
+  (defun eglot-java-run-main-fork ()
+    "Run a main class."
+    (interactive)
+    (let* ((fqcn (eglot-java--class-fqcn))
+           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
+      (if fqcn
+          (compile
+           (concat "java -cp "
+                   (mapconcat #'identity cp path-separator)
+                   " "
+                   fqcn)
+           t)
+        (user-error "No main method found in this file! Is the file saved?!"))))
+  :hook (java-ts-mode . eglot-java-mode)
+  )
+
 (use-package eglot-booster
   :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-
 	:after eglot
 	:config	(eglot-booster-mode))
 
@@ -1907,6 +1832,7 @@ Use `treemacs' command for old functionality."
     "-"   'org-ctrl-c-minus
     "A"   'org-attach)
   :config
+  (setq org-tags-column -120) ;; так лучше 
   (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
   (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ? 
 
@@ -1914,6 +1840,11 @@ Use `treemacs' command for old functionality."
     "Convert region from markdown to org, replacing selection"
     (interactive "r")
     (shell-command-on-region start end "pandoc -f markdown -t org" t t))
+
+   (defun +org-align-all-tags ()
+    "Wrap org-align-tags to be interactive and apply to all"
+    (interactive)
+    (org-align-tags t))
 
   (defun +org-sparse-tree (&optional arg type)
     (interactive)
@@ -2218,9 +2149,11 @@ Speeds up `org-agenda' remote operations."
  :after (org))
 
 (use-package org-download
-  :hook ((org-mode . org-download-enable)
-         (org-mode . my-org-download-set-dir)
-         )
+  :after org 
+  ;; :hook (
+  ;;        (org-mode . org-download-enable)
+  ;;        (org-mode . my-org-download-set-dir)
+  ;;        )
   :custom
   (org-download-method 'directory)
   (org-download-image-org-width 600)
@@ -2233,14 +2166,17 @@ Speeds up `org-agenda' remote operations."
   ;;   "Set `org-download-image-dir` to the directory of the current 
   ;;       buffer's file."
   ;;   (setq-local org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))))
+
   (defun my-org-download-set-dir ()
+    (interactive) ;; TODO temp fix 
     "Set `org-download-image-dir` to an Images subdirectory in the current file's directory."
     (let* ((filename (buffer-file-name))
            (file-dir (file-name-directory filename))
            (file-name (file-name-nondirectory (file-name-sans-extension filename)))
            (images-dir (expand-file-name "Attachments" file-dir)))
       (setq-local org-download-image-dir 
-                  (expand-file-name (concat file-name "-img") images-dir)))))
+                  (expand-file-name (concat file-name "-img") images-dir))))
+  )
 
 (use-package org-appear
   :hook ((org-mode . org-appear-mode)
@@ -2825,6 +2761,8 @@ append it to ENTRY."
 (use-feature novice
   :custom
   (disabled-command-function nil "Enable all commands"))
+
+(require 'extras)
 
 (provide 'init)
 ;;; init.el ends here

@@ -44,7 +44,6 @@
     - { name: 'notmuch', is_dir: True }
     - { name: 'npm/npmrc', is_dir: false }
     - { name: 'nvidia-settings', is_dir: True }
-    - { name: 'nvim', is_dir: True }
     - { name: 'picom', is_dir: True }
     - { name: 'python', is_dir: True }
     - { name: 'ranger', is_dir: True }

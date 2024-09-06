@@ -406,5 +406,42 @@ main
 * Настройка приложений
 ** Подготовка сред для разработки
 *** Python
-pipx ? он по дефолту же вроде
-pipx install jedi-language-server - для lsp 
+pipx ? он по дефолту же вроде или нет ?
+pipx install jedi-language-server - для lsp
+xi -Su python3-jupyter_console - для Emacs 
+xi -Su jupyterlab
+Должен ли я ставить это все через Pipx ? 
+conda ? anaconda и так далее ? 
+линтеры? форматеры ? тесты ? 
+*** Java
+Все ставим через SDKMAN.
+JDK, maven, gradle, JMeter, VisualVM.
+Что-то еще ?
+Spring boot ?
+JDTLS надо вкурить как через мавен его собирать.
+junit Туда же.
+Есть cli для Кафка кста и вроде даже несколько. 
+*** SQL
+ну, нихуя ? языковой сервер мы можем поставить, но хули толку ?
+*** Groovy
+sdkman 
+*** Kotlin
+мэн
+*** Scala
+мэн
+*** Haskell
+х3 ?
+*** JS(TS) HTML+CSS
+Пока не знаю что надо
+*** Common-Lisp
+SBCL не помню где брал
+еще что то надо
+*** elisp
+тут все ясно. хотя cask Хуяск 
+*** Racket
+*** Scheme
+*** Clojure
+*** Perl
+*** Bash
+*** go
+*** rust
