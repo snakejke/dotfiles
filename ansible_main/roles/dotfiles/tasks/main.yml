@@ -10,6 +10,7 @@
     - 'emacs/.local'
     - 'emacs/dict'
     - 'npm'
+    - 'mpv'
 
 - name: Копируем файлы из ~/.config в ~/.local/dotfiles/
   shell:
@@ -33,7 +34,7 @@
     - { name: 'fvwm', is_dir: True }
     - { name: 'git', is_dir: True }
     - { name: 'lf', is_dir: True }
-    - { name: 'mpv', is_dir: True }
+    - { name: 'mpv/mpv.conf', is_dir: false }
     - { name: 'notmuch', is_dir: True }
     - { name: 'npm/npmrc', is_dir: false }
     - { name: 'nvidia-settings', is_dir: True }
