@@ -1,6 +1,0 @@
-# key: beginjava
-# name: beginjava
-# --
-#+begin_src ${1:java}
-`%`$0
-#+end_src

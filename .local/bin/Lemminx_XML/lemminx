@@ -1,6 +1,0 @@
-#!/bin/sh
-
-java \
-    -noverify \
-    -Xms1G \
-    -jar /home/snake/.local/bin/org.eclipse.lemminx-uber.jar
