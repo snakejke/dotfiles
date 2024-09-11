@@ -18,6 +18,8 @@ application/x-zerosize=emacsclient.desktop;
 application/octet-stream=nvim.desktop;
 image/webp=nsxiv.desktop;
 application/x-7z-compressed=emacsclient.desktop;
+application/x-bat=emacsclient.desktop;
+text/html=emacsclient.desktop;
 
 [Default Applications]
 image/gif=nsxiv.desktop;
@@ -34,6 +36,7 @@ application/pdf=org.pwmt.zathura-pdf-mupdf.desktop
 text/x-chdr=emacsclient.desktop
 image/svg+xml=nsxiv.desktop
 application/x-zerosize=emacsclient.desktop
+x-scheme-handler/eclipse+mpc=_usr_lib_eclipse_.desktop
 
 [Removed Associations]
 image/jpeg=engineer.atlas.Nyxt.desktop;

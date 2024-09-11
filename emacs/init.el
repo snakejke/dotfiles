@@ -785,7 +785,7 @@ unreadable. Returns the names of envvars that were changed."
   (leetcode-prefer-language "java"))
 
 (use-package elcord
-  :commands elcord 
+  ;;:commands elcord 
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
@@ -1175,113 +1175,6 @@ unreadable. Returns the names of envvars that were changed."
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
 
-;; (use-feature java-ts-mode
-;;   :mode "\\.java\\'")
-
-;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
-(defun my/point-in-defun-declaration-p ()
-  (let ((bod (save-excursion (c-beginning-of-defun)
-                             (point))))
-    (<= bod
-        (point)
-        (save-excursion (goto-char bod)
-                        (re-search-forward "{")
-                        (point)))))
-
-(defun my/is-string-concatenation-p ()
-  "Returns true if the previous line is a string concatenation"
-  (save-excursion
-    (let ((start (point)))
-      (forward-line -1)
-      (if (re-search-forward " \\\+$" start t) t nil))))
-
-(defun my/inside-java-lambda-p ()
-  "Returns true if point is the first statement inside of a lambda"
-  (save-excursion
-    (c-beginning-of-statement-1)
-    (let ((start (point)))
-      (forward-line -1)
-      (if (search-forward " -> {" start t) t nil))))
-
-(defun my/trailing-paren-p ()
-  "Returns true if point is a training paren and semicolon"
-  (save-excursion
-    (end-of-line)
-    (let ((endpoint (point)))
-      (beginning-of-line)
-      (if (re-search-forward "[ ]*);$" endpoint t) t nil))))
-
-(defun my/prev-line-call-with-no-args-p ()
-  "Return true if the previous line is a function call with no arguments"
-  (save-excursion
-    (let ((start (point)))
-      (forward-line -1)
-      (if (re-search-forward ".($" start t) t nil))))
-
-(defun my/arglist-cont-nonempty-indentation (arg)
-  (if (my/inside-java-lambda-p)
-      '+
-    (if (my/is-string-concatenation-p)
-        16 ;; TODO don't hard-code
-      (unless (my/point-in-defun-declaration-p) '++))))
-
-(defun my/statement-block-intro (arg)
-  (if (and (c-at-statement-start-p) (my/inside-java-lambda-p)) 0 '+))
-
-(defun my/block-close (arg)
-  (if (my/inside-java-lambda-p) '- 0))
-
-(defun my/arglist-close (arg) (if (my/trailing-paren-p) 0 '--))
-
-(defun my/arglist-intro (arg)
-  (if (my/prev-line-call-with-no-args-p) '++ 0))
-
-(defconst intellij-java-style
-  '((c-basic-offset . 4)
-    (c-comment-only-line-offset . (0 . 0))
-    ;; the following preserves Javadoc starter lines
-    (c-offsets-alist
-     .
-     ((inline-open . 0)
-      (topmost-intro-cont    . +)
-      (statement-block-intro . my/statement-block-intro)
-      (block-close           . my/block-close)
-      (knr-argdecl-intro     . +)
-      (substatement-open     . +)
-      (substatement-label    . +)
-      (case-label            . +)
-      (label                 . +)
-      (statement-case-open   . +)
-      (statement-cont        . +)
-      (arglist-intro         . my/arglist-intro)
-      (arglist-cont-nonempty . (my/arglist-cont-nonempty-indentation c-lineup-arglist))
-      (arglist-close         . my/arglist-close)
-      (inexpr-class          . 0)
-      (access-label          . 0)
-      (inher-intro           . ++)
-      (inher-cont            . ++)
-      (brace-list-intro      . +)
-      (func-decl-cont        . ++))))
-  "Elasticsearch's Intellij Java Programming Style")
-
-(c-add-style "intellij" intellij-java-style)
-(customize-set-variable 'c-default-style
-                        '((java-ts-mode . "intellij")
-                          (awk-mode . "awk")
-                          (other . "gnu")))
-
-(add-hook 'sql-mode-hook 'lsp)
-(setq lsp-sqls-workspace-config-path nil)
-(setq lsp-sqls-connections
-    '(
-       ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
-      ))
-
-(use-package dap-mode
-  :after lsp-mode
-  :config
-  (dap-mode t))
-
 (use-package eglot
   :hook
   (
@@ -1296,6 +1189,8 @@ unreadable. Returns the names of envvars that were changed."
    ;:documentOnTypeFormattingProvider))
   (eglot-autoshutdown t)
   :config
+  ;; (add-to-list 'eglot-server-programs '(kotlin-ts-mode "/home/snake/kotlin-language-server/server/build/install/server/bin/kotlin-language-server"))
+
   (cl-callf plist-put eglot-events-buffer-config :size 0)
   :init
   (defun +eglot-register (modes &rest servers)
@@ -1344,6 +1239,36 @@ unreadable. Returns the names of envvars that were changed."
   :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
 	:after eglot
 	:config	(eglot-booster-mode))
+
+;; (use-feature java-ts-mode
+;;   :mode "\\.java\\'")
+
+(use-package groovy-mode 
+:mode (("build\\.gradle" . groovy-mode)
+       ("Jenkinsfile" . groovy-mode))
+:config
+(+eglot-register '(groovy-mode) "groovy-language-server"))
+
+(use-package kotlin-ts-mode 
+  :ensure (kotlin-ts-mode :host gitlab :repo "bricka/emacs-kotlin-ts-mode")
+  :mode "\\.kts?m?\\'")
+
+(add-hook 'sql-mode-hook 'lsp)
+(setq lsp-sqls-workspace-config-path nil)
+(setq lsp-sqls-connections
+    '(
+       ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
+      ))
+
+(use-package dap-mode
+  :after lsp-mode
+  :config
+  (dap-mode t))
+
+(use-package move-text
+  :bind (("M-p" . move-text-up)
+         ("M-n" . move-text-down))
+  :config (move-text-default-bindings))
 
 (use-package treesit-auto
   :custom
@@ -1517,8 +1442,6 @@ unreadable. Returns the names of envvars that were changed."
    minibuffer-local-completion-map)
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
    (setq sbt:program-options '("-Dsbt.supershell=false")))
-
-
 
 (use-package puni
   :hook (((
@@ -2252,6 +2175,20 @@ Speeds up `org-agenda' remote operations."
   (vc-follow-symlinks t "Visit real file when editing a symlink without prompting."))
 
 (use-feature window
+  :bind (("C-x 2" . vsplit-last-buffer)
+         ("C-x 3" . hsplit-last-buffer))
+  :preface
+  (defun hsplit-last-buffer ()
+    "Focus to the last created horizontal window."
+    (interactive)
+    (split-window-horizontally)
+    (other-window 1))
+
+  (defun vsplit-last-buffer ()
+    "Focus to the last created vertical window."
+    (interactive)
+    (split-window-vertically)
+    (other-window 1))
   :custom
   (switch-to-buffer-obey-display-actions t)
   (switch-to-prev-buffer-skip-regexp
@@ -2761,6 +2698,8 @@ append it to ENTRY."
 (use-feature novice
   :custom
   (disabled-command-function nil "Enable all commands"))
+
+(add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
 
 (require 'extras)
 

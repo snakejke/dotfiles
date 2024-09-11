@@ -1,7 +1,10 @@
 zsh/.zhistory
 zsh/.zcompdump
 zsh/zsh-autosuggestions/*
+zsh/.z
+zsh/zsh-z/*
 fvwm/*.pid
 etc/sv/amneziavpn/supervise/**
 etc/sv/runsvdir-snake/supervise/**
 
+/zsh/zsh-z/

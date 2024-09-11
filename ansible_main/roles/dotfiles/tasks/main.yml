@@ -7,7 +7,6 @@
   loop:
     - 'ansible'
     - 'emacs'
-    - 'discord'
     - 'emacs/.local'
     - 'emacs/dict'
     - 'npm'
@@ -22,11 +21,7 @@
       {% endif %}
   loop:
     - { name: 'ansible/ansible.cfg',is_dir: False  }
-    - { name: 'alacritty', is_dir: True }
-    - { name: 'com.github.johnfactotum.Foliate', is_dir: True }
     - { name: 'devilspie2', is_dir: True }
-    - { name: 'discord/settings.json', is_dir: False }
-    - { name: 'doom', is_dir: True }
     - { name: 'dunst', is_dir: True }
     - { name: 'emacs/early-init.el', is_dir: false }
     - { name: 'emacs/init-dev.el', is_dir: false }
@@ -37,10 +32,8 @@
     - { name: 'fdm', is_dir: True }
     - { name: 'fvwm', is_dir: True }
     - { name: 'git', is_dir: True }
-    - { name: 'ideavimrc', is_dir: True }
     - { name: 'lf', is_dir: True }
     - { name: 'mpv', is_dir: True }
-    - { name: 'nodejs', is_dir: True }
     - { name: 'notmuch', is_dir: True }
     - { name: 'npm/npmrc', is_dir: false }
     - { name: 'nvidia-settings', is_dir: True }
@@ -50,11 +43,8 @@
     - { name: 'readline', is_dir: True }
     - { name: 'rofi', is_dir: True }
     - { name: 'sx', is_dir: True }
-    - { name: 'systemd', is_dir: True }
-    - { name: 'tint2', is_dir: True }
     - { name: 'tmux', is_dir: True }
     - { name: 'wget', is_dir: True }
-    - { name: 'xremap', is_dir: True }
     - { name: 'xsettingsd', is_dir: True }
     - { name: 'zathura', is_dir: True }
     - { name: 'zsh', is_dir: True }

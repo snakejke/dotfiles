@@ -1414,7 +1414,7 @@ is set if N was explicitly specified."
 [[https://github.com/yqrashawn/yqdotfiles/blob/1634092b80933ecd94018074847e2aaf35279d69/.doom.d/visual.el#L45][yqrashawn]] фикс таймера
 #+begin_src emacs-lisp :lexical t
 (use-package elcord
-  :commands elcord 
+  ;;:commands elcord 
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
@@ -2076,6 +2076,7 @@ default lsp-passthrough."
 #+end_src
 
 * TODO hydra
+(use-package hydra) 
 * quickrun
 #+begin_src emacs-lisp :lexical t
 (use-package quickrun
@@ -2211,15 +2212,152 @@ default lsp-passthrough."
   :init (when (executable-find "python3")
           (setq lsp-pyright-python-executable-cmd "python3")))
 #+end_src
+* eglot
+** general 
+#+begin_src emacs-lisp :lexical t 
+(use-package eglot
+  :hook
+  (
+   ;;(python-mode . eglot-ensure)
+   ;;(c-mode . eglot-ensure)
+   ;;(c++-mode . eglot-ensure)
+   ;(java-ts-mode . eglot-ensure)
+   (scala . eglot-ensure
+   ))
+  :custom
+   ;(eglot-ignored-server-capabilities '(:documentLinkProvider
+   ;:documentOnTypeFormattingProvider))
+  (eglot-autoshutdown t)
+  :config
+  ;; (add-to-list 'eglot-server-programs '(kotlin-ts-mode "/home/snake/kotlin-language-server/server/build/install/server/bin/kotlin-language-server"))
+
+  (cl-callf plist-put eglot-events-buffer-config :size 0)
+  :init
+  (defun +eglot-register (modes &rest servers)
+    "Register MODES with LSP SERVERS.
+     Examples:
+     (+eglot-register 'vhdl-mode \"vhdl_ls\")
+     (+eglot-register 'lua-mode \"lua-language-server\" \"lua-lsp\")
+     (+eglot-register '(c-mode c++-mode) '(\"clangd\" \"--clang-tidy\" \"-j=12\") \"ccls\")"
+    (declare (indent 0))
+    (with-eval-after-load 'eglot
+      (add-to-list
+       'eglot-server-programs
+       (cons modes (if (length> servers 1)
+                       (eglot-alternatives (ensure-list servers))
+                     (ensure-list (car servers)))))))
+  )
+#+end_src
+
+** eglot-java
+#+begin_src emacs-lisp :lexical t 
+(use-package eglot-java
+  :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
+  :custom
+  (eglot-java-eclipse-jdt-args
+   '("-XX:+UseAdaptiveSizePolicy"
+     "-XX:GCTimeRatio=4"
+     "-XX:AdaptiveSizePolicyWeight=90"
+     "-Xmx8G"
+     "-Xms2G"
+     ))
+  :config
+  (defun eglot-java-run-main-fork ()
+    "Run a main class."
+    (interactive)
+    (let* ((fqcn (eglot-java--class-fqcn))
+           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
+      (if fqcn
+          (compile
+           (concat "java -cp "
+                   (mapconcat #'identity cp path-separator)
+                   " "
+                   fqcn)
+           t)
+        (user-error "No main method found in this file! Is the file saved?!"))))
+  :hook (java-ts-mode . eglot-java-mode)
+  )
+#+end_src
+
+** eglot-booster
+#+begin_src emacs-lisp :lexical t :tangle yes
+(use-package eglot-booster
+  :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
+	:after eglot
+	:config	(eglot-booster-mode))
+#+end_src
+** пример Eglot, corfu, cape, temple, eglot-tempel
+#+begin_src emacs-lisp :lexical t :tangle no
+(leaf eglot
+  :straight t
+  :hook
+  ((rust-mode-hook . eglot-ensure))
+  :custom
+  ((eglot-ignored-server-capabilities . '(:documentHighlightProvider :inlayHintProvider))))
+
+(leaf corfu
+  :straight
+  (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
+  :custom
+  ((corfu-auto . t)
+   (corfu-auto-prefix . 1)
+   (corfu-quit-no-match . nil)
+   (corfu-popupinfo-delay . 0.3)
+   (corfu-popupinfo-max-width . 70)
+   (corfu-popupinfo-max-height . 20))
+  :init
+  (require 'corfu)
+  (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1)
+  (setq corfu-map (make-keymap)))
+
+(leaf cape
+  :straight t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+
+(leaf tempel
+  :straight t
+  :init
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (setq-local completion-at-point-functions
+                          (list (cape-super-capf
+                                 #'eglot-completion-at-point
+                                 #'tempel-expand
+                                 #'cape-keyword))))))
+
+(leaf eglot-tempel
+  :after eglot
+  :straight (eglot-tempel :host github :repo "fejfighter/eglot-tempel"))
+#+end_src
+
 * Java-ts-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
 ;; (use-feature java-ts-mode
 ;;   :mode "\\.java\\'")
 #+end_src
+* groovy-mode
+#+begin_src emacs-lisp :lexical t :tangle yes
+(use-package groovy-mode 
+:mode (("build\\.gradle" . groovy-mode)
+       ("Jenkinsfile" . groovy-mode))
+:config
+(+eglot-register '(groovy-mode) "groovy-language-server"))
+#+end_src
+* kotlin-ts-mode
+#+begin_src emacs-lisp :lexical t :tangle yes
+(use-package kotlin-ts-mode 
+  :ensure (kotlin-ts-mode :host gitlab :repo "bricka/emacs-kotlin-ts-mode")
+  :mode "\\.kts?m?\\'")
+#+end_src
 * TODO Настройка индентов
 ** test
 Это не работает.
-#+begin_src emacs-lisp :lexical t
+#+begin_src emacs-lisp :lexical t :tangle no
 ;; via http://emacs.stackexchange.com/questions/17327/how-to-have-c-offset-style-correctly-detect-a-java-constructor-and-change-indent
 (defun my/point-in-defun-declaration-p ()
   (let ((bod (save-excursion (c-beginning-of-defun)
@@ -2328,6 +2466,14 @@ default lsp-passthrough."
   :config
   (dap-mode t))
 #+end_src
+* move-text
+Двигаем текст между строк. 
+#+begin_src emacs-lisp :lexical t
+(use-package move-text
+  :bind (("M-p" . move-text-up)
+         ("M-n" . move-text-down))
+  :config (move-text-default-bindings))
+#+end_src
 * eldoc
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-package eldoc
@@ -2337,127 +2483,6 @@ default lsp-passthrough."
   (defvar global-eldoc-mode nil)
   :config
   (global-eldoc-mode))
-#+end_src
-
-* eglot
-** general 
-#+begin_src emacs-lisp :lexical t 
-(use-package eglot
-  :hook
-  (
-   ;;(python-mode . eglot-ensure)
-   ;;(c-mode . eglot-ensure)
-   ;;(c++-mode . eglot-ensure)
-   ;(java-ts-mode . eglot-ensure)
-   (scala . eglot-ensure
-   ))
-  :custom
-   ;(eglot-ignored-server-capabilities '(:documentLinkProvider
-   ;:documentOnTypeFormattingProvider))
-  (eglot-autoshutdown t)
-  :config
-  (cl-callf plist-put eglot-events-buffer-config :size 0)
-  :init
-  (defun +eglot-register (modes &rest servers)
-    "Register MODES with LSP SERVERS.
-     Examples:
-     (+eglot-register 'vhdl-mode \"vhdl_ls\")
-     (+eglot-register 'lua-mode \"lua-language-server\" \"lua-lsp\")
-     (+eglot-register '(c-mode c++-mode) '(\"clangd\" \"--clang-tidy\" \"-j=12\") \"ccls\")"
-    (declare (indent 0))
-    (with-eval-after-load 'eglot
-      (add-to-list
-       'eglot-server-programs
-       (cons modes (if (length> servers 1)
-                       (eglot-alternatives (ensure-list servers))
-                     (ensure-list (car servers)))))))
-  )
-#+end_src
-
-** eglot-java
-#+begin_src emacs-lisp :lexical t 
-(use-package eglot-java
-  :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
-  :custom
-  (eglot-java-eclipse-jdt-args
-   '("-XX:+UseAdaptiveSizePolicy"
-     "-XX:GCTimeRatio=4"
-     "-XX:AdaptiveSizePolicyWeight=90"
-     "-Xmx8G"
-     "-Xms2G"
-     ))
-  :config
-  (defun eglot-java-run-main-fork ()
-    "Run a main class."
-    (interactive)
-    (let* ((fqcn (eglot-java--class-fqcn))
-           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
-      (if fqcn
-          (compile
-           (concat "java -cp "
-                   (mapconcat #'identity cp path-separator)
-                   " "
-                   fqcn)
-           t)
-        (user-error "No main method found in this file! Is the file saved?!"))))
-  :hook (java-ts-mode . eglot-java-mode)
-  )
-#+end_src
-
-** eglot-booster
-#+begin_src emacs-lisp :lexical t :tangle yes
-(use-package eglot-booster
-  :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-	:after eglot
-	:config	(eglot-booster-mode))
-#+end_src
-** пример Eglot, corfu, cape, temple, eglot-tempel
-#+begin_src emacs-lisp :lexical t :tangle no
-(leaf eglot
-  :straight t
-  :hook
-  ((rust-mode-hook . eglot-ensure))
-  :custom
-  ((eglot-ignored-server-capabilities . '(:documentHighlightProvider :inlayHintProvider))))
-
-(leaf corfu
-  :straight
-  (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
-  :custom
-  ((corfu-auto . t)
-   (corfu-auto-prefix . 1)
-   (corfu-quit-no-match . nil)
-   (corfu-popupinfo-delay . 0.3)
-   (corfu-popupinfo-max-width . 70)
-   (corfu-popupinfo-max-height . 20))
-  :init
-  (require 'corfu)
-  (global-corfu-mode 1)
-  (corfu-popupinfo-mode 1)
-  (setq corfu-map (make-keymap)))
-
-(leaf cape
-  :straight t
-  :init
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
-
-(leaf tempel
-  :straight t
-  :init
-  (add-hook 'eglot-managed-mode-hook
-            (lambda ()
-              (setq-local completion-at-point-functions
-                          (list (cape-super-capf
-                                 #'eglot-completion-at-point
-                                 #'tempel-expand
-                                 #'cape-keyword))))))
-
-(leaf eglot-tempel
-  :after eglot
-  :straight (eglot-tempel :host github :repo "fejfighter/eglot-tempel"))
 #+end_src
 
 * treesit-auto
@@ -2683,10 +2708,6 @@ HTDP + SICP
    minibuffer-local-completion-map)
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
    (setq sbt:program-options '("-Dsbt.supershell=false")))
-#+end_src
-
-#+begin_src emacs-lisp :lexical t
-
 #+end_src
 
 * puni (replace paredit)
@@ -4114,9 +4135,22 @@ I use doom-modeline for the rest of my mode line configuration.
 #+end_src
 
 * window 
-
 #+begin_src emacs-lisp :lexical t
 (use-feature window
+  :bind (("C-x 2" . vsplit-last-buffer)
+         ("C-x 3" . hsplit-last-buffer))
+  :preface
+  (defun hsplit-last-buffer ()
+    "Focus to the last created horizontal window."
+    (interactive)
+    (split-window-horizontally)
+    (other-window 1))
+
+  (defun vsplit-last-buffer ()
+    "Focus to the last created vertical window."
+    (interactive)
+    (split-window-vertically)
+    (other-window 1))
   :custom
   (switch-to-buffer-obey-display-actions t)
   (switch-to-prev-buffer-skip-regexp
@@ -4872,9 +4906,19 @@ https://github.com/joddie/macrostep
   :custom
   (disabled-command-function nil "Enable all commands"))
 #+end_src
+* zsh aliases highlight
+#+begin_src emacs-lisp :lexical t 
+(add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
+#+end_src
 * extras
 #+begin_src emacs-lisp :lexical t
 (require 'extras)
+#+end_src
+* edraw
+#+begin_src emacs-lisp :tangle no
+(use-package edraw 
+  :ensure (:host github :repo "misohena/el-easydraw")
+  :after org)
 #+end_src
 * (provide 'init')
 

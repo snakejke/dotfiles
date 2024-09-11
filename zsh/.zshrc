@@ -11,27 +11,26 @@ bindkey '^ ' autosuggest-accept
 #if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
 #    tmux attach -t default || tmux new -s default
 #fi
-#if [ -n "$GNOME_KEYRING_PID" ]; then
-#    export SSH_AUTH_SOCK=$(find /run/user/$UID -type s -name 'ssh*')
-#fi
 
 zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 export MANPAGER="BATPAGER"
 #export $(dbus-launch)
 
-autoload -Uz compinit
-compinit
-
 . "$ZDOTDIR/aliases"
 . "$ZDOTDIR/.functions"
 . "$ZDOTDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
 . "/usr/share/fzf/key-bindings.zsh"
+. "$ZDOTDIR/zsh-z/zsh-z.plugin.zsh"
+
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' menu select
 
 setopt append_history     
 setopt inc_append_history
 setopt hist_ignore_all_dups
 setopt share_history
-
 
 mkfile() {
     mkdir -p "$(dirname "$1")" && touch "$1"
@@ -40,7 +39,6 @@ mkfile() {
 
 download() { aria2c -d ~/Downloads "$1"; }
 
-
 nvm() {
   unset -f nvm  
   source "$NVM_DIR/nvm.sh"
@@ -48,6 +46,7 @@ nvm() {
 }
 
 export SDKMAN_DIR="/home/snake/.local/devjava/sdkman"
+# :TODO 
 # sdk() {
 #   unset -f sdk
 #   source "$SDKMAN_DIR/bin/sdkman-init.sh"

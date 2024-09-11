@@ -35,6 +35,8 @@ export PATH="${PATH}:$JAVA_HOME/bin"
 #SDKMAN
 export PATH="${PATH}:$HOME/.local/devjava/sdkman/candidates/maven/current/bin"
 #if need Doom
+#GRADLE
+export GRADLE_USER_HOME="$HOME/.local/devjava/.gradle"
 #export PATH="$HOME/.config/emacs/bin:$PATH"
 #Pass
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
@@ -57,6 +59,11 @@ export PATH="${PATH}:$XDG_DATA_HOME/go/bin"
 #Rust
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export PATH="${PATH}:$HOME/.local/share/cargo/bin"
+#Python
+export IPYTHONDIR=${XDG_CONFIG_HOME:-$HOME/.config}/ipython
+export JUPYTER_CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}/jupyter
+#Scala
+export G8_HOME="$XDG_DATA_HOME/g8"
 #
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 #
