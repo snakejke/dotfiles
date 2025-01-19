@@ -25,6 +25,26 @@ AddToFunc   StartFunction
 + I Module FvwmMFL
 
 
+#Функция для размещения окон 50/50
+DestroyFunc PlaceEmacsWindows
+AddToFunc PlaceEmacsWindows
++ I All (emacs, CurrentDesk) ResizeMove 50% -37p 0 0
++ I Next (emacs, CurrentDesk) ResizeMove 50% -37p 50% 0
+
+# Горячая клавиша для вызова функции
+Silent Key t       A 4  PlaceEmacsWindows
+
+# Функция для смены мест окон Emacs
+DestroyFunc SwapEmacsWindows
+AddToFunc SwapEmacsWindows
++ I All (emacs, CurrentDesk) AnimatedMove 50% 0
++ I Next (emacs, CurrentDesk) AnimatedMove 0 0
++ I Focus
++ I Next (emacs, CurrentDesk) Focus
+
+# Бинды для смены мест (теперь одна клавиша, так как эффект одинаковый)
+Silent Key Left    A 4  SwapEmacsWindows
+
 #############
 # 2: Styles #
 #############
@@ -47,6 +67,7 @@ Style FvwmIdent WindowListSkip
 Style xfce4-panel !Title, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
 Style "Whisker Menu" !Title, !Borders
 #Style jetbrains-idea FPLenient
+Style jetbrains-idea ClickToFocus
 Style Steam ClickToFocus, !Title
 Style steam ClickToFocus, !Title 
 Style steamwebhelper ClickToFocus
@@ -269,6 +290,7 @@ Silent Key o       A 4C Exec exec ocr_clipboard
 Silent Key f       A 4C Exec exec flameshot.sh
 Silent Key r       A 4C Exec exec video.sh
 Silent Key p       A 4  Exec exec passmenu.sh
+Silent Key Pause   A A  Exec lock_and_blur.sh
 Silent Key F1      A M  Menu MenuFvwmRoot
 Silent Key Menu    A A  Menu MenuFvwmRoot
 #Silent Key Tab     A M WindowList Root c c NoDeskSort, NoGeometry, SelectOnRelease Meta_L, CurrentAtEnd

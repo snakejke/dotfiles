@@ -14,9 +14,9 @@ xset r rate 300 50
 picom --config ~/.config/picom/picom.conf &
 #feh --no-fehbg --bg-scale ~/Documents/Pictures/wallpapers/wall.jpg &
 wmname LG3D &
-/usr/bin/xsettingsd &
+#/usr/bin/xsettingsd &
 dbus-run-session pipewire &
-dbus-run-session fvwm3 -v
+dbus-run-session fvwm3
 #case $XDG_VTNR in
     #1) exec startxfce4 ;;
     #2) exec fvwm3 ;;

@@ -1,12 +1,16 @@
 alias sss="loginctl poweroff"
 alias rrr="loginctl reboot"
 
+alias sudo!='sudo $(fc -ln -1)'
+alias history="fc -t '%Y-%m-%d %T' -il 1"
 alias calc='emacsclient -c -n -e "(full-calc)" '
 alias e='emacsclient -c -n -a ""'
-alias dired='emacsclient -e "(dired default-directory)" -c -t'
-alias du=dust
+# "-c -t"
+alias d='emacsclient -e "(dired default-directory)" -c -a ""'
+alias du=gdu
 alias ip='ip -c=always'
-alias ls='ls --color=auto'
+alias ls='ls -A --group-directories-first --color=auto'
 alias lf=lfrun
 alias sbt='sbt -ivy "$XDG_DATA_HOME/ivy2" -sbt-dir "$XDG_DATA_HOME/sbt"'
+alias lazypodman='DOCKER_HOST=unix:///run/user/1000/podman/podman.sock lazydocker'
 #alias scala="scala $SCALA_REPL_OPTS"

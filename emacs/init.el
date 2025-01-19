@@ -238,7 +238,7 @@
 
 (+general-global-menu! "git/version-control" "g")
 
-(+general-global-menu! "link" "l")
+(+general-global-menu! "local" "l")
 
 (+general-global-menu! "narrow" "n"
   "d" 'narrow-to-defun
@@ -342,8 +342,8 @@
 )
 
 (use-package evil-collection
-  :ensure (:remotes ("origin"
-                      ("fork" :repo "progfolio/evil-collection")))
+  ;; :ensure (:remotes ("origin"
+  ;;                     ("fork" :repo "progfolio/evil-collection")))
   :after (evil)
   :config (evil-collection-init)
   :init
@@ -398,11 +398,12 @@
   :init
   (setq locale-coding-system 'utf-8
         coding-system-for-read 'utf-8
-        coding-system-for-write 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
+        coding-system-for-write 'utf-8
+        terminal-coding-system 'utf-8
+        keyboard-coding-system 'utf-8
+        selection-coding-system 'utf-8
+        buffer-file-coding-system 'utf-8
+        prefer-coding-system 'utf-8)
   ;; don't want ESC as a modifier. 
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ;; переделать
   (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
@@ -741,20 +742,20 @@ if one already exists."
   :defer t)
 
 (use-package docker-compose-mode
+  :defer t
   :mode "docker-compose.*\.yml\\'")
 
 (use-package dockerfile-mode
+  :defer t
   :mode "Dockerfile[a-zA-Z.-]*\\'")
 
-(when (display-graphic-p)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . hscroll))
-        mouse-wheel-scroll-amount-horizontal 1
-        mouse-wheel-progressive-speed nil))
-(setq scroll-step 1
-      scroll-margin 1 ;; default 0
-      auto-window-vscroll nil
-      scroll-preserve-screen-position t)
-(pixel-scroll-precision-mode t)
+(use-package ultra-scroll
+  :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0) 
+  :config
+  (ultra-scroll-mode 1))
 
 (use-feature simple
   :general
@@ -860,6 +861,8 @@ if one already exists."
   :ensure (leetcode :host github :repo "kaiwk/leetcode.el" :files ("leetcode.el"))
   :defer t
   :custom
+  (leetcode-save-solutions t)
+  (leetcode-directory "/tmp/")
   (leetcode-prefer-language "java"))
 
 (use-package elcord
@@ -1032,30 +1035,50 @@ if one already exists."
   "The evil visual state"
   )
 
-(defun my-evil nil
-     (let ((state (if (bound-and-true-p evil-state)
-                     (symbol-name evil-state)
-                    " ")))
-     (propertize (concat " " (upcase state) " ") 'face (intern (format "evil-%s-face" state)))))
+;; (defun my-evil nil
+;;      (let ((state (if (bound-and-true-p evil-state)
+;;                      (symbol-name evil-state)
+;;                     " ")))
+;;      (propertize (concat " " (upcase state) " ") 'face (intern (format "evil-%s-face" state)))))
 
-(setq-default mode-line-format '((:eval (my-evil))
-    ""
-     ("%e" mode-line-front-space
-     (:propertize
-      ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
-      display (min-width (5.0)))
-     mode-line-frame-identification
-     mode-line-buffer-identification "   "
-     mode-line-position
-     (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
-     minions-mode-line-modes
-     mode-line-misc-info
-     mode-line-frame-identification
-     mode-line-end-spaces)))
+;; (setq-default mode-line-format '((:eval (my-evil))
+;;     ""
+;;      ("%e" mode-line-front-space
+;;      (:propertize
+;;       ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
+;;       display (min-width (5.0)))
+;;      mode-line-frame-identification
+;;      mode-line-buffer-identification "   "
+;;      mode-line-position
+;;      (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
+;;      minions-mode-line-modes
+;;      mode-line-misc-info
+;;      mode-line-frame-identification
+;;      mode-line-end-spaces)))
+(defun my-evil nil
+  (let ((state (if (bound-and-true-p evil-state)
+                   (symbol-name evil-state)
+                 "NORMAL")))
+    (propertize (format " %s " (upcase state))
+                'face (intern (format "evil-%s-face" state)))))
+
+(setq-default mode-line-format '((:eval (my-evil))  ; Убираем пустую строку после eval
+                                ("%e" mode-line-front-space
+                                (:propertize
+                                 ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
+                                 display (min-width (5.0)))
+                                mode-line-frame-identification
+                                mode-line-buffer-identification "   "
+                                mode-line-position
+                                (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
+                                minions-mode-line-modes
+                                mode-line-misc-info
+                                mode-line-frame-identification
+                                mode-line-end-spaces)))
 
 (use-package minions
   :custom
-  (minions-prominent-modes '(flymake-mode))
+  (minions-prominent-modes '(flymake-mode flycheck-mode))
   :config
   (setq minions-mode-line-lighter "  "
         minions-mode-line-delimiters '("" . ""))
@@ -1194,6 +1217,7 @@ if one already exists."
   :custom
   (corfu-cycle t)
   (corfu-auto t)
+  (corfu-auto-prefix 1)
   ;;(corfu-seperator ?-)
   (corfu-seperator ?\s)
   :config
@@ -1210,42 +1234,25 @@ if one already exists."
   (setq corfu-popinfo-delay '(0.5 . 1.0)))
 
 (use-package cape
-  :general (:prefix "M-c"               ; Particular completion function
-            "p" 'completion-at-point
-            "t" 'complete-tag           ; etags
-            "d" 'cape-dabbrev           ; or dabbrev-completion
-            "f" 'cape-file
-            "k" 'cape-keyword
-            "s" 'cape-symbol
-            "a" 'cape-abbrev
-            "i" 'cape-ispell
-            "l" 'cape-line
-            "w" 'cape-dict
-            "\\"' cape-tex
-            "_" 'cape-tex
-            "^" 'cape-tex
-            "&" 'cape-sgml
-            "r" 'cape-rfc1345
-            )
+  ;; :general (:prefix "M-c"               ; Particular completion function
+  ;;           "p" 'completion-at-point
+  ;;           "t" 'complete-tag           ; etags
+  ;;           "d" 'cape-dabbrev           ; or dabbrev-completion
+  ;;           )
   :custom
   (cape-dabbrev-min-length 3)
+  (cape-dabbrev-check-other-buffers nil)
   :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
   ;;(add-to-list 'completion-at-point-functions #'cape-history)
-  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 )
 
 (use-package nerd-icons-corfu
@@ -1255,6 +1262,26 @@ if one already exists."
 (use-package quickrun
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
+
+;; (with-eval-after-load 'lsp-mode
+;;   ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
+;;   (lsp-register-client
+;;    (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+;;                     :major-modes '(erlang-mode)
+;;                     :priority 0
+;;                     :server-id 'erlang-language-platform))
+;;   )
+
+(use-package lsp-ui
+  :after lsp
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-doc-header t)
+  (setq lsp-ui-doc-include-signature t)
+  (setq lsp-ui-doc-border (face-foreground 'default))
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-delay 0.05))
 
 (use-feature eglot
   :hook
@@ -1296,14 +1323,14 @@ if one already exists."
 
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
-  :custom
-  (eglot-java-eclipse-jdt-args
-   '("-XX:+UseAdaptiveSizePolicy"
-     "-XX:GCTimeRatio=4"
-     "-XX:AdaptiveSizePolicyWeight=90"
-     "-Xmx8G"
-     "-Xms2G"
-     ))
+  ;; :custom
+  ;; (eglot-java-eclipse-jdt-args
+  ;;  '("-XX:+UseAdaptiveSizePolicy"
+  ;;    "-XX:GCTimeRatio=4"
+  ;;    "-XX:AdaptiveSizePolicyWeight=90"
+  ;;    "-Xmx8G"
+  ;;    "-Xms2G"
+  ;;    ))
   :config
   (defun eglot-java-run-main-fork ()
     "Run a main class."
@@ -1347,6 +1374,18 @@ if one already exists."
     :mode (("\\.ex\\'" . elixir-ts-mode)
            ("\\.exs\\'" . elixir-ts-mode)
            ("\\mix.lock\\'" . elixir-ts-mode)))
+
+(use-package erlang
+  :defer t
+  ;; :config
+  ;; (+eglot-register '(erlang-mode) "elp-server"))
+  )
+  ;; :init
+ ;; (lsp-register-client
+ ;;   (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+ ;;                    :major-modes '(erlang-mode)
+ ;;                    :priority 0
+ ;;                    :server-id 'erlang-language-platform))
 
 (use-package scala-mode
   :defer t
@@ -1603,6 +1642,11 @@ if one already exists."
   :config (flycheck-package-setup)
   (add-to-list 'display-buffer-alist
                '("\\*Flycheck errors\\*"  display-buffer-below-selected (window-height . 0.15))))
+
+(use-package flycheck-eglot
+  :after (flycheck eglot)
+  :config
+  (global-flycheck-eglot-mode 1))
 
 (use-feature flymake
   :general
@@ -1869,6 +1913,20 @@ Use `treemacs' command for old functionality."
     "Convert region from markdown to org, replacing selection"
     (interactive "r")
     (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
+
+(defun +md-to-org-region-python (start end)
+  "Convert region from markdown to org, replacing selection"
+  (interactive "r")
+  (shell-command-on-region 
+   start end 
+   "python3 /home/snake/md_to_org_debug.py" 
+   t t))
+  
+  ;; better 
+  ;; (defun +md-to-org-region (start end)
+  ;;   "Convert region from markdown to org, replacing selection"
+  ;;   (interactive "r")
+  ;;   (shell-command-on-region start end "python3 /home/snake/md_to_org.py" t t))
 
 
   ;; (defun +md-to-org-region (start end)
@@ -2412,6 +2470,7 @@ Speeds up `org-agenda' remote operations."
        (lambda (file) (file-name-sans-extension (file-relative-name file store-dir)))
        (directory-files-recursively store-dir "\.gpg$"))))
   :config
+  (add-to-list 'auth-sources "~/.password-store/.authinfo")
   (auth-source-pass-enable))
 
 (use-package password-store
@@ -2565,7 +2624,11 @@ append it to ENTRY."
    :states '(normal)
    :keymaps 'elfeed-show-mode-map
    "J" 'elfeed-show-next
-   "K" 'elfeed-show-prev))
+   "K" 'elfeed-show-prev)
+  :custom
+  (elfeed-db-directory
+   (expand-file-name "elfeed" user-emacs-directory))
+  )
 
 (use-feature elisp-mode
   :general
@@ -2653,6 +2716,11 @@ append it to ENTRY."
   (holiday-hebrew-holidays nil)
   (holiday-islamic-holidays nil)
   (holiday-oriental-holidays nil))
+
+(use-package hl-todo
+  :config
+  (setq hl-todo-highlight-punctuation ":")
+  (global-hl-todo-mode +1))
 
 (use-package htmlize
   :defer t)
@@ -2760,27 +2828,35 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
-(use-feature notmuch
+(use-package notmuch
   :commands (notmuch)
   :defer t
   :general
   (+general-global-open
     "m" '(notmuch :which-key "Notmuch"))
   :init
-  (setq mail-user-agent 'message-user-agent
-        message-mail-user-agent t
-        )
+  ;; (setq mail-user-agent 'message-user-agent
+  ;;       message-mail-user-agent t
+  ;;       )
   (setq notmuch-search-oldest-first nil
-     
-      message-send-mail-function 'message-send-mail-with-sendmail
-      notmuch-always-prompt-for-sender t ;;test 
-      message-kill-buffer-on-exit t
-      message-directory "~/Mail"
-      message-sendmail-envelope-from 'header
-      mail-envelope-from 'header
-      notmuch-show-all-tags-list t 
-      mail-specify-envelope-from t)
-  (setq mail-host-address (system-name))
+        message-send-mail-function 'message-send-mail-with-sendmail
+        notmuch-always-prompt-for-sender t ;;test 
+        message-kill-buffer-on-exit t
+        message-directory "~/Mail"
+        message-sendmail-envelope-from 'header
+        mail-envelope-from 'header
+        notmuch-show-all-tags-list t 
+        mail-specify-envelope-from t)
+;; (defun my/notmuch-draft-save-on-buffer-save (&optional arg)
+;;   "Use `notmuch-draft-save` instead of `save-buffer` in draft buffers."
+;;   (when (and (derived-mode-p 'notmuch-message-mode)
+;;              (string-match-p "\\*message\\*" (buffer-name)))
+;;     (notmuch-draft-save)
+;;     (message "Draft saved correctly with `notmuch-draft-save`!")
+;;     t))
+
+;; (advice-add 'basic-save-buffer :before-until #'my/notmuch-draft-save-on-buffer-save)
+
 )
 
 (use-feature whitespace

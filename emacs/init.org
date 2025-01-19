@@ -494,7 +494,7 @@ And a macro to ease the creation of nested menu bindings:
 #+end_src
 *** l links
 #+begin_src emacs-lisp :lexical t
-(+general-global-menu! "link" "l")
+(+general-global-menu! "local" "l")
 #+end_src
 *** n narrowing
 #+begin_src emacs-lisp :lexical t
@@ -624,8 +624,8 @@ And a macro to ease the creation of nested menu bindings:
 Коллекция evil биндов из репы progfolio. Поменять ? 
 #+begin_src emacs-lisp :lexical t 
 (use-package evil-collection
-  :ensure (:remotes ("origin"
-                      ("fork" :repo "progfolio/evil-collection")))
+  ;; :ensure (:remotes ("origin"
+  ;;                     ("fork" :repo "progfolio/evil-collection")))
   :after (evil)
   :config (evil-collection-init)
   :init
@@ -697,11 +697,12 @@ Shows match counts in mode line.
   :init
   (setq locale-coding-system 'utf-8
         coding-system-for-read 'utf-8
-        coding-system-for-write 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
+        coding-system-for-write 'utf-8
+        terminal-coding-system 'utf-8
+        keyboard-coding-system 'utf-8
+        selection-coding-system 'utf-8
+        buffer-file-coding-system 'utf-8
+        prefer-coding-system 'utf-8)
   ;; don't want ESC as a modifier. 
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ;; переделать
   (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
@@ -1131,18 +1132,20 @@ if one already exists."
 * docker-compose-mode
 #+begin_src emacs-lisp :lexical t
 (use-package docker-compose-mode
+  :defer t
   :mode "docker-compose.*\.yml\\'")
 #+end_src
 * dockerfile-mode
 #+begin_src emacs-lisp :lexical t
 (use-package dockerfile-mode
+  :defer t
   :mode "Dockerfile[a-zA-Z.-]*\\'")
 #+end_src
 * TODO Настройка скролла
 [[https://github.com/Lovesan/.emacs.d/blob/master/lisp/lvsn-commons.el]] потом попробовать.
 [[https://github.com/MatthewZMD/.emacs.d/blob/7c0269d77ba4b99186143ebdd9afff04ce69580b/elisp/init-scroll.el#L42]]
-scroll-conservatively  101 или 10000 ? 
-#+begin_src emacs-lisp :lexical t 
+
+#+begin_src emacs-lisp :lexical t :tangle no 
 (when (display-graphic-p)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . hscroll))
         mouse-wheel-scroll-amount-horizontal 1
@@ -1242,6 +1245,17 @@ Signals an error at buffer boundaries unless NOERROR is non-nil."
       (global-set-key [remap evil-previous-line] nil)
       (global-set-key [remap evil-next-visual-line] nil)
       (global-set-key [remap evil-previous-visual-line] nil))))
+#+end_src
+* ultra-scroll
+
+#+begin_src emacs-lisp :lexical t 
+(use-package ultra-scroll
+  :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0) 
+  :config
+  (ultra-scroll-mode 1))
 #+end_src
 * auto-fill-mode
 #+begin_src emacs-lisp :lexical t
@@ -1500,6 +1514,8 @@ is set if N was explicitly specified."
   :ensure (leetcode :host github :repo "kaiwk/leetcode.el" :files ("leetcode.el"))
   :defer t
   :custom
+  (leetcode-save-solutions t)
+  (leetcode-directory "/tmp/")
   (leetcode-prefer-language "java"))
 
 #+end_src
@@ -1729,26 +1745,46 @@ for your search query.
   "The evil visual state"
   )
 
-(defun my-evil nil
-     (let ((state (if (bound-and-true-p evil-state)
-                     (symbol-name evil-state)
-                    " ")))
-     (propertize (concat " " (upcase state) " ") 'face (intern (format "evil-%s-face" state)))))
+;; (defun my-evil nil
+;;      (let ((state (if (bound-and-true-p evil-state)
+;;                      (symbol-name evil-state)
+;;                     " ")))
+;;      (propertize (concat " " (upcase state) " ") 'face (intern (format "evil-%s-face" state)))))
 
-(setq-default mode-line-format '((:eval (my-evil))
-    ""
-     ("%e" mode-line-front-space
-     (:propertize
-      ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
-      display (min-width (5.0)))
-     mode-line-frame-identification
-     mode-line-buffer-identification "   "
-     mode-line-position
-     (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
-     minions-mode-line-modes
-     mode-line-misc-info
-     mode-line-frame-identification
-     mode-line-end-spaces)))
+;; (setq-default mode-line-format '((:eval (my-evil))
+;;     ""
+;;      ("%e" mode-line-front-space
+;;      (:propertize
+;;       ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
+;;       display (min-width (5.0)))
+;;      mode-line-frame-identification
+;;      mode-line-buffer-identification "   "
+;;      mode-line-position
+;;      (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
+;;      minions-mode-line-modes
+;;      mode-line-misc-info
+;;      mode-line-frame-identification
+;;      mode-line-end-spaces)))
+(defun my-evil nil
+  (let ((state (if (bound-and-true-p evil-state)
+                   (symbol-name evil-state)
+                 "NORMAL")))
+    (propertize (format " %s " (upcase state))
+                'face (intern (format "evil-%s-face" state)))))
+
+(setq-default mode-line-format '((:eval (my-evil))  ; Убираем пустую строку после eval
+                                ("%e" mode-line-front-space
+                                (:propertize
+                                 ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
+                                 display (min-width (5.0)))
+                                mode-line-frame-identification
+                                mode-line-buffer-identification "   "
+                                mode-line-position
+                                (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
+                                minions-mode-line-modes
+                                mode-line-misc-info
+                                mode-line-frame-identification
+                                mode-line-end-spaces)))
 
 #+end_src
 
@@ -1784,7 +1820,7 @@ for your search query.
 #+begin_src emacs-lisp :lexical t
 (use-package minions
   :custom
-  (minions-prominent-modes '(flymake-mode))
+  (minions-prominent-modes '(flymake-mode flycheck-mode))
   :config
   (setq minions-mode-line-lighter "  "
         minions-mode-line-delimiters '("" . ""))
@@ -1964,6 +2000,7 @@ for your search query.
   :custom
   (corfu-cycle t)
   (corfu-auto t)
+  (corfu-auto-prefix 1)
   ;;(corfu-seperator ?-)
   (corfu-seperator ?\s)
   :config
@@ -1973,87 +2010,6 @@ for your search query.
     (setq evil-complete-next-func (lambda (_) (completion-at-point))))
   )
 #+end_src
-** проверить
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package corfu
-  :ensure (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
-  :hook (lsp-completion-mode . kb/corfu-setup-lsp) ; Use corfu for lsp completion
-  :general
-  (:keymaps 'corfu-map
-   :states 'insert
-   "C-n" #'corfu-next
-   "C-p" #'corfu-previous
-   "<escape>" #'corfu-quit
-   "<return>" #'corfu-insert
-   "H-SPC" #'corfu-insert-separator
-   ;; "SPC" #'corfu-insert-separator ; Use when `corfu-quit-at-boundary' is non-nil
-   "M-d" #'corfu-show-documentation
-   "C-g" #'corfu-quit
-   "M-l" #'corfu-show-location)
-  :custom
-  ;; Works with `indent-for-tab-command'. Make sure tab doesn't indent when you
-  ;; want to perform completion
-  (completion-cycle-threshold nil)      ; Always show candidates in menu
-
-  (corfu-auto nil)
-  (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.25)
-
-  (corfu-min-width 80)
-  (corfu-max-width corfu-min-width)     ; Always have the same width
-  (corfu-count 14)
-  (corfu-scroll-margin 4)
-  (corfu-cycle nil)
-
-  ;; `nil' means to ignore `corfu-separator' behavior, that is, use the older
-  ;; `corfu-quit-at-boundary' = nil behavior. Set this to separator if using
-  ;; `corfu-auto' = `t' workflow (in that case, make sure you also set up
-  ;; `corfu-separator' and a keybind for `corfu-insert-separator', which my
-  ;; configuration already has pre-prepared). Necessary for manual corfu usage with
-  ;; orderless, otherwise first component is ignored, unless `corfu-separator'
-  ;; is inserted.
-  (corfu-quit-at-boundary nil)
-  (corfu-separator ?\s)            ; Use space
-  (corfu-quit-no-match 'separator) ; Don't quit if there is `corfu-separator' inserted
-  (corfu-preview-current 'insert)  ; Preview first candidate. Insert on input if only one
-  (corfu-preselect-first t)        ; Preselect first candidate?
-
-  ;; Other
-  (corfu-echo-documentation nil)        ; Already use corfu-doc
-  (lsp-completion-provider :none)       ; Use corfu instead for lsp completions
-  :init
-  (corfu-global-mode)
-  :config
-  ;; NOTE 2022-03-01: This allows for a more evil-esque way to have
-  ;; `corfu-insert-separator' work with space in insert mode without resorting to
-  ;; overriding keybindings with `general-override-mode-map'. See
-  ;; https://github.com/minad/corfu/issues/12#issuecomment-869037519
-  ;; Alternatively, add advice without `general.el':
-  ;; (advice-add 'corfu--setup :after 'evil-normalize-keymaps)
-  ;; (advice-add 'corfu--teardown :after 'evil-normalize-keymaps)
-  (general-add-advice '(corfu--setup corfu--teardown) :after 'evil-normalize-keymaps)
-  (evil-make-overriding-map corfu-map)
-
-  ;; Enable Corfu more generally for every minibuffer, as long as no other
-  ;; completion UI is active. If you use Mct or Vertico as your main minibuffer
-  ;; completion UI. From
-  ;; https://github.com/minad/corfu#completing-with-corfu-in-the-minibuffer
-  (defun corfu-enable-always-in-minibuffer ()
-    "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-    (unless (or (bound-and-true-p mct--active) ; Useful if I ever use MCT
-                (bound-and-true-p vertico--input))
-      (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
-      (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
-
-  ;; Setup lsp to use corfu for lsp completion
-  (defun kb/corfu-setup-lsp ()
-    "Use orderless completion style with lsp-capf instead of the
-default lsp-passthrough."
-    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-          '(orderless))))
-#+end_src
-
 * corfu-doc замена company-quickhelp(OBSULUTE) . Использовать corfu-popinfo
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-package corfu-doc
@@ -2091,42 +2047,25 @@ default lsp-passthrough."
 [[https://kristofferbalintona.me/posts/202203130102/][Cape | Kristoffer Balintona]]
 #+begin_src emacs-lisp :lexical t 
 (use-package cape
-  :general (:prefix "M-c"               ; Particular completion function
-            "p" 'completion-at-point
-            "t" 'complete-tag           ; etags
-            "d" 'cape-dabbrev           ; or dabbrev-completion
-            "f" 'cape-file
-            "k" 'cape-keyword
-            "s" 'cape-symbol
-            "a" 'cape-abbrev
-            "i" 'cape-ispell
-            "l" 'cape-line
-            "w" 'cape-dict
-            "\\"' cape-tex
-            "_" 'cape-tex
-            "^" 'cape-tex
-            "&" 'cape-sgml
-            "r" 'cape-rfc1345
-            )
+  ;; :general (:prefix "M-c"               ; Particular completion function
+  ;;           "p" 'completion-at-point
+  ;;           "t" 'complete-tag           ; etags
+  ;;           "d" 'cape-dabbrev           ; or dabbrev-completion
+  ;;           )
   :custom
   (cape-dabbrev-min-length 3)
+  (cape-dabbrev-check-other-buffers nil)
   :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
   ;;(add-to-list 'completion-at-point-functions #'cape-history)
-  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 )
 #+end_src
 
@@ -2201,9 +2140,18 @@ default lsp-passthrough."
   ;;                             jdtls
   ;;                             ))
   :config
+    ;; Enable LSP automatically for Erlang files
+  ;; (add-hook 'erlang-mode-hook #'lsp)
+
+  ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
+  ;; (lsp-register-client
+  ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+  ;;                   :major-modes '(erlang-mode)
+  ;;                   :priority 0
+  ;;                   :server-id 'erlang-language-platform)) 
   (setq lsp-auto-guess-root t)
   ;; (add-to-list 'lsp-enabled-clients 'jdtls)
-  (setq lsp-enabled-clients '(jdtls jedi))
+  (setq lsp-enabled-clients '(jdtls jedi elp))
   (setq lsp-disabled-clients '(pyls pylsp))
   ;; (setq lsp-log-io nil)
   (setq lsp-restart 'auto-restart)
@@ -2222,7 +2170,16 @@ default lsp-passthrough."
   ;; (setq lsp-enable-snippet nil)
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
   (setq lsp-idle-delay 0.5)
+  
+  ;; Enable LSP automatically for Erlang files
+  ;; (add-hook 'erlang-mode-hook #'lsp)
 
+  ;; ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
+  ;; (lsp-register-client
+  ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+  ;;                   :major-modes '(erlang-mode)
+  ;;                   :priority 0
+  ;;                   :server-id 'erlang-language-platform))
   ;;emacs-lsp-booster
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
   "Try to parse bytecode instead of json."
@@ -2258,8 +2215,18 @@ default lsp-passthrough."
 
   )
 #+end_src
+#+begin_src emacs-lisp :lexical t
+;; (with-eval-after-load 'lsp-mode
+;;   ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
+;;   (lsp-register-client
+;;    (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+;;                     :major-modes '(erlang-mode)
+;;                     :priority 0
+;;                     :server-id 'erlang-language-platform))
+;;   )
+#+end_src
 ** lsp-ui
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t :tangle yes
 (use-package lsp-ui
   :after lsp
   :commands lsp-ui-mode
@@ -2349,14 +2316,14 @@ default lsp-passthrough."
 #+begin_src emacs-lisp :lexical t 
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
-  :custom
-  (eglot-java-eclipse-jdt-args
-   '("-XX:+UseAdaptiveSizePolicy"
-     "-XX:GCTimeRatio=4"
-     "-XX:AdaptiveSizePolicyWeight=90"
-     "-Xmx8G"
-     "-Xms2G"
-     ))
+  ;; :custom
+  ;; (eglot-java-eclipse-jdt-args
+  ;;  '("-XX:+UseAdaptiveSizePolicy"
+  ;;    "-XX:GCTimeRatio=4"
+  ;;    "-XX:AdaptiveSizePolicyWeight=90"
+  ;;    "-Xmx8G"
+  ;;    "-Xms2G"
+  ;;    ))
   :config
   (defun eglot-java-run-main-fork ()
     "Run a main class."
@@ -2787,6 +2754,20 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
            ("\\mix.lock\\'" . elixir-ts-mode)))
 #+end_src
 * erlang mode 
+#+begin_src emacs-lisp :lexical t
+(use-package erlang
+  :defer t
+  ;; :config
+  ;; (+eglot-register '(erlang-mode) "elp-server"))
+  )
+  ;; :init
+ ;; (lsp-register-client
+ ;;   (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+ ;;                    :major-modes '(erlang-mode)
+ ;;                    :priority 0
+ ;;                    :server-id 'erlang-language-platform))
+
+#+end_src
 * go
 * rust
 * ruby
@@ -3143,7 +3124,7 @@ Eglot + sqls ?
                '("\\*Flycheck errors\\*"  display-buffer-below-selected (window-height . 0.15))))
 #+end_src
 ** flycheck-eglot
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t :tangle yes
 (use-package flycheck-eglot
   :after (flycheck eglot)
   :config
@@ -3481,6 +3462,20 @@ Use `treemacs' command for old functionality."
     "Convert region from markdown to org, replacing selection"
     (interactive "r")
     (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
+
+(defun +md-to-org-region-python (start end)
+  "Convert region from markdown to org, replacing selection"
+  (interactive "r")
+  (shell-command-on-region 
+   start end 
+   "python3 /home/snake/md_to_org_debug.py" 
+   t t))
+  
+  ;; better 
+  ;; (defun +md-to-org-region (start end)
+  ;;   "Convert region from markdown to org, replacing selection"
+  ;;   (interactive "r")
+  ;;   (shell-command-on-region start end "python3 /home/snake/md_to_org.py" t t))
 
 
   ;; (defun +md-to-org-region (start end)
@@ -4338,9 +4333,6 @@ https://github.com/org-mime/org-mime
 [[https://emacs.stackexchange.com/questions/75983/how-to-format-org-downloads-image-saving-directorys][org mode - How to format org-download's image saving directory(s)? - Emacs St...]] это помогло решить. хотя в этом коде есть микро ошибка.
 [[https://github.com/abo-abo/org-download/issues/195][abo-abo/org-download#195 Syntax to create subdirectories for each org file: (...]] не знаю что тут.
 
-#+attr_org: :width 600px
-[[file:/home/snake/.config/emacs/org-download/2024-09-04_18-58-31_screenshot.png]]
-
 #+begin_src emacs-lisp :lexical t
 (use-package org-download
   :after org 
@@ -4452,6 +4444,47 @@ https://github.com/org-mime/org-mime
   :commands (yas-global-mode)
   :custom
   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
+#+end_src
+* tempel
+#+begin_src emacs-lisp :lexical t :tangle no
+;; Configure Tempel
+(use-package tempel
+  ;; Require trigger prefix before template name when completing.
+  ;; :custom
+  ;; (tempel-trigger-prefix "<")
+
+  :bind (("M-=" . tempel-complete) ;; Alternative tempel-expand
+         ("M--" . tempel-insert))
+  :custom
+  (tempel-trigger-prefix "<") ;; Require trigger prefix before template name when completing.
+
+  ;; :init
+
+  ;; ;; Setup completion at point
+  ;; (defun tempel-setup-capf ()
+  ;;   ;; Add the Tempel Capf to `completion-at-point-functions'.
+  ;;   ;; `tempel-expand' only triggers on exact matches. Alternatively use
+  ;;   ;; `tempel-complete' if you want to see all matches, but then you
+  ;;   ;; should also configure `tempel-trigger-prefix', such that Tempel
+  ;;   ;; does not trigger too often when you don't expect it. NOTE: We add
+  ;;   ;; `tempel-expand' *before* the main programming mode Capf, such
+  ;;   ;; that it will be tried first.
+  ;;   (setq-local completion-at-point-functions
+  ;;               (cons #'tempel-expand
+  ;;                     completion-at-point-functions)))
+
+  ;; (add-hook 'conf-mode-hook 'tempel-setup-capf)
+  ;; (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  ;; (add-hook 'text-mode-hook 'tempel-setup-capf)
+  :hook ((prog-mode text-mode) . +tempel-setup-capf-h)
+  :hook (prog-mode . tempel-abbrev-mode)
+  :config
+  (defun +tempel-setup-capf-h ()
+    (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
+;;)
+;; Optional: Add tempel-collection.
+;; The package is young and doesn't have comprehensive coverage.
+(use-package tempel-collection)
 #+end_src
 * doom-snippets
 #+begin_src emacs-lisp :lexical t
@@ -4686,6 +4719,7 @@ John Wiegley
        (lambda (file) (file-name-sans-extension (file-relative-name file store-dir)))
        (directory-files-recursively store-dir "\.gpg$"))))
   :config
+  (add-to-list 'auth-sources "~/.password-store/.authinfo")
   (auth-source-pass-enable))
 #+end_src
 
@@ -4874,7 +4908,11 @@ This will fontify with colors the string like "#aabbcc" or "blue".
    :states '(normal)
    :keymaps 'elfeed-show-mode-map
    "J" 'elfeed-show-next
-   "K" 'elfeed-show-prev))
+   "K" 'elfeed-show-prev)
+  :custom
+  (elfeed-db-directory
+   (expand-file-name "elfeed" user-emacs-directory))
+  )
 #+end_src
 * elisp-mode
 #+begin_src emacs-lisp :lexical t
@@ -5011,6 +5049,15 @@ I've removed the default holiday lists that I don't need.
   (holiday-islamic-holidays nil)
   (holiday-oriental-holidays nil))
 #+end_src
+
+* hl-todo
+#+begin_src emacs-lisp :lexical t
+(use-package hl-todo
+  :config
+  (setq hl-todo-highlight-punctuation ":")
+  (global-hl-todo-mode +1))
+#+end_src
+
 * htmlize
 #+begin_quote
 This package converts the buffer text and the associated decorations to HTML.
@@ -5161,27 +5208,35 @@ https://github.com/joddie/macrostep
 #+end_src
 * notmuch
 #+begin_src emacs-lisp :lexical t
- (use-feature notmuch
+ (use-package notmuch
   :commands (notmuch)
   :defer t
   :general
   (+general-global-open
     "m" '(notmuch :which-key "Notmuch"))
   :init
-  (setq mail-user-agent 'message-user-agent
-        message-mail-user-agent t
-        )
+  ;; (setq mail-user-agent 'message-user-agent
+  ;;       message-mail-user-agent t
+  ;;       )
   (setq notmuch-search-oldest-first nil
-     
-      message-send-mail-function 'message-send-mail-with-sendmail
-      notmuch-always-prompt-for-sender t ;;test 
-      message-kill-buffer-on-exit t
-      message-directory "~/Mail"
-      message-sendmail-envelope-from 'header
-      mail-envelope-from 'header
-      notmuch-show-all-tags-list t 
-      mail-specify-envelope-from t)
-  (setq mail-host-address (system-name))
+        message-send-mail-function 'message-send-mail-with-sendmail
+        notmuch-always-prompt-for-sender t ;;test 
+        message-kill-buffer-on-exit t
+        message-directory "~/Mail"
+        message-sendmail-envelope-from 'header
+        mail-envelope-from 'header
+        notmuch-show-all-tags-list t 
+        mail-specify-envelope-from t)
+;; (defun my/notmuch-draft-save-on-buffer-save (&optional arg)
+;;   "Use `notmuch-draft-save` instead of `save-buffer` in draft buffers."
+;;   (when (and (derived-mode-p 'notmuch-message-mode)
+;;              (string-match-p "\\*message\\*" (buffer-name)))
+;;     (notmuch-draft-save)
+;;     (message "Draft saved correctly with `notmuch-draft-save`!")
+;;     t))
+
+;; (advice-add 'basic-save-buffer :before-until #'my/notmuch-draft-save-on-buffer-save)
+
 )
 #+end_src
 * wgrep

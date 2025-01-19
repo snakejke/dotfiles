@@ -7011,3 +7011,1742 @@
 [1734517576.730592] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
 [1734522144.827352] execute_complex_function: Grab failed, unable to execute immediate action
 [1734530332.982309] execute_complex_function: Grab failed, unable to execute immediate action
+[1734593328.839368] FScreenInit: Using RandR 1.6
+[1734593328.842626] scan_screens: Case 1: Add new monitors
+[1734593328.842653] monitor_mark_new: Added new monitor: DP-2 (0x55eeee2625f0)
+[1734593328.889705] main: Loading window states via (null)
+[1734593329.019326] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734593329.019340] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.019395] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734593329.019401] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.019489] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734593329.019499] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.019585] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734593329.019591] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.019772] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734593329.019779] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.019870] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734593329.019876] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020173] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734593329.020184] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020393] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734593329.020402] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020569] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734593329.020577] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020655] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734593329.020663] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020780] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734593329.020789] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020867] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734593329.020876] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.020986] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734593329.020995] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021071] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734593329.021077] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021147] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734593329.021152] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021277] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734593329.021288] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021449] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734593329.021470] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021548] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734593329.021556] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021633] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734593329.021641] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021718] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734593329.021727] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021807] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734593329.021816] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.021894] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734593329.021903] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022015] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734593329.022023] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022117] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734593329.022127] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022227] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734593329.022234] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022288] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734593329.022293] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022369] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734593329.022373] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022428] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734593329.022432] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022486] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734593329.022490] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734593329.022567] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734593329.022571] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734619078.716031] _merge_cr_moveresize: _merge_cr_moveresize: merged 43 cr events
+[1734619101.909510] _merge_cr_moveresize: _merge_cr_moveresize: merged 36 cr events
+[1734619105.772859] _merge_cr_moveresize: _merge_cr_moveresize: merged 46 cr events
+[1734670851.147465] FScreenInit: Using RandR 1.6
+[1734670851.150525] scan_screens: Case 1: Add new monitors
+[1734670851.150557] monitor_mark_new: Added new monitor: DP-2 (0x55732c23b5f0)
+[1734670851.219094] main: Loading window states via (null)
+[1734670851.361252] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734670851.361270] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361369] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734670851.361375] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361442] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734670851.361448] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361514] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734670851.361520] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361591] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734670851.361598] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361683] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734670851.361702] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361782] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734670851.361791] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.361863] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734670851.361877] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362001] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734670851.362008] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362091] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734670851.362097] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362193] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734670851.362198] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362265] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734670851.362271] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362364] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734670851.362370] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362436] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734670851.362442] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362528] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734670851.362534] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362657] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734670851.362663] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362800] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734670851.362806] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362880] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734670851.362887] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.362966] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734670851.362972] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363038] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734670851.363044] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363110] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734670851.363116] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363184] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734670851.363192] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363303] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734670851.363310] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363391] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734670851.363398] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363524] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734670851.363532] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363605] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734670851.363612] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363713] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734670851.363720] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363802] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734670851.363809] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.363897] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734670851.363904] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734670851.364025] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734670851.364032] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734675193.975437] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1734677352.985393] FScreenInit: Using RandR 1.6
+[1734677352.988584] scan_screens: Case 1: Add new monitors
+[1734677352.988621] monitor_mark_new: Added new monitor: DP-2 (0x5625273a05f0)
+[1734677353.036916] main: Loading window states via (null)
+[1734677353.175154] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734677353.175167] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175225] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734677353.175231] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175288] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734677353.175293] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175347] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734677353.175352] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175407] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734677353.175411] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175467] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734677353.175471] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175528] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734677353.175532] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175645] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734677353.175654] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175751] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734677353.175757] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175814] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734677353.175819] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175897] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734677353.175902] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.175958] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734677353.175963] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176042] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734677353.176047] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176103] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734677353.176107] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176162] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734677353.176167] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176246] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734677353.176251] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176353] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734677353.176365] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176424] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734677353.176428] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176482] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734677353.176487] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176543] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734677353.176547] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176603] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734677353.176607] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176663] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734677353.176667] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176767] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734677353.176772] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176827] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734677353.176832] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176910] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734677353.176915] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.176967] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734677353.176971] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.177069] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734677353.177074] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.177129] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734677353.177133] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.177188] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734677353.177192] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677353.177269] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734677353.177274] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734677998.741655] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734698262.125970] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1734700882.357079] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1734700902.529433] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734701386.420529] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1734701388.015338] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1734704469.520587] execute_complex_function: Grab failed, unable to execute immediate action
+[1734708784.067745] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1734726290.662103] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734727787.353568] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734731093.877670] FScreenInit: Using RandR 1.6
+[1734731093.880746] scan_screens: Case 1: Add new monitors
+[1734731093.880774] monitor_mark_new: Added new monitor: DP-2 (0x558bd9b295f0)
+[1734731093.951199] main: Loading window states via (null)
+[1734731094.095199] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734731094.095217] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095333] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734731094.095343] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095451] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734731094.095459] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095655] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734731094.095661] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095745] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734731094.095750] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095810] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734731094.095815] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095872] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734731094.095877] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.095931] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734731094.095935] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096015] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734731094.096032] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096090] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734731094.096095] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096175] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734731094.096180] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096234] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734731094.096238] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096342] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734731094.096357] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096441] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734731094.096446] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096539] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734731094.096544] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096654] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734731094.096659] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096793] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734731094.096798] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096868] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734731094.096873] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.096942] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734731094.096947] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097026] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734731094.097032] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097109] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734731094.097114] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097186] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734731094.097190] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097279] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734731094.097284] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097339] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734731094.097352] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097458] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734731094.097464] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097521] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734731094.097527] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097605] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734731094.097610] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097666] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734731094.097671] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097725] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734731094.097730] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734731094.097812] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734731094.097817] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734732610.787543] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734733506.273818] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734760650.907683] FScreenInit: Using RandR 1.6
+[1734760650.910791] scan_screens: Case 1: Add new monitors
+[1734760650.910825] monitor_mark_new: Added new monitor: DP-2 (0x563cc02f65f0)
+[1734760650.957245] main: Loading window states via (null)
+[1734760651.100202] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734760651.100216] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100284] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734760651.100288] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100356] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734760651.100360] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100425] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734760651.100430] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100492] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734760651.100496] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100588] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734760651.100599] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100689] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734760651.100696] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100786] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734760651.100792] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100894] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734760651.100898] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.100962] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734760651.100967] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101045] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734760651.101050] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101105] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734760651.101110] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101193] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734760651.101211] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101277] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734760651.101282] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101336] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734760651.101340] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101479] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734760651.101486] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101631] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734760651.101636] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101704] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734760651.101708] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101774] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734760651.101779] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101845] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734760651.101850] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.101915] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734760651.101919] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102044] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734760651.102050] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102149] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734760651.102153] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102219] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734760651.102223] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102343] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734760651.102351] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102428] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734760651.102434] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102529] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734760651.102534] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102600] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734760651.102604] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102669] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734760651.102673] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734760651.102767] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734760651.102772] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.217463] FScreenInit: Using RandR 1.6
+[1734812776.220697] scan_screens: Case 1: Add new monitors
+[1734812776.220725] monitor_mark_new: Added new monitor: DP-2 (0x55d36cde45f0)
+[1734812776.263758] main: Loading window states via (null)
+[1734812776.401963] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734812776.401977] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402036] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734812776.402042] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402127] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734812776.402133] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402205] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734812776.402211] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402282] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734812776.402287] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402360] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734812776.402366] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402425] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734812776.402430] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402485] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734812776.402489] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402570] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734812776.402575] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402628] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734812776.402632] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402714] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734812776.402718] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402778] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734812776.402784] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.402868] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734812776.402874] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403001] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734812776.403007] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403096] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734812776.403103] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403202] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734812776.403208] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403320] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734812776.403326] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403388] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734812776.403393] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403451] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734812776.403456] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403514] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734812776.403519] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403582] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734812776.403587] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403653] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734812776.403659] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403747] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734812776.403754] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403818] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734812776.403825] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403924] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734812776.403930] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.403989] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734812776.403994] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.404114] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734812776.404120] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.404182] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734812776.404188] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.404248] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734812776.404253] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734812776.404344] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734812776.404349] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813209.926567] FScreenInit: Using RandR 1.6
+[1734813209.929903] scan_screens: Case 1: Add new monitors
+[1734813209.929930] monitor_mark_new: Added new monitor: DP-2 (0x55b0930995f0)
+[1734813209.974072] main: Loading window states via (null)
+[1734813210.106440] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734813210.106455] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106521] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734813210.106526] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106590] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734813210.106595] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106660] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734813210.106666] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106743] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734813210.106749] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106822] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734813210.106829] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106892] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734813210.106897] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.106959] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734813210.106964] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107060] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734813210.107066] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107217] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734813210.107223] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107344] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734813210.107349] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107428] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734813210.107433] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107569] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734813210.107575] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107633] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734813210.107637] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107702] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734813210.107707] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107785] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734813210.107789] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107891] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734813210.107896] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.107950] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734813210.107954] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108035] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734813210.108040] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108094] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734813210.108098] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108165] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734813210.108169] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108232] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734813210.108236] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108369] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734813210.108373] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108429] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734813210.108433] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108508] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734813210.108513] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108568] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734813210.108572] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108648] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734813210.108652] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108708] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734813210.108712] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108764] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734813210.108768] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813210.108851] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734813210.108855] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734813240.694659] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734854235.875714] FScreenInit: Using RandR 1.6
+[1734854235.880804] scan_screens: Case 1: Add new monitors
+[1734854235.880846] monitor_mark_new: Added new monitor: DP-2 (0x559cef6855f0)
+[1734854235.930486] main: Loading window states via (null)
+[1734854236.052677] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734854236.052687] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.052761] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734854236.052766] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.052835] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734854236.052840] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.052910] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734854236.052914] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.052995] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734854236.053000] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053072] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734854236.053076] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053149] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734854236.053153] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053241] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734854236.053249] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053359] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734854236.053364] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053471] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734854236.053477] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053577] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734854236.053581] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053649] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734854236.053653] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053752] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734854236.053766] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053853] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734854236.053861] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.053941] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734854236.053946] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054056] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734854236.054063] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054229] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734854236.054236] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054320] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734854236.054326] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054408] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734854236.054414] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054486] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734854236.054490] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054560] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734854236.054564] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054635] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734854236.054639] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054738] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734854236.054742] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054812] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734854236.054816] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.054915] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734854236.054919] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.055001] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734854236.055007] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.055108] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734854236.055112] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.055182] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734854236.055187] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.055274] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734854236.055280] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734854236.055402] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734854236.055408] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734886432.785897] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1734888115.162995] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1734898695.089743] _merge_cr_moveresize: _merge_cr_moveresize: merged 6 cr events
+[1734938459.846142] FScreenInit: Using RandR 1.6
+[1734938459.852210] scan_screens: Case 1: Add new monitors
+[1734938459.852253] monitor_mark_new: Added new monitor: DP-2 (0x559a568ba5f0)
+[1734938459.908315] main: Loading window states via (null)
+[1734938460.024737] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1734938460.024751] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.024831] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1734938460.024839] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.024912] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734938460.024919] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.024992] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734938460.024999] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025071] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734938460.025078] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025150] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734938460.025157] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025251] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734938460.025260] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025333] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734938460.025340] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025455] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734938460.025463] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025637] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734938460.025653] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025760] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734938460.025764] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025821] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734938460.025826] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025905] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734938460.025910] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.025967] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734938460.025971] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026035] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734938460.026040] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026122] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734938460.026127] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026253] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1734938460.026259] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026321] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1734938460.026325] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026396] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1734938460.026401] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026463] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1734938460.026467] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026524] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1734938460.026528] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026583] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1734938460.026587] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026668] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1734938460.026672] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026727] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1734938460.026732] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026822] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1734938460.026828] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026884] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1734938460.026888] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.026973] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1734938460.026978] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.027035] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1734938460.027039] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.027093] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1734938460.027097] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734938460.027193] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1734938460.027199] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1734941273.293017] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734942282.296676] execute_complex_function: Grab failed, unable to execute immediate action
+[1734957233.435443] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734973325.342800] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734976372.195786] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1734980048.648211] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1734985179.402134] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1734989909.602531] _merge_cr_moveresize: _merge_cr_moveresize: merged 9 cr events
+[1734989989.666321] _merge_cr_moveresize: _merge_cr_moveresize: merged 14 cr events
+[1734990198.599408] _merge_cr_moveresize: _merge_cr_moveresize: merged 8 cr events
+[1734990563.432760] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1734993431.928750] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1734994106.554376] _merge_cr_moveresize: _merge_cr_moveresize: merged 5 cr events
+[1735026973.879085] FScreenInit: Using RandR 1.6
+[1735026973.882485] scan_screens: Case 1: Add new monitors
+[1735026973.882521] monitor_mark_new: Added new monitor: DP-2 (0x5642058c75f0)
+[1735026973.927687] main: Loading window states via (null)
+[1735026974.066914] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735026974.066969] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067043] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735026974.067048] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067104] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735026974.067110] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067164] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735026974.067168] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067225] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735026974.067229] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067282] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735026974.067286] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067343] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735026974.067348] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067409] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735026974.067413] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067493] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735026974.067497] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067551] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735026974.067554] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067628] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735026974.067634] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067689] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735026974.067694] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067768] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735026974.067772] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067839] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735026974.067845] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.067913] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735026974.067937] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068053] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735026974.068061] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068191] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735026974.068198] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068268] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735026974.068274] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068341] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735026974.068347] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068417] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735026974.068433] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068506] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735026974.068513] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068584] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735026974.068591] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068686] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735026974.068693] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068764] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735026974.068770] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068863] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735026974.068869] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.068968] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735026974.068975] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.069088] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735026974.069095] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.069168] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735026974.069175] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.069248] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735026974.069255] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735026974.069362] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735026974.069369] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735041499.103017] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735042996.927291] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735043013.507638] _merge_cr_moveresize: _merge_cr_moveresize: merged 17 cr events
+[1735043430.629681] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735043431.481492] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1735059485.329219] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735070539.430950] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735112673.793982] FScreenInit: Using RandR 1.6
+[1735112673.797297] scan_screens: Case 1: Add new monitors
+[1735112673.797346] monitor_mark_new: Added new monitor: DP-2 (0x55881855d5f0)
+[1735112673.855794] main: Loading window states via (null)
+[1735112673.984789] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735112673.984803] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.984881] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735112673.984887] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985025] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735112673.985031] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985098] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735112673.985103] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985173] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735112673.985179] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985249] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735112673.985254] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985332] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735112673.985347] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985416] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735112673.985421] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985523] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735112673.985529] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985594] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735112673.985598] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985704] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735112673.985709] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985775] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735112673.985779] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985873] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735112673.985878] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.985943] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735112673.985947] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986012] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735112673.986017] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986110] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735112673.986115] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986245] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735112673.986251] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986353] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735112673.986365] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986464] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735112673.986473] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986561] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735112673.986569] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986662] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735112673.986671] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986765] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735112673.986773] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.986903] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735112673.986911] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987000] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735112673.987008] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987114] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735112673.987120] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987187] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735112673.987194] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987302] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735112673.987309] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987405] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735112673.987411] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987506] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735112673.987513] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735112673.987646] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735112673.987652] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735149529.194847] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735153751.374635] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735156263.626418] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735160061.638671] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735198534.913050] FScreenInit: Using RandR 1.6
+[1735198534.916217] scan_screens: Case 1: Add new monitors
+[1735198534.916254] monitor_mark_new: Added new monitor: DP-2 (0x556c8f7855f0)
+[1735198534.961211] main: Loading window states via (null)
+[1735198535.087555] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735198535.087573] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.087687] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735198535.087696] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.087777] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735198535.087783] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.087853] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735198535.087858] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.087926] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735198535.087930] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.087998] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735198535.088003] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088069] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735198535.088073] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088162] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735198535.088168] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088296] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735198535.088303] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088376] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735198535.088382] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088494] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735198535.088500] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088570] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735198535.088574] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088667] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735198535.088671] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088738] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735198535.088742] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088808] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735198535.088813] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.088918] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735198535.088925] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089085] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735198535.089101] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089171] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735198535.089177] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089234] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735198535.089238] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089301] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735198535.089306] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089365] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735198535.089369] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089425] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735198535.089430] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089509] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735198535.089514] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089568] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735198535.089573] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089660] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735198535.089664] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089729] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735198535.089733] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089830] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735198535.089834] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.089909] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735198535.089915] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.090003] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735198535.090011] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735198535.090111] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735198535.090118] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735202987.428404] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735211349.124445] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735211731.389840] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735223636.719265] _merge_cr_moveresize: _merge_cr_moveresize: merged 12 cr events
+[1735224384.737129] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735233477.337627] FScreenInit: Using RandR 1.6
+[1735233477.342061] scan_screens: Case 1: Add new monitors
+[1735233477.342126] monitor_mark_new: Added new monitor: DP-2 (0x563523aac340)
+[1735233477.361736] main: Loading window states via /home/snake/.config/fvwm/.fs-restart-void:1
+[1735233477.466093] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735233477.466110] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466216] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735233477.466223] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466300] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735233477.466305] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466398] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735233477.466403] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466502] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735233477.466507] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466579] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735233477.466584] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466667] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735233477.466672] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466741] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735233477.466746] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466899] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735233477.466905] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.466988] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735233477.466993] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467087] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735233477.467092] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467151] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735233477.467156] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467246] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735233477.467251] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467311] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735233477.467316] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467373] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735233477.467378] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467470] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735233477.467475] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467591] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735233477.467596] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467661] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735233477.467666] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467731] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735233477.467736] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467793] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735233477.467804] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467893] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735233477.467903] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.467966] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735233477.467972] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468052] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735233477.468057] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468123] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735233477.468128] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468210] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735233477.468215] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468272] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735233477.468285] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468368] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735233477.468374] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468437] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735233477.468442] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468501] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735233477.468506] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233477.468586] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735233477.468591] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.258455] FScreenInit: Using RandR 1.6
+[1735233524.261582] scan_screens: Case 1: Add new monitors
+[1735233524.261619] monitor_mark_new: Added new monitor: DP-2 (0x55d314e18340)
+[1735233524.274793] main: Loading window states via /home/snake/.config/fvwm/.fs-restart-void:1
+[1735233524.371103] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735233524.371122] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371188] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735233524.371194] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371246] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735233524.371251] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371305] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735233524.371309] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371386] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735233524.371391] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371453] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735233524.371458] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371513] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735233524.371518] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371577] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735233524.371581] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371667] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735233524.371671] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371726] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735233524.371731] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371833] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735233524.371848] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.371912] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735233524.371917] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372003] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735233524.372008] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372063] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735233524.372068] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372130] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735233524.372135] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372234] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735233524.372240] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372348] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735233524.372353] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372416] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735233524.372420] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372475] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735233524.372480] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372619] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735233524.372628] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372689] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735233524.372694] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372752] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735233524.372757] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372858] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735233524.372864] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.372921] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735233524.372926] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.373010] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735233524.373014] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.373069] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735233524.373074] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.373149] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735233524.373154] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.373210] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735233524.373214] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.373268] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735233524.373273] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233524.373348] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735233524.373353] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735233963.435035] _merge_cr_moveresize: _merge_cr_moveresize: merged 6 cr events
+[1735233989.286402] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735233991.657895] _merge_cr_moveresize: _merge_cr_moveresize: merged 5 cr events
+[1735236521.148453] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735236895.918704] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735236895.967945] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735237207.030961] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735237546.427662] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735238445.050956] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735239437.493880] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735239750.252870] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735248418.620624] execute_complex_function: Grab failed, unable to execute immediate action
+[1735248536.512184] execute_complex_function: Grab failed, unable to execute immediate action
+[1735249074.490499] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735252317.372006] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735286505.313371] FScreenInit: Using RandR 1.6
+[1735286505.316819] scan_screens: Case 1: Add new monitors
+[1735286505.316860] monitor_mark_new: Added new monitor: DP-2 (0x5588e97795f0)
+[1735286505.370056] main: Loading window states via (null)
+[1735286505.502130] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735286505.502145] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502255] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735286505.502267] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502343] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735286505.502350] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502420] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735286505.502426] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502496] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735286505.502502] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502572] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735286505.502578] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502657] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735286505.502663] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502735] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735286505.502742] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502857] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735286505.502863] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.502941] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735286505.502947] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503047] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735286505.503053] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503122] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735286505.503128] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503226] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735286505.503232] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503302] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735286505.503308] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503377] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735286505.503383] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503484] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735286505.503490] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503657] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735286505.503665] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503736] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735286505.503742] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503811] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735286505.503817] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503887] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735286505.503892] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.503975] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735286505.503982] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504052] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735286505.504058] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504157] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735286505.504163] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504249] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735286505.504255] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504369] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735286505.504375] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504446] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735286505.504452] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504550] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735286505.504556] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504635] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735286505.504641] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504712] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735286505.504718] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735286505.504817] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735286505.504824] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735292231.925082] _merge_cr_moveresize: _merge_cr_moveresize: merged 20 cr events
+[1735292234.657283] _merge_cr_moveresize: _merge_cr_moveresize: merged 12 cr events
+[1735300493.980308] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735303393.680190] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735306780.559544] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735306982.048025] _merge_cr_moveresize: _merge_cr_moveresize: merged 26 cr events
+[1735308964.163159] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735326820.730395] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735336385.266908] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1735339042.164492] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735339042.168730] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735340960.272559] _merge_cr_moveresize: _merge_cr_moveresize: merged 13 cr events
+[1735341444.148510] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735341447.161834] _merge_cr_moveresize: _merge_cr_moveresize: merged 8 cr events
+[1735375891.909071] FScreenInit: Using RandR 1.6
+[1735375891.912315] scan_screens: Case 1: Add new monitors
+[1735375891.912341] monitor_mark_new: Added new monitor: DP-2 (0x55881e5515f0)
+[1735375891.971971] main: Loading window states via (null)
+[1735375892.102304] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735375892.102317] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102383] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735375892.102388] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102452] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735375892.102457] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102521] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735375892.102525] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102599] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735375892.102604] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102669] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735375892.102674] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102745] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735375892.102751] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102816] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735375892.102820] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102913] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735375892.102917] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.102980] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735375892.102984] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103076] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735375892.103081] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103192] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735375892.103198] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103322] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735375892.103328] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103446] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735375892.103458] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103552] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735375892.103560] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103675] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735375892.103681] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103836] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735375892.103843] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.103924] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735375892.103930] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.104013] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735375892.104020] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.104163] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735375892.104171] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.104686] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735375892.104698] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.104794] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735375892.104802] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.104906] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735375892.104912] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.104981] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735375892.104987] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.105100] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735375892.105107] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.105193] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735375892.105211] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.105341] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735375892.105348] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.105426] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735375892.105432] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.105505] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735375892.105511] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735375892.105612] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735375892.105618] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735377344.499631] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735381340.531938] execute_complex_function: Grab failed, unable to execute immediate action
+[1735381348.296012] execute_complex_function: Grab failed, unable to execute immediate action
+[1735403535.639198] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735409044.504271] _merge_cr_moveresize: _merge_cr_moveresize: merged 5 cr events
+[1735424977.764666] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735425065.709473] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1735469532.204951] FScreenInit: Using RandR 1.6
+[1735469532.209848] scan_screens: Case 1: Add new monitors
+[1735469532.209889] monitor_mark_new: Added new monitor: DP-2 (0x55c5f75b15f0)
+[1735469532.276319] main: Loading window states via (null)
+[1735469532.397636] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735469532.397653] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.397737] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735469532.397743] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.397823] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735469532.397829] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.397908] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735469532.397914] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.397994] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735469532.398000] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398079] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735469532.398086] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398169] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735469532.398175] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398250] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735469532.398256] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398356] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735469532.398362] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398430] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735469532.398437] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398542] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735469532.398549] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398618] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735469532.398624] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398728] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735469532.398745] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398821] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735469532.398827] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.398900] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735469532.398906] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399005] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735469532.399011] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399137] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735469532.399143] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399211] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735469532.399217] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399284] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735469532.399290] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399363] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735469532.399369] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399441] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735469532.399448] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399535] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735469532.399542] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399642] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735469532.399648] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399715] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735469532.399721] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399891] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735469532.399899] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.399980] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735469532.399986] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.400103] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735469532.400109] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.400236] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735469532.400243] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.400329] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735469532.400335] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735469532.400436] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735469532.400442] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735473254.616264] _merge_cr_moveresize: _merge_cr_moveresize: merged 5 cr events
+[1735473267.734428] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735476291.817606] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735479586.964059] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735483784.924816] FScreenInit: Using RandR 1.6
+[1735483784.928361] scan_screens: Case 1: Add new monitors
+[1735483784.928387] monitor_mark_new: Added new monitor: DP-2 (0x5595a94665f0)
+[1735483784.983418] main: Loading window states via (null)
+[1735483785.112134] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735483785.112155] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112256] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735483785.112264] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112341] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735483785.112346] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112418] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735483785.112423] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112497] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735483785.112501] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112581] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735483785.112586] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112662] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735483785.112666] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112736] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735483785.112740] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.112920] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735483785.112925] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113010] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735483785.113015] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113102] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735483785.113106] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113181] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735483785.113187] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113285] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735483785.113289] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113354] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735483785.113358] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113423] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735483785.113427] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113521] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735483785.113525] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113652] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735483785.113656] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113721] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735483785.113726] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113802] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735483785.113808] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113885] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735483785.113891] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.113959] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735483785.113964] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114028] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735483785.114032] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114136] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735483785.114142] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114206] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735483785.114211] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114303] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735483785.114308] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114376] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735483785.114383] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114509] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735483785.114518] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114598] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735483785.114603] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114672] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735483785.114676] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735483785.114776] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735483785.114782] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735486453.625114] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735487456.544155] _merge_cr_moveresize: _merge_cr_moveresize: merged 7 cr events
+[1735487528.981097] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735487669.646339] _merge_cr_moveresize: _merge_cr_moveresize: merged 5 cr events
+[1735487781.631825] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735490177.198509] FScreenInit: Using RandR 1.6
+[1735490177.201816] scan_screens: Case 1: Add new monitors
+[1735490177.201846] monitor_mark_new: Added new monitor: DP-2 (0x55a0d3d6d5f0)
+[1735490177.250277] main: Loading window states via (null)
+[1735490177.381809] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735490177.381827] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.381908] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735490177.381917] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.381995] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735490177.382004] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382089] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735490177.382097] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382179] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735490177.382186] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382265] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735490177.382273] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382350] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735490177.382358] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382434] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735490177.382441] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382545] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735490177.382554] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382632] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735490177.382640] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382756] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735490177.382764] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382845] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735490177.382853] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.382963] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735490177.382970] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383042] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735490177.383048] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383139] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735490177.383147] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383254] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735490177.383262] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383396] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735490177.383404] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383487] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735490177.383495] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383591] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735490177.383600] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383683] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735490177.383691] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383768] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735490177.383776] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383851] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735490177.383859] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.383952] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735490177.383958] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384014] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735490177.384018] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384119] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735490177.384125] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384182] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735490177.384186] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384283] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735490177.384288] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384344] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735490177.384348] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384421] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735490177.384428] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735490177.384536] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735490177.384544] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735491768.146404] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735492068.313981] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1735493101.915716] FScreenInit: Using RandR 1.6
+[1735493101.920701] scan_screens: Case 1: Add new monitors
+[1735493101.920738] monitor_mark_new: Added new monitor: DP-2 (0x55911d4145f0)
+[1735493101.977650] main: Loading window states via (null)
+[1735493102.100992] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735493102.101005] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101082] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735493102.101089] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101161] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735493102.101167] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101236] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735493102.101242] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101310] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735493102.101316] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101384] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735493102.101390] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101461] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735493102.101468] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101537] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735493102.101543] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101641] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735493102.101647] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101714] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735493102.101720] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101816] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735493102.101822] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101890] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735493102.101896] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.101992] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735493102.101998] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102066] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735493102.102080] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102155] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735493102.102161] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102259] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735493102.102265] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102390] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735493102.102396] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102464] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735493102.102470] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102538] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735493102.102544] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102611] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735493102.102617] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102686] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735493102.102702] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102773] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735493102.102779] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102876] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735493102.102884] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.102952] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735493102.102958] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.103054] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735493102.103060] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.103146] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735493102.103153] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.103254] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735493102.103260] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.103329] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735493102.103335] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.103403] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735493102.103409] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735493102.103505] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735493102.103511] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735504143.104991] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735546543.879344] FScreenInit: Using RandR 1.6
+[1735546543.882656] scan_screens: Case 1: Add new monitors
+[1735546543.882686] monitor_mark_new: Added new monitor: DP-2 (0x55fbc38595f0)
+[1735546543.926795] main: Loading window states via (null)
+[1735546544.054318] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735546544.054330] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054411] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735546544.054418] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054546] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735546544.054552] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054631] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735546544.054637] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054706] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735546544.054713] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054781] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735546544.054787] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054854] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735546544.054859] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.054926] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735546544.054932] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055026] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735546544.055032] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055098] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735546544.055118] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055237] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735546544.055244] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055310] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735546544.055316] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055456] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735546544.055462] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055529] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735546544.055535] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055602] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735546544.055607] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055701] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735546544.055707] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055829] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735546544.055835] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055901] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735546544.055907] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.055973] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735546544.055989] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056058] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735546544.056065] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056189] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735546544.056196] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056297] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735546544.056304] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056404] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735546544.056410] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056478] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735546544.056484] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056580] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735546544.056586] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056655] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735546544.056662] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056760] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735546544.056766] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056834] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735546544.056840] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.056909] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735546544.056915] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735546544.057012] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735546544.057018] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735552275.722353] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735555077.142480] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735555077.149538] _merge_cr_moveresize: _merge_cr_moveresize: merged 75 cr events
+[1735555525.327467] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735559920.900708] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735577126.435244] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735577126.451813] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735577126.462199] _merge_cr_moveresize: _merge_cr_moveresize: merged 129 cr events
+[1735579839.657130] execute_complex_function: Grab failed, unable to execute immediate action
+[1735579840.177625] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735581116.384249] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735582891.195286] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735583662.904530] _merge_cr_moveresize: _merge_cr_moveresize: merged 71 cr events
+[1735586264.241849] _merge_cr_moveresize: _merge_cr_moveresize: merged 1 cr events
+[1735632088.882218] FScreenInit: Using RandR 1.6
+[1735632088.885902] scan_screens: Case 1: Add new monitors
+[1735632088.885942] monitor_mark_new: Added new monitor: DP-2 (0x55a08dc9c5f0)
+[1735632088.929686] main: Loading window states via (null)
+[1735632089.051799] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735632089.051813] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.051868] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735632089.051873] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.051927] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735632089.051932] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.051995] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735632089.052003] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052083] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735632089.052089] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052189] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735632089.052195] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052253] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735632089.052258] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052318] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735632089.052323] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052399] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735632089.052403] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052455] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735632089.052459] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052536] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735632089.052540] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052595] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735632089.052599] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052727] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735632089.052735] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052810] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735632089.052817] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052885] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735632089.052891] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.052967] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735632089.052981] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053085] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735632089.053090] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053160] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735632089.053166] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053221] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735632089.053226] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053295] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735632089.053302] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053359] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735632089.053363] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053464] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735632089.053471] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053561] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735632089.053567] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053622] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735632089.053626] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053705] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735632089.053709] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053762] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735632089.053766] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053842] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735632089.053846] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053900] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735632089.053905] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.053959] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735632089.053963] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735632089.054041] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735632089.054045] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735645387.671962] _merge_cr_moveresize: _merge_cr_moveresize: merged 33 cr events
+[1735645404.275031] _merge_cr_moveresize: _merge_cr_moveresize: merged 16 cr events
+[1735645413.153219] _merge_cr_moveresize: _merge_cr_moveresize: merged 7 cr events
+[1735645417.647573] _merge_cr_moveresize: _merge_cr_moveresize: merged 64 cr events
+[1735646115.660789] _merge_cr_moveresize: _merge_cr_moveresize: merged 9 cr events
+[1735646376.619579] _merge_cr_moveresize: _merge_cr_moveresize: merged 107 cr events
+[1735648690.995025] _merge_cr_moveresize: _merge_cr_moveresize: merged 25 cr events
+[1735648692.706994] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735655774.174867] _merge_cr_moveresize: _merge_cr_moveresize: merged 8 cr events
+[1735655779.608252] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735665516.495586] _merge_cr_moveresize: _merge_cr_moveresize: merged 4 cr events
+[1735665540.124340] _merge_cr_moveresize: _merge_cr_moveresize: merged 20 cr events
+[1735665750.023627] _merge_cr_moveresize: _merge_cr_moveresize: merged 23 cr events
+[1735666918.307017] _merge_cr_moveresize: _merge_cr_moveresize: merged 83 cr events
+[1735667449.464537] _merge_cr_moveresize: _merge_cr_moveresize: merged 2 cr events
+[1735667929.117676] _merge_cr_moveresize: _merge_cr_moveresize: merged 22 cr events
+[1735668328.731414] _merge_cr_moveresize: _merge_cr_moveresize: merged 23 cr events
+[1735668333.394595] _merge_cr_moveresize: _merge_cr_moveresize: merged 5 cr events
+[1735668337.289490] _merge_cr_moveresize: _merge_cr_moveresize: merged 12 cr events
+[1735677140.362869] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735717063.349346] FScreenInit: Using RandR 1.6
+[1735717063.353003] scan_screens: Case 1: Add new monitors
+[1735717063.353046] monitor_mark_new: Added new monitor: DP-2 (0x55626ee625f0)
+[1735717063.399541] main: Loading window states via (null)
+[1735717063.532667] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735717063.532681] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.532741] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735717063.532746] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.532800] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735717063.532805] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.532906] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735717063.532912] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.532982] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735717063.532987] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533051] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735717063.533055] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533120] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735717063.533124] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533189] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735717063.533193] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533302] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735717063.533308] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533367] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735717063.533372] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533459] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735717063.533465] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533539] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735717063.533550] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533663] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735717063.533669] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533761] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735717063.533768] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.533858] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735717063.533864] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534014] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735717063.534022] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534145] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735717063.534150] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534203] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735717063.534208] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534279] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735717063.534284] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534349] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735717063.534353] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534417] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735717063.534421] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534494] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735717063.534499] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534595] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735717063.534599] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534691] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735717063.534697] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534800] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735717063.534804] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534889] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735717063.534895] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.534985] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735717063.534990] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.535044] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735717063.535048] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.535103] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735717063.535107] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735717063.535189] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735717063.535193] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735725359.632272] _merge_cr_moveresize: _merge_cr_moveresize: merged 3 cr events
+[1735725369.407416] _merge_cr_moveresize: _merge_cr_moveresize: merged 6 cr events
+[1735725375.931497] _merge_cr_moveresize: _merge_cr_moveresize: merged 24 cr events
+[1735729245.116345] _merge_cr_moveresize: _merge_cr_moveresize: merged 30 cr events
+[1735734647.919665] _merge_cr_moveresize: _merge_cr_moveresize: merged 41 cr events
+[1735734745.412459] _merge_cr_moveresize: _merge_cr_moveresize: merged 25 cr events
+[1735744073.844496] FScreenInit: Using RandR 1.6
+[1735744073.848226] scan_screens: Case 1: Add new monitors
+[1735744073.848252] monitor_mark_new: Added new monitor: DP-2 (0x561c6814e5f0)
+[1735744073.893474] main: Loading window states via (null)
+[1735744074.010460] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735744074.010473] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.010567] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735744074.010574] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.010649] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735744074.010655] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.010748] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735744074.010757] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.010849] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735744074.010859] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.010928] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735744074.010941] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011009] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735744074.011014] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011084] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735744074.011090] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011204] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735744074.011208] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011282] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735744074.011286] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011414] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735744074.011422] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011512] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735744074.011520] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011672] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735744074.011680] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011776] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735744074.011785] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.011897] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735744074.011905] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.012042] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735744074.012050] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.012211] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735744074.012219] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.012307] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735744074.012314] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.012414] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735744074.012422] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.012515] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735744074.012530] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.012939] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735744074.012948] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013040] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735744074.013048] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013208] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735744074.013216] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013326] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735744074.013334] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013467] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735744074.013475] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013580] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735744074.013588] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013727] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735744074.013735] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013835] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735744074.013853] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.013974] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735744074.013992] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735744074.014131] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735744074.014138] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803281.846470] FScreenInit: Using RandR 1.6
+[1735803281.849795] scan_screens: Case 1: Add new monitors
+[1735803281.849826] monitor_mark_new: Added new monitor: DP-2 (0x55b5b49125f0)
+[1735803281.895406] main: Loading window states via (null)
+[1735803282.017835] _scan_for_pixmap: Couldn't load image from icons/win/move.png
+[1735803282.017845] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.017930] _scan_for_pixmap: Couldn't load image from icons/win/resize.png
+[1735803282.017936] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018019] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735803282.018024] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018126] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735803282.018132] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018225] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735803282.018231] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018316] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735803282.018322] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018450] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735803282.018460] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018539] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735803282.018545] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018646] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735803282.018653] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018721] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735803282.018727] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018824] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735803282.018830] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.018898] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735803282.018904] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019001] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735803282.019007] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019075] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735803282.019081] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019183] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735803282.019190] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019289] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735803282.019296] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019450] _scan_for_pixmap: Couldn't load image from icons/win/iconify.png
+[1735803282.019457] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019533] _scan_for_pixmap: Couldn't load image from icons/win/max.png
+[1735803282.019539] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019604] _scan_for_pixmap: Couldn't load image from icons/win/shade.png
+[1735803282.019610] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019676] _scan_for_pixmap: Couldn't load image from icons/win/sticky.png
+[1735803282.019682] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019748] _scan_for_pixmap: Couldn't load image from icons/win/title.png
+[1735803282.019754] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.019849] _scan_for_pixmap: Couldn't load image from icons/win/sendto.png
+[1735803282.019856] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020016] _scan_for_pixmap: Couldn't load image from icons/win/close.png
+[1735803282.020022] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020124] _scan_for_pixmap: Couldn't load image from icons/win/destroy.png
+[1735803282.020130] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020258] _scan_for_pixmap: Couldn't load image from icons/win/raise.png
+[1735803282.020264] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020356] _scan_for_pixmap: Couldn't load image from icons/win/lower.png
+[1735803282.020362] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020497] _scan_for_pixmap: Couldn't load image from icons/win/top.png
+[1735803282.020503] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020586] _scan_for_pixmap: Couldn't load image from icons/win/stays.png
+[1735803282.020591] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020674] _scan_for_pixmap: Couldn't load image from icons/win/bottom.png
+[1735803282.020679] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735803282.020798] _scan_for_pixmap: Couldn't load image from icons/info.png
+[1735803282.020803] _scan_for_pixmap: Check that FVWM has support for the filetype it's being asked to load.
+[1735817804.689584] _merge_cr_moveresize: _merge_cr_moveresize: merged 19 cr events
+[1735817845.796206] _merge_cr_moveresize: _merge_cr_moveresize: merged 54 cr events

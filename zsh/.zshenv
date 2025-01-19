@@ -2,7 +2,9 @@ typeset -U PATH
 export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
 #
 export RANGER_LOAD_DEFAULT_RC=FALSE
-
+# ?
+export NO_AT_BRIDGE=1
+#
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share" 
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -65,13 +67,13 @@ export PATH="${PATH}:$HOME/.local/share/cargo/bin"
 #Python
 export IPYTHONDIR=${XDG_CONFIG_HOME:-$HOME/.config}/ipython
 export JUPYTER_CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}/jupyter
+export RUFF_CACHE_DIR="$XDG_CACHE_HOME/.ruff_cache"
 #Scala
 export G8_HOME="$XDG_DATA_HOME/g8"
 #export SCALA_REPL_HISTORY="$HOME/.local/share/scala/.dotty_history"
 #export SCALA_REPL_OPTS="-Dscala.color -Dscala.shell.histfile=${SCALA_REPL_HISTORY}"
-#asdf Erlang/Elixir
-export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME}/asdf/asdfrc"
-export ASDF_DATA_DIR="${XDG_DATA_HOME}/asdf"
+#mise Erlang/Elixir/Ruby 
+path=($XDG_DATA_HOME/mise/shims $path)
 #Haskell
 export GHCUP_USE_XDG_DIRS=1
 export CABAL_CONFIG="${XDG_CONFIG_HOME}/cabal/config"
@@ -80,7 +82,7 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 #
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 ##
-export PERL_CPANM_HOME="$HOME"/.local/etc/cpanm
+export PERL_CPANM_HOME="$HOME/.local/etc/cpanm"
 #broken
 #export GTK2_RC_FILES="/home/snake/.config/gtk-2.0/.gtkrc-2.0"
 #---
@@ -92,6 +94,7 @@ export SAVEHIST=$HISTSIZE
 export NODE_REPL_HISTORY="$XDG_CONFIG_HOME/nodejs/.node_repl_history"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"
+path=($XDG_CONFIG_HOME/npm/node_modules/bin $path)
 #Chrome ignoring that 
 export NSS_DEFAULT_DB_DIR="$HOME/.local/.pki/nssdb"
 export EDITOR="emacsclient -c -n"
@@ -100,11 +103,13 @@ export VISUAL=$EDITOR
 export ANSIBLE_HOME="$XDG_CONFIG_HOME/ansible"
 export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
 export ANSIBLE_GALAXY_CACHE_DIR="$XDG_CACHE_HOME/ansible/galaxy_cache"
-
+#
+export RESTIC_PASSWORD_FILE="$PASSWORD_STORE_DIR/.restic"
+# 
 export EMACS_SOCKET_NAME="/run/user/1000/emacs/snake-emacsd-vanilla"
 #emacs-lsp
 export LSP_USE_PLISTS=true
-
+#export MAILDIR
 export TMUX_CONF=~/.config/tmux/tmux.conf
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc"
 export LYNX_CFG=~/.config/lynx/lynx.cfg
