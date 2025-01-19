@@ -16,7 +16,7 @@ picom --config ~/.config/picom/picom.conf &
 wmname LG3D &
 /usr/bin/xsettingsd &
 dbus-run-session pipewire &
-dbus-run-session fvwm3
+dbus-run-session fvwm3 -v
 #case $XDG_VTNR in
     #1) exec startxfce4 ;;
     #2) exec fvwm3 ;;

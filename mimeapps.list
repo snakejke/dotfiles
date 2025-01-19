@@ -9,7 +9,7 @@ inode/socket=emacsclient.desktop;
 text/plain=nvim.desktop;emacsclient.desktop;
 application/x-shellscript=emacsclient.desktop;
 application/xml=emacsclient.desktop;
-application/pdf=org.pwmt.zathura-pdf-mupdf.desktop;
+application/pdf=zotero.desktop;org.pwmt.zathura-pdf-mupdf.desktop;
 application/postscript=org.pwmt.zathura-ps.desktop;
 text/x-chdr=emacsclient.desktop;
 application/x-desktop=emacsclient.desktop;
@@ -20,6 +20,13 @@ image/webp=nsxiv.desktop;
 application/x-7z-compressed=emacsclient.desktop;
 application/x-bat=emacsclient.desktop;
 text/html=emacsclient.desktop;
+application/epub+zip=com.github.johnfactotum.Foliate.desktop;org.pwmt.zathura-pdf-mupdf.desktop;
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
+text/x-java=code-oss.desktop;emacsclient.desktop;geany.desktop;nvim.desktop;
+application/x-fictionbook+xml=com.github.johnfactotum.Foliate.desktop;
+text/x-python=emacsclient.desktop;
+application/x-executable=emacs.desktop;
+text/javascript=emacsclient.desktop;
 
 [Default Applications]
 image/gif=nsxiv.desktop;
@@ -37,6 +44,8 @@ text/x-chdr=emacsclient.desktop
 image/svg+xml=nsxiv.desktop
 application/x-zerosize=emacsclient.desktop
 x-scheme-handler/eclipse+mpc=_usr_lib_eclipse_.desktop
+application/x-executable=emacs.desktop
+text/x-java=emacsclient.desktop
 
 [Removed Associations]
 image/jpeg=engineer.atlas.Nyxt.desktop;

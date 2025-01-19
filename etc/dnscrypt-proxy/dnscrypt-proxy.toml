@@ -5,7 +5,7 @@
 
 # server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
 
-server_names = ['dct-ru', 'cs-lv', 'controld-unfiltered', 'sth-dsncrypyt-se', 'nextdns'] 
+#server_names = ['dct-ru', 'cs-lv', 'controld-unfiltered', 'sth-dsncrypyt-se', 'nextdns'] 
 #server_names = ['dct-ru'] 
 #cs-lv                 
 #controld-unfiltered  

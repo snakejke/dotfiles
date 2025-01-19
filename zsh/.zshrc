@@ -1,3 +1,4 @@
+# zmodload zsh/zprof
 autoload -U colors && colors
 PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
 
@@ -21,6 +22,7 @@ export MANPAGER="BATPAGER"
 . "$ZDOTDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
 . "/usr/share/fzf/key-bindings.zsh"
 . "$ZDOTDIR/zsh-z/zsh-z.plugin.zsh"
+#. "$HOME/.local/devjava/asdf/asdf.sh"
 
 autoload -Uz compinit
 compinit
@@ -45,6 +47,7 @@ nvm() {
   nvm "$@"
 }
 
+
 export SDKMAN_DIR="/home/snake/.local/devjava/sdkman"
 # :TODO 
 # sdk() {
@@ -53,3 +56,4 @@ export SDKMAN_DIR="/home/snake/.local/devjava/sdkman"
 #   sdk "$@"
 # }
 [[ -s "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh" ]] && source "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh"
+#zprof

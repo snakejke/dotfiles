@@ -1,56 +1,20 @@
-# InfoStoreAdd can be used to store variable data internal to fvwm.
-# The variable can then be used in the configuration as $[infostore.name].
-#
-# You can also use environment variables but for data internal to fvwm
-# use InfoStore variables instead.
-#
-# The following is used in various menus and also sets the terminal
-# that FvwmConsole uses. Change this to your terminal of choice
-InfoStoreAdd terminal st
+DesktopConfiguration global
 
-# This is used for "Run Command" and the Meta+Space key-binding.
-# runcmd is the binary name and runcmdopt contains additional
-# command line options.
+InfoStoreAdd terminal st
+ImagePath $[FVWM_USERDIR]/icons
 InfoStoreAdd runcmd "dmenu_run"
 InfoStoreAdd runcmdopt "-nb '#2b4e5e'"
 
-# DesktopConfiguration sets how fvwm handles desktops:
-#
-# * global -- the default. This means all screens show the same desktops/pages.
-# * per-monitor -- every monitor has its own virtual desktop/pages.
-#     For this mode it's recommended that FvwmPager is configured to
-#     use the monitor configuration option, so that only windows on that
-#     specific monitor are shown.
-# * shared -- the virtual desktops are shared across all monitors and each
-#     monitor shows a single desktop at a time. If one monitor switches to a
-#     desktop currently being viewed by another, the two monitors swap which
-#     desktop they are viewing.  This is similar to how Xmonad or Herbsflutwm
-#     handle desks.  This mode only works with two or more monitors.
-#
-DesktopConfiguration global
+# Default Font
+DefaultFont "xft:IBM Plex Mono:SemiBold:size=13:antialias=True"
 
-###########
-# 1: Functions
-#
-# Fvwm can use custom functions for various tasks.
-# The syntax for defining a function named FunctionName is:
-#
-#   DestroyFunc FunctionName
-#   AddToFunc FunctionName
-#   + I [Action to do Immediately]
-#   + C [Action to do on a Mouse Click]
-#   + D [Action to do on a Mouse Double Click]
-#   + H [Action to do on a Mouse Hold]
-#   + M [Action to do on a Mouse Motion]
-###########
+#------------------------------------------------------------------------------
+# Functions
+#------------------------------------------------------------------------------
+
+Read $[FVWM_USERDIR]/functions
 
 # Start Function
-#
-# The start function is run right after fvwm is done reading
-# the config file. This function run after each restart
-# so using Test (Init) or Test (Restart) can further control
-#a actions that are run during the first time run (Init) or
-# actions that are run after a restart.
 DestroyFunc StartFunction
 AddToFunc   StartFunction
 + I Test (Init) Exec exec feh --no-fehbg --bg-scale /home/snake/.config/fvwm/polyblack.jpg &
@@ -60,123 +24,43 @@ AddToFunc   StartFunction
 + I Module FvwmEvent EventNewDesk
 + I Module FvwmMFL
 
-# Mouse Bindings Functions
-DestroyFunc RaiseMoveX
-AddToFunc RaiseMoveX
-+ I Raise
-+ M $0
-+ D $1
-
-DestroyFunc RaiseMove
-AddToFunc RaiseMove
-+ I Raise
-+ M $0
-
-DestroyFunc MoveToCurrent
-AddToFunc MoveToCurrent
-+ I ThisWindow MoveToPage
-+ I ThisWindow MoveToDesk
-
-# Function: ViewManPage $0
-#
-# This function loads the man page $0 in an terminal
-# and is used with the help menu.
-DestroyFunc ViewManPage
-AddToFunc   ViewManPage
-+ I Exec exec $[infostore.terminal] -g 80x40 \
-  -n "Manual Page - $0" -T "Manual Page - $0" -e man "$0"
-
-# Function: IconManClick
-#
-# This function is run from FvwmIconMan when the button is clicked.
-DestroyFunc IconManClick
-AddToFunc   IconManClick
-+ I ThisWindow (Raised, !Shaded, !Iconic, CurrentPage, AnyScreen) Iconify
-+ I TestRc (Match) Break
-+ I ThisWindow WindowShade off
-+ I ThisWindow Iconify off
-+ I ThisWindow Raise
-+ I ThisWindow (AcceptsFocus) FlipFocus
-
-# Function: ToggleTitle
-#
-# This function will toggle if fvwm shows the TitleBar.
-DestroyFunc ToggleTitle
-AddToFunc   ToggleTitle
-+ I ThisWindow (HasTitle) WindowStyle !Title
-+ I TestRc (NoMatch) WindowStyle Title
-
-# Function: ChangeDesk
-#
-# This function is called by FvwmEvent every time the Desk is changed.
-DestroyFunc ChangeDesk
-AddToFunc   ChangeDesk
-+ I SendToModule FvwmButtons ChangeButton desk0 Colorset 10
-+ I SendToModule FvwmButtons ChangeButton desk1 Colorset 10
-+ I SendToModule FvwmButtons ChangeButton desk2 Colorset 10
-+ I SendToModule FvwmButtons ChangeButton desk3 Colorset 10
-+ I SendToModule FvwmButtons ChangeButton desk$0 Colorset 11
-
 
 #############
 # 2: Styles #
 #############
+EwmhBaseStruts screen $[monitor.primary] 0 0 0 37 
 
-# Desktops and Pages
-#
-# Fvwm has both Virtual Desktops and Pages. Each Desktop is built from
-# a grid of Pages. The following sets the name of four Desktops and then
-# divides each Desktop into a 2x2 grid of Pages that are positioned as
-#
-#   +---+---+
-#   |   |   |
-#   +---+---+
-#   |   |   |
-#   +---+---+
-#
-DesktopName 0 Main
-# DesktopName 1 Desk1
-# DesktopName 2 Desk2
-# DesktopName 3 Desk3
-ImagePath $[FVWM_USERDIR]/icons
 DesktopSize 1x1
-Style * CursorStyle Bibata-Modern-Classic
-Style xfce4-panel NoTitle, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
-Style "Whisker Menu" NoTitle, !Borders
-#fix focus menu 
-Style jetbrains-idea FPLenient
-# EdgeScroll will move the view port between the Pages when the mouse
-# moves to the edge of the screen. This set the amount of distance to
-# scroll at 100% (full page) and the EdgeResistance which is a timer
-# for how long the mouse as at the edge before it scrolls.
-#
-# Set EdgeScroll 0 0 and/or EdgeResistance -1 to disable.(default 450)
+DesktopName 0 Main
 EdgeScroll 100 100
 EdgeResistance -1
 EdgeThickness 1
-Style * EdgeMoveDelay 30, EdgeMoveResistance 30
 
-# EwmhBaseStruts [screen name] [left] [right] [top] [bottom]
-# Резервирование пустого места под xfce4-panel
-EwmhBaseStruts screen $[monitor.primary] 0 0 0 37 
-
-# This sets the ClickTime and MoveThreshold used to determine
-# Double Clicks, Hold and Move for the mouse.
+IgnoreModifiers L25 
 ClickTime 250
 MoveThreshold 3
 
-# Default Font
-DefaultFont "xft:IBM Plex Mono:SemiBold:size=13:antialias=True"
+# Window Specific Styles
+#Style * CursorStyle Bibata-Modern-Classic
+Style ConfirmQuit !Title, PositionPlacement Center, WindowListSkip, Layer 6
+Style FvwmIdent WindowListSkip
+Style xfce4-panel !Title, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
+Style "Whisker Menu" !Title, !Borders
+#Style jetbrains-idea FPLenient
+Style Steam ClickToFocus, !Title
+Style steam ClickToFocus, !Title 
+Style steamwebhelper ClickToFocus
+Style dota2 InitialMapCommand Maximize fullscreen, !Title, NoHandles, BorderWidth 0
 
-# Sets the focus style to SloppyFocus and a mouse click
-# in a window will Raise it.
+Style * EdgeMoveDelay 30, EdgeMoveResistance 30
 Style * SloppyFocus, MouseFocusClickRaises
+
+Style * !Icon
+Style * Lenience
+Style * MWMFunctions, MWMDecor, HintOverride
 
 # Window Placement
 Style * MinOverlapPlacement, GrabFocusOff, !UsePPosition, PositionPlacement center
-# , !UsePPosition x3 x3
-# Sets all windows to OpaqueMove (vs a wired frame) and  windows will
-# snap to each other and the edge of the screen.
 OpaqueMoveSize unlimited
 Style * ResizeOpaque, SnapAttraction 1 SameType ScreenAll, SnapGrid
 
@@ -187,65 +71,23 @@ Style * !FPGrabFocusTransient, FPReleaseFocusTransient
 # WindowShade
 Style * WindowShadeScrolls, WindowShadeSteps 10
 
-# Ignore Numlock and other modifiers for bindings
-# See http://fvwm.org/documentation/faq/#why-do-numlock-capslock-and-scrolllock-interfere-with-clicktofocus-andor-my-mouse-bindings
-IgnoreModifiers L25
 
 # Decor Styles
 Style * BorderWidth 2, HandleWidth 2, MWMButtons, FvwmBorder, FirmBorder
 Style * Colorset 1, HilightColorset 2
-
-# BorderColorset and HilightBorderColorset take 8 positive colorsets
-# to specify the colorset for each edge and handle (corner). The order is:
-#   North NorthEast East SouthEast South SouthWest West NorthWest
-# This makes the edges and corners (handles) different colors.
 Style * BorderColorset 3 4 3 4 3 4 3 4
 Style * HilightBorderColorset 4 8 4 8 4 8 4 8
 
-# Disable Icons from appearing on desktop.
-# Comment this out or use Style * Icon to get the icons back.
-Style * !Icon
-
-# Window Specific Styles
-Style RightPanel !Title, !Borders, !Handles, Sticky, \
-                 WindowListSkip, NeverFocus
-Style ConfirmQuit !Title, PositionPlacement Center, WindowListSkip, Layer 6
-Style FvwmIdent WindowListSkip
-
 #######
 # 3: Colorsets
-#
-# Colorsets can be used to configure the color of the various
-# parts of fvwm such as window decor, menus, modules, etc.
-#
-# Colorset Convention
-#
-#   0 - Default
-#   1 - Inactive Windows
-#   2 - Active Window
-#   3 - Inactive Windows Borders
-#   4 - Active Windows Borders
-
-
-#   5 - Menu - Inactive Item
-#   6 - Menu - Active Item
-#   7 - Menu - Grayed Item
-#   8 - Menu - Title
-#   9 - Reserved
-#  10+ Modules
-#      10 - Module Default
-#      11 - Module Hilight
-#      12 - Module ActiveButton (Mouse Hover)
-#      13 - FvwmPager Active Page
-#      14 - FvwmIconMan Iconified Button
 ###########
 Colorset 0  fg #000000, bg #fefcff, hi, sh, Plain, NoShape
 Colorset 1  fg #000000, bg #fefcff, hi, sh, Plain, NoShape
 Colorset 2  fg #000000, bg #fefcff, hi, sh, Plain, NoShape
-# цвета бортов 
+# 
 Colorset 3  fg #fefcff, bg #fefcff, hi, sh, Plain, NoShape
 Colorset 4  fg #fefcff, bg #fefcff, hi, sh, Plain, NoShape
-#Цвета в меню 
+#
 Colorset 5  fg #000000, bg #cbdcca, hi, sh, Plain, NoShape
 Colorset 6  fg #000000, bg #88b2b1, hi, sh, Plain, NoShape
 Colorset 7  fg #999999, bg #cbdcca, hi, sh, Plain, NoShape
@@ -258,25 +100,13 @@ Colorset 14 fg #a8988f, bg #fefcff, hi #aaaaaa, sh #999999, Plain, NoShape
 
 #######
 # 6: Window Decor
-#
-# Buttons Locations: [1 3 5 7 9  TTTTT  0 8 6 4 2]
-#
-#   1 - WindowOps Menu
-#   2 - Close
-#   4 - Maximize
-#   6 - Minimize
-###########
+#######
 TitleStyle Centered Height 30 -- Flat
 ###########
 # ButtonStyle All ActiveDown -- !Flat
-# Опции окна 
-#ButtonStyle 1 Pixmap /home/snake/Downloads/wrench-svgrepo-com.svg -- Flat
 ButtonStyle 1 Pixmap thunder.svg  -- Flat
-# закрыть
 ButtonStyle 2 Pixmap window-close-symbolic.svg -- Flat
-# масимум
 ButtonStyle 4 Pixmap window-maximize-symbolic.svg -- Flat
-# свернуть 
 ButtonStyle 6 Pixmap window-minimize-symbolic.svg -- Flat
 
 #######
@@ -286,7 +116,7 @@ MenuStyle * MenuColorset 5, ActiveColorset 6, GreyedColorset 7, TitleColorset 8
 MenuStyle * Hilight3DOff, HilightBack, HilightTitleBack, SeparatorsLong
 MenuStyle * TrianglesSolid, TrianglesUseFore
 MenuStyle * ItemFormat "%s%|%3.1i%5.3l%5l%5r%5.3>%|"
-MenuStyle * Font "xft:Sans:Bold:size=8:antialias=True"
+MenuStyle * Font "xft:Sans:Bold:size=13:antialias=True"
 
 # Root Menu
 #
@@ -294,44 +124,10 @@ MenuStyle * Font "xft:Sans:Bold:size=8:antialias=True"
 # window or using alt-f1 (or menu).
 DestroyMenu MenuFvwmRoot
 AddToMenu   MenuFvwmRoot "Fvwm" Title
-+ "$[gt.&Programs]%icons/programs.png%" Popup MenuPrograms
-+ "$[gt.XDG &Menu]%icons/apps.png%"     Popup XDGMenu
-+ "&XTerm%icons/terminal.png%"          Exec exec $[infostore.terminal]
-Test (x $[infostore.runcmd]) + "R&un Command%icons/run_arrow.png%" Exec exec $[infostore.runcmd] $[infostore.runcmdopt]
 + "" Nop
-Test (x $[FVWM_MODULEDIR]/FvwmConsole) + "Fvwm&Console%icons/terminal.png%" Module FvwmConsole -terminal $[infostore.terminal]
-Test (x FvwmPrompt) + "&FvwmPrompt%icons/terminal.png%" Exec exec $[infostore.terminal] -e FvwmPrompt
-+ "$[gt.&Wallpapers]%icons/wallpaper.png%" Popup BGMenu
-+ "$[gt.M&an Pages]%icons/help.png%"       Popup MenuFvwmManPages
-+ "$[gt.Cop&y Config]%icons/conf.png%"     FvwmScript FvwmScript-ConfirmCopyConfig
-+ "" Nop
-+ "$[gt.Re&fresh]%icons/refresh.png%" Refresh
-+ "$[gt.&Restart]%icons/restart.png%" Restart
-+ "$[gt.&Quit]%icons/quit.png%"       Module FvwmScript FvwmScript-ConfirmQuit
-
-# Generate XDGMenu
-PipeRead "fvwm-menu-desktop -e"
-
-# Programs Menu
-#
-# This test for some common programs and adds them to the menu.
-# When adding programs you don't need to use the Test (x foo)
-# lines as this is only to help make this menu portable.
-DestroyMenu MenuPrograms
-AddToMenu   MenuPrograms "$[gt.Programs]" Title
-Test (x google-chrome-stable) + "Google-Chrome" Exec exec google-chrome-stable
-Test (x st) + "st" Exec exec st
-Test (x emacs) + "Emacs" Exec exec emacs
-
-# Background Menu
-#
-# Backgrounds are located in ~/.fvwm/images/background/
-# Menu icons are located in ~/.fvwm/images/bgicons/
-DestroyMenu BGMenu
-AddToMenu   BGMenu "$[gt.Wallpapers]" Title
-+ "$[gt.Floral]%bgicons/bg1.png%"  SetBG bg1.png
-+ "$[gt.Circles]%bgicons/bg2.png%" SetBG bg2.png
-+ "$[gt.Space]%bgicons/bg3.png%"   SetBG bg3.png
++ "Refresh " Refresh
++ "Restart " Restart
++ "Quit "    Module FvwmScript FvwmScript-ConfirmQuit
 
 # Window Operations Menus
 DestroyMenu MenuWindowOps
@@ -466,43 +262,22 @@ Test (x FvwmPrompt) + "FvwmPrompt" ViewManPage FvwmPrompt
 # Alt-Space to launch dmenu (Note: dmenu must be present in the system)
 # 4 - это клавиша Windows 
 # Silent suppresses any errors (such as keyboards with no Menu key).
-Silent Key Return  A 4 Exec exec st
-Silent Key d       A 4 Exec exec rofi_launch.sh
+Silent Key Return  A 4  Exec exec st
+Silent Key d       A 4  Exec exec rofi_launch.sh
 Silent Key s       A 4C Exec exec maimscreenshot
-Silent Key p       A 4 Exec exec passmenu.sh
-Silent Key F1      A M Menu MenuFvwmRoot
-Silent Key Menu    A A Menu MenuFvwmRoot
+Silent Key o       A 4C Exec exec ocr_clipboard
+Silent Key f       A 4C Exec exec flameshot.sh
+Silent Key r       A 4C Exec exec video.sh
+Silent Key p       A 4  Exec exec passmenu.sh
+Silent Key F1      A M  Menu MenuFvwmRoot
+Silent Key Menu    A A  Menu MenuFvwmRoot
 #Silent Key Tab     A M WindowList Root c c NoDeskSort, NoGeometry, SelectOnRelease Meta_L, CurrentAtEnd
-Silent Key F1      A C GotoDesk 0 0
-Silent Key F2      A C GotoDesk 0 1
-Silent Key F3      A C GotoDesk 0 2
-Silent Key F4      A C GotoDesk 0 3
+Silent Key F1      A C  GotoDesk 0 0
+Silent Key F2      A C  GotoDesk 0 1
+Silent Key F3      A C  GotoDesk 0 2
+Silent Key F4      A C  GotoDesk 0 3
 #Silent Key Super_R A A Exec exec $[infostore.terminal]
 Test (x $[infostore.runcmd]) Silent Key Space A M Exec exec $[infostore.runcmd] $[infostore.runcmdopt]
-
-#ALT+TAB как в Windows 
-InfoStoreAdd TabDir Next
-
-DestroyFunc FocusRaiseAndStuff
-AddToFunc   FocusRaiseAndStuff
-+ I Iconify off
-+ I Focus
-+ I Raise
-
-DestroyFunc SwitchDirection
-AddToFunc   SwitchDirection
-+ I Test (EnvMatch infostore.TabDir Next) InfoStoreAdd TabDir Prev
-+ I TestRc (NoMatch) InfoStoreAdd TabDir Next
-
-DestroyFunc SwitchWindow
-AddToFunc   SwitchWindow
-+ I $[infostore.TabDir] (CurrentPage, !Iconic, !Sticky) FocusRaiseAndStuff
-+ I Deschedule 134000
-+ I Schedule 700 134000 SwitchDirection
-
-Key Tab A M  SwitchWindow
-
-
 
 # Window Buttons: [1 3 5 7 9  TTTTT  0 8 6 4 2]
 #   1 - Open the WindowOps menu.
@@ -627,10 +402,4 @@ DestroyModuleConfig EventNewDesk:*
 *EventNewDesk: PassID
 *EventNewDesk: new_desk ChangeDesk
 
-# Local configuration file. For use with the default-config.
-#
-# If $FVWMUSER_DIR/local.config ($HOME/.fvwm/local.config by default)
-# exists, then read it. This allows changes to default-config settings
-# without needing a full copy of the default-config. This will also allow
-# default-config changes to get used after upgrades (if applicable).
 Test (f $[FVWM_USERDIR]/local.config) Read $[FVWM_USERDIR]/local.config

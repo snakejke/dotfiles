@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Проверка на наличие аргумента
+if [ -z "$1" ]; then
+  echo "Укажите файл для копирования в буфер обмена."
+  exit 1
+fi
+
+# Проверка, существует ли указанный файл
+if [ ! -f "$1" ]; then
+  echo "Файл $1 не найден."
+  exit 1
+fi
+
+# Попытка копировать с помощью xclip, затем с помощью xsel
+if command -v xclip &> /dev/null; then
+  xclip -selection clipboard < "$1"
+  echo "Содержимое файла $1 скопировано в буфер обмена с помощью xclip."
+elif command -v xsel &> /dev/null; then
+  xsel --clipboard < "$1"
+  echo "Содержимое файла $1 скопировано в буфер обмена с помощью xsel."
+else
+  echo "Не удалось найти ни xclip, ни xsel. Установите одну из этих утилит и повторите попытку."
+  exit 1
+fi

@@ -10,7 +10,7 @@
 
 (setq initial-buffer-choice t) ;;*scratch*
 
-(defvar elpaca-installer-version 0.7)
+(defvar elpaca-installer-version 0.8)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -27,18 +27,18 @@
     (make-directory repo t)
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                 ,@(when-let ((depth (plist-get order :depth)))
-                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                 ,(plist-get order :repo) ,repo))))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
             (progn (message "%s" (buffer-string)) (kill-buffer buffer))
           (error "%s" (with-current-buffer buffer (buffer-string))))
       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
@@ -171,7 +171,7 @@
 (+general-global-menu! "open" "o"
   "-"  'dired-jump
   "p"  'treemacs
-  "e"  'eshell
+  "e"  'project-eshell-popup
   )
 
 (+general-global-menu! "buffer" "b"
@@ -248,30 +248,7 @@
 
 (+general-global-menu! "project" "p"
    ;;"b" '(:ignore t :which-key "buffer")
-  ;; "!"
-  ;; "&"
-  ;; "."
-  ;; ">"
-  ;; "a"
-  ;; "b"
-  ;; "c"
-  ;; "C"
-  ;; "d"
-  ;; "D"
-  ;; "e"
-  ;; "F"
-  ;; "g"
-  ;; "i"
-  ;; "k"
-  ;; "o"
   "p" 'project-switch-project
-  ;; "r"
-  ;; "R"
-  ;; "s"
-  ;; "t"
-  ;; "T"
-  ;; "x"
-  ;; "X"
   )
 
 (+general-global-menu! "quit" "q"
@@ -511,6 +488,92 @@ unreadable. Returns the names of envvars that were changed."
   ;; (electric-pair-mode t)
   )
 
+(use-package atomic-chrome
+  :demand t
+  :ensure (atomic-chrome :host github :repo "KarimAziev/atomic-chrome")
+  :commands (atomic-chrome-start-server)
+  :config
+  (setq-default atomic-chrome-extension-type-list '(atomic-chrome))
+  (atomic-chrome-start-server))
+
+(use-feature eshell
+  :custom
+  (eshell-banner-message "")
+  :init
+  (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
+        eshell-prompt-function
+        (lambda nil
+          (concat
+	         "[" (user-login-name) "@" (system-name) " "
+	         (if (string= (eshell/pwd) (getenv "HOME"))
+	             "~" (eshell/basename (eshell/pwd)))
+	         "]"
+	         (if (= (user-uid) 0) "# " "$ "))))
+
+  ;;TODO 
+  (defun project-eshell-popup (&optional arg)
+    "Start Eshell in a pop-up window in the current project's root directory.
+If a buffer already exists for running Eshell in the project's root,
+switch to it. Otherwise, create a new Eshell buffer.
+With \\[universal-argument] prefix arg, create a new Eshell buffer even
+if one already exists."
+    (interactive "P")
+    (let* ((default-directory (project-root (project-current t)))
+           (eshell-buffer-name (project-prefixed-buffer-name "eshell"))
+           (eshell-buffer (get-buffer eshell-buffer-name))
+           (display-buffer-alist
+            '(("\\*eshell.*\\*"
+               (display-buffer-in-side-window)
+               (window-height . 0.3)
+               (side . bottom)
+               (slot . 0)))))
+      (if (and eshell-buffer (not arg))
+          (pop-to-buffer eshell-buffer)
+        (let ((buf (generate-new-buffer eshell-buffer-name)))
+          (pop-to-buffer buf)
+          (unless (derived-mode-p 'eshell-mode)
+            (eshell-mode))
+          buf))))
+  
+  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))) 
+
+;; (setq eshell-prompt-function
+;;   (lambda ()
+;;     (concat
+;;      (propertize "┌─[" 'face `(:foreground "#2aa198"))
+;;      (propertize (user-login-name) 'face `(:foreground "#dc322f"))
+;;      (propertize "@" 'face `(:foreground "#2aa198"))
+;;      (propertize (system-name) 'face `(:foreground "#268bd2"))
+;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
+;;      (propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "#b58900"))
+;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
+;;      (propertize (concat (eshell/pwd)) 'face `(:foreground "#93a1a1"))
+;;      (propertize "]\n" 'face `(:foreground "#2aa198"))
+;;      (propertize "└─>" 'face `(:foreground "#2aa198"))
+;;      (propertize (if (boundp 'venv-current-name)
+;;             (concat " (" venv-current-name ")")
+;;           "")
+;;         'face `(:foreground "#00dc00"))
+;;      (propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "#2aa198"))
+;;      ))))
+
+;; (setq eshell-prompt-function
+;;   (lambda ()
+;;     (concat
+;;      (propertize "┌─[" 'face `(:foreground "#2aa198"))
+;;      (propertize (user-login-name) 'face `(:foreground "#dc322f"))
+;;      (propertize "@" 'face `(:foreground "#2aa198"))
+;;      (propertize (system-name) 'face `(:foreground "#268bd2"))
+;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
+;;      (propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "#b58900"))
+;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
+;;      (propertize (concat (eshell/pwd)) 'face `(:foreground "#93a1a1"))
+;;      (propertize "]\n" 'face `(:foreground "#2aa198"))
+;;      (propertize "└─>" 'face `(:foreground "#2aa198"))
+;;      (propertize (if venv-current-name (concat " (" venv-current-name ")")  "") 'face `(:foreground "#00dc00"))
+;;      (propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "#2aa198"))
+;;      )))
+
 ;; Adapted from: rougier/nano-emacs
 (defun +what-faces (pos)
   "Get the font faces at POS."
@@ -526,7 +589,7 @@ unreadable. Returns the names of envvars that were changed."
   :config 
   (setq modus-themes-custom-auto-reload nil
       modus-themes-bold-constructs nil
-      modus-themes-mixed-fonts t ;; что-то компактнее стало ? 
+      modus-themes-mixed-fonts t 
       modus-themes-italic-constructs t
       modus-themes-prompts '(bold intense)
       modus-themes-completions '((t . (extrabold)))
@@ -539,32 +602,42 @@ unreadable. Returns the names of envvars that were changed."
     (set-face-attribute 'default nil :height 190)
     (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif" :height 1.0 :weight 'medium)
     (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
-    
-    (setq modus-themes-common-palette-overrides
-      '(
-        (fringe unspecified)
-        (border-mode-line-active unspecified)
-        (border-mode-line-inactive unspecified)
 
-        (constant "#bcbec4")
-        (fnname "#57aaf7")
-        (keyword "#fa8072") ;; light salmon 
-        (string "#6AAB73")
-        (type "#BCBEC4")
-        (variable "#bcbec4")
-        ;;rainbow-delimiters
-        (rainbow-0 "#E8BA36")
-        (rainbow-1 "#54A857")
-        (rainbow-2 "#359FF4")
-        (rainbow-3 "#6E7ED9")
-        (rainbow-4 "#179387")
-        (rainbow-5 "#A5BE00")
-        (rainbow-6 "#005FA3")
-        (rainbow-7 "#DB7100")
-        (rainbow-8 "#FFC666")
-        (rainbow-9 "#38FF91")
-        )
-      )
+    (setq modus-themes-common-palette-overrides
+          '(
+          (fringe unspecified)
+          (border-mode-line-active unspecified)
+          (border-mode-line-inactive unspecified)
+          ))
+
+    ;;Dark 
+    (setq modus-vivendi-palette-overrides
+        '((bg-main  "#1e1f22");;idea
+          (fg-main "#bcbec4")
+          (constant "#bcbec4")
+          (fnname "#57aaf7")
+          (keyword "#fa8072") ;; light salmon 
+          (string "#6AAB73")
+          (type "#BCBEC4")
+          (variable "#bcbec4")
+          ;;rainbow-delimiters
+          (rainbow-0 "#E8BA36")
+          (rainbow-1 "#54A857")
+          (rainbow-2 "#359FF4")
+          (rainbow-3 "#6E7ED9")
+          (rainbow-4 "#179387")
+          (rainbow-5 "#A5BE00")
+          (rainbow-6 "#005FA3")
+          (rainbow-7 "#DB7100")
+          (rainbow-8 "#FFC666")
+          (rainbow-9 "#38FF91")
+          ))
+    ;; TODO Light
+    (setq modus-operandi-palette-overrides
+        '(
+          (bg-main  "#f2f3f4")
+          ;;(fg-main "#bcbec4")
+          ))
     ;; Make line numbers less intense
 ;; (setq modus-themes-common-palette-overrides
 ;;       '((fg-line-number-inactive "gray50")
@@ -589,10 +662,6 @@ unreadable. Returns the names of envvars that were changed."
 
 (add-hook 'enable-theme-functions #'my-modus-themes-invisible-dividers)
 
-    (setq modus-vivendi-palette-overrides
-        '((bg-main  "#1e1f22");;idea
-          (fg-main "#bcbec4")
-         )) ;; idea
     (load-theme 'modus-vivendi t))
 
     ;;  (setq modus-themes-common-palette-overrides '((constant "#bcbec4")))
@@ -633,7 +702,7 @@ unreadable. Returns the names of envvars that were changed."
   ;;(setq dired-omit-files (rx (seq bol ".")))
   (let ((args (list "-ahl" "-v" "--group-directories-first")))
     (when (featurep :system 'bsd)
-      (if-let (gls (executable-find "gls"))
+      (if-let* (gls (executable-find "gls"))
           (setq insert-directory-program gls)
         (setq args (list (car args)))))
     (setq dired-listing-switches (string-join args " ")))
@@ -667,6 +736,15 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature dired-x
  :after dired
  :hook (dired-mode . dired-omit-mode))
+
+(use-package docker
+  :defer t)
+
+(use-package docker-compose-mode
+  :mode "docker-compose.*\.yml\\'")
+
+(use-package dockerfile-mode
+  :mode "Dockerfile[a-zA-Z.-]*\\'")
 
 (when (display-graphic-p)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . hscroll))
@@ -1086,6 +1164,9 @@ unreadable. Returns the names of envvars that were changed."
               ("M-s f"   . consult-dir-jump-file))
   )
 
+(use-package consult-eglot
+  :defer t)
+
 
 
 (use-package embark
@@ -1162,7 +1243,7 @@ unreadable. Returns the names of envvars that were changed."
   ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
   ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
   ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-  (add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
 )
@@ -1175,7 +1256,7 @@ unreadable. Returns the names of envvars that were changed."
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
 
-(use-package eglot
+(use-feature eglot
   :hook
   (
    ;;(python-mode . eglot-ensure)
@@ -1185,13 +1266,17 @@ unreadable. Returns the names of envvars that were changed."
    (scala . eglot-ensure
    ))
   :custom
-   ;(eglot-ignored-server-capabilities '(:documentLinkProvider
-   ;:documentOnTypeFormattingProvider))
   (eglot-autoshutdown t)
+  (eglot-report-progress nil)
+  (eglot-stay-out-of '())
+  (eglot-extend-to-xref t)
+  (eglot-send-changes-idle-time 0.5)
+                     
   :config
-  ;; (add-to-list 'eglot-server-programs '(kotlin-ts-mode "/home/snake/kotlin-language-server/server/build/install/server/bin/kotlin-language-server"))
-
+  (setq eglot-ignored-server-capabilities '(:documentHighlightProvider
+                                            :foldingRangeProvider))
   (cl-callf plist-put eglot-events-buffer-config :size 0)
+  (push '((java-mode java-ts-mode) . jdtls-command-contact) eglot-server-programs)
   :init
   (defun +eglot-register (modes &rest servers)
     "Register MODES with LSP SERVERS.
@@ -1206,7 +1291,8 @@ unreadable. Returns the names of envvars that were changed."
        (cons modes (if (length> servers 1)
                        (eglot-alternatives (ensure-list servers))
                      (ensure-list (car servers)))))))
-  )
+
+)
 
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
@@ -1232,13 +1318,17 @@ unreadable. Returns the names of envvars that were changed."
                    fqcn)
            t)
         (user-error "No main method found in this file! Is the file saved?!"))))
-  :hook (java-ts-mode . eglot-java-mode)
+  ;; :hook (java-ts-mode . eglot-java-mode)
   )
 
 (use-package eglot-booster
   :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
 	:after eglot
 	:config	(eglot-booster-mode))
+
+(use-package eglot-hierarchy
+  :ensure (eglot-hierarchy :host github :repo "dolmens/eglot-hierarchy")
+  :defer t)
 
 ;; (use-feature java-ts-mode
 ;;   :mode "\\.java\\'")
@@ -1253,36 +1343,27 @@ unreadable. Returns the names of envvars that were changed."
   :ensure (kotlin-ts-mode :host gitlab :repo "bricka/emacs-kotlin-ts-mode")
   :mode "\\.kts?m?\\'")
 
-(add-hook 'sql-mode-hook 'lsp)
-(setq lsp-sqls-workspace-config-path nil)
-(setq lsp-sqls-connections
-    '(
-       ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
-      ))
+(use-package elixir-ts-mode
+    :mode (("\\.ex\\'" . elixir-ts-mode)
+           ("\\.exs\\'" . elixir-ts-mode)
+           ("\\mix.lock\\'" . elixir-ts-mode)))
 
-(use-package dap-mode
-  :after lsp-mode
+(use-package scala-mode
+  :defer t
+  :interpreter ("scala" . scala-mode))
+
+(use-package sbt-mode
+  :defer t
+  :commands sbt-start sbt-command
   :config
-  (dap-mode t))
-
-(use-package move-text
-  :bind (("M-p" . move-text-up)
-         ("M-n" . move-text-down))
-  :config (move-text-default-bindings))
-
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
-
-(use-package jsonrpc)
-
-(use-feature nxml-mode
-  :mode "\\.xml\\'"
-  :config
-  (+eglot-register '(nxml-mode xml-mode) "lemminx"))
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (use-package racket-mode
   :defer t
@@ -1321,6 +1402,46 @@ unreadable. Returns the names of envvars that were changed."
   ;;   "m" '(macrostep-expand :wk "Expand macro")
   ;;   "M" #'macrostep-geiser-expand-all)
   )
+
+(add-hook 'sql-mode-hook 'lsp)
+(setq lsp-sqls-workspace-config-path nil)
+(setq lsp-sqls-connections
+    '(
+       ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
+      ))
+
+(use-package web-mode
+  :defer t
+  :mode
+  "\\.\\(phtml\\|php\\|[gj]sp\\|as[cp]x\\|erb\\|djhtml\\|html?\\|hbs\\|ejs\\|jade\\|swig\\|tm?pl\\|vue\\)$"
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+
+(use-package dap-mode
+  :after lsp-mode
+  :config
+  (dap-mode t))
+
+(use-package move-text
+  :bind (("M-p" . move-text-up)
+         ("M-n" . move-text-down))
+  :config (move-text-default-bindings))
+
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+;;(use-package jsonrpc)
+
+(use-feature nxml-mode
+  :mode "\\.xml\\'"
+  :config
+  (+eglot-register '(nxml-mode xml-mode) "lemminx"))
 
 (use-package sly
   :hook ((lisp-mode-local-vars . sly-editing-mode))
@@ -1426,23 +1547,6 @@ unreadable. Returns the names of envvars that were changed."
 (use-package sly-overlay
   :defer t)
 
-(use-package scala-mode
-  :defer t
-  :interpreter ("scala" . scala-mode))
-
-(use-package sbt-mode
-  :defer t
-  :commands sbt-start sbt-command
-  :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-  ;; allows using SPACE when in the minibuffer
-  (substitute-key-definition
-   'minibuffer-complete-word
-   'self-insert-command
-   minibuffer-local-completion-map)
-   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-   (setq sbt:program-options '("-Dsbt.supershell=false")))
-
 (use-package puni
   :hook (((
            lisp-mode
@@ -1546,6 +1650,8 @@ unreadable. Returns the names of envvars that were changed."
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag))
+  :custom
+  (treemacs-sorting 'alphabetic-numeric-asc)
   :init
   ;; from doom
   (defun +treemacs/toggle ()
@@ -1762,7 +1868,17 @@ Use `treemacs' command for old functionality."
   (defun +md-to-org-region (start end)
     "Convert region from markdown to org, replacing selection"
     (interactive "r")
-    (shell-command-on-region start end "pandoc -f markdown -t org" t t))
+    (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
+
+
+  ;; (defun +md-to-org-region (start end)
+  ;; "Convert region from markdown to org, replacing selection"
+  ;; (interactive "r")
+  ;; (save-excursion
+  ;;   (delete-trailing-whitespace start end)
+  ;;   (shell-command-on-region start end 
+  ;;     "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " 
+  ;;     ;; t t)))
 
    (defun +org-align-all-tags ()
     "Wrap org-align-tags to be interactive and apply to all"
@@ -1799,7 +1915,8 @@ Use `treemacs' command for old functionality."
 
   (add-to-list 'org-emphasis-alist
              '("*" (bold :foreground "#f1e00a")
-               ))
+               ("_" (underline :foreground "#c1d0a4")
+               )))
 
   :custom
   ;;default:
@@ -1832,11 +1949,11 @@ Use `treemacs' command for old functionality."
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
 
-(defvar org-highlight-mode nil
+(defvar org-mouse-bold-mode nil
   "Флаг для включения/выключения выделения текста в режиме org.")
 
 (define-advice mouse-set-region (:after (click) org-highlight ())
-  (when (and org-highlight-mode
+  (when (and org-mouse-bold-mode
              (derived-mode-p 'org-mode)
              (use-region-p))
     (let ((origin (buffer-substring (region-beginning) (region-end)))
@@ -1844,16 +1961,16 @@ Use `treemacs' command for old functionality."
       (delete-region (region-beginning) (region-end))
       (insert emphasis-char origin emphasis-char))))
 
-(defun org-highlight-mode-enable ()
+(defun org-mouse-bold-mode-enable ()
   "Включить режим выделения текста в режиме org."
   (interactive)
-  (setq org-highlight-mode t)
+  (setq org-mouse-bold-mode t)
   (message "Режим выделения текста в режиме org включен."))
 
-(defun org-highlight-mode-disable ()
+(defun org-mouse-bold-mode-disable ()
   "Выключить режим выделения текста в режиме org."
   (interactive)
-  (setq org-highlight-mode nil)
+  (setq org-mouse-bold-mode nil)
   (message "Режим выделения текста в режиме org выключен."))
 
 (use-package org-cliplink
@@ -2090,7 +2207,7 @@ Speeds up `org-agenda' remote operations."
   ;;       buffer's file."
   ;;   (setq-local org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))))
 
-  (defun my-org-download-set-dir ()
+  (defun +my-org-download-set-dir ()
     (interactive) ;; TODO temp fix 
     "Set `org-download-image-dir` to an Images subdirectory in the current file's directory."
     (let* ((filename (buffer-file-name))
@@ -2141,8 +2258,11 @@ Speeds up `org-agenda' remote operations."
     ;;"t" '(:ignore t :which-key "terminal")
     "T" 'vterm-other-window
     "t" 'vterm)
-  :config
-  (evil-set-initial-state 'vterm-mode 'emacs))
+  ;; :config
+  ;; (evil-set-initial-state 'vterm-mode 'emacs)
+  :init
+  (add-to-list 'evil-insert-state-modes #'vterm-mode)
+  )
 
 (use-package diminish
   :defer 10)
@@ -2226,10 +2346,22 @@ Speeds up `org-agenda' remote operations."
   :defer 1
   :config (show-paren-mode))
 
-(use-package project
+(use-feature project
   :config
   (add-to-list 'project-switch-commands '(+project-magit-status "Magit" "m"))
   (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep" "F"))
+  :custom
+  (project-vc-extra-root-markers
+   '(".projectile.el" ".project.el" ".project" ; Emacs
+     ".repo" ; Repo workspaces
+     "autogen.sh" ; Autotools
+     ".dir-locals.el"
+     "*.csproj" "*.vbproj" "*.vcxproj" "*.vdproj" ".code-workspace" ; Visual Studio
+     "requirements.txt" ; Python
+     "package.json" ; Node.js
+     "pom.xml" ; Apache Maven (Java/Kotlin)
+     "gradlew" "build.gradle.kts"
+     "Cargo.toml")) ; Cargo (Rust)
   :init
   (defun +project-magit-status ()
   (interactive)
@@ -2376,7 +2508,7 @@ append it to ENTRY."
 (use-package elfeed
   :commands (elfeed)
   :config
-  (defvar +elfeed-feed-file (expand-file-name "~/Documents/rss-feeds.org"))
+  (defvar +elfeed-feed-file (expand-file-name "~/OrgFiles/elfeed.org"))
 
   (setq elfeed-feeds
         (with-current-buffer (find-file-noselect +elfeed-feed-file)
@@ -2483,7 +2615,8 @@ append it to ENTRY."
   :ensure (fountain-mode :host github :repo "rnkn/fountain-mode")
   :mode "\\.fountain\\'")
 
-(use-package transient :defer t)
+(use-package transient :defer t
+  :ensure(transient :host github :repo "magit/transient"))
 
 (use-package forge
   :ensure (:files (:defaults "docs/*"))
@@ -2596,7 +2729,12 @@ append it to ENTRY."
    ("\\.md\\'" . markdown-mode)
    ("\\.markdown\\'" . markdown-mode))
   :custom
-  (markdown-command "/usr/bin/pandoc"))
+  (markdown-command "/usr/bin/pandoc")
+  :init
+  (defun my-markdown-mode-hook()
+      (visual-line-mode 1))
+    (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
+  )
 
 (use-feature minibuffer
   :custom (read-file-name-completion-ignore-case t)
@@ -2678,16 +2816,7 @@ append it to ENTRY."
 ;;    (vconcat (mapcar (lambda (c) (+ face-offset c)) " … ")))))
   )
 
-(use-package web-mode
-  :defer t
-  :mode
-  "\\.\\(phtml\\|php\\|[gj]sp\\|as[cp]x\\|erb\\|djhtml\\|html?\\|hbs\\|ejs\\|jade\\|swig\\|tm?pl\\|vue\\)$"
-  :config
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
-
-(use-package xref
+(use-feature xref
 ;    :bind
 ;   ;; Mimic VSCode
 ;;   ("s-<mouse-1>" . xref-find-definitions-at-mouse)

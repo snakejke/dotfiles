@@ -24,6 +24,8 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 #fix  ~/.nv/ComputeCache
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME/.nv/ComputeCache"
+#CUDA
+export PATH="${PATH}:/usr/local/cuda/bin"
 
 export MYSQL_HISTFILE="$XDG_DATA_HOME/mysql_history"
 export PSQL_HISTORY="$XDG_STATE_HOME/psql_history"
@@ -59,11 +61,20 @@ export PATH="${PATH}:$XDG_DATA_HOME/go/bin"
 #Rust
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export PATH="${PATH}:$HOME/.local/share/cargo/bin"
+#export RUSTUP_HOME="${XDG_DATA_HOME}"/rustup
 #Python
 export IPYTHONDIR=${XDG_CONFIG_HOME:-$HOME/.config}/ipython
 export JUPYTER_CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}/jupyter
 #Scala
 export G8_HOME="$XDG_DATA_HOME/g8"
+#export SCALA_REPL_HISTORY="$HOME/.local/share/scala/.dotty_history"
+#export SCALA_REPL_OPTS="-Dscala.color -Dscala.shell.histfile=${SCALA_REPL_HISTORY}"
+#asdf Erlang/Elixir
+export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME}/asdf/asdfrc"
+export ASDF_DATA_DIR="${XDG_DATA_HOME}/asdf"
+#Haskell
+export GHCUP_USE_XDG_DIRS=1
+export CABAL_CONFIG="${XDG_CONFIG_HOME}/cabal/config"
 #
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 #

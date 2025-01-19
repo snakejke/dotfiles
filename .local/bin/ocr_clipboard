@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Путь для временных файлов
+TEMP_IMAGE="/tmp/screenshot.png"
+TEMP_TEXT="/tmp/ocr_result.txt"
+
+# Захват выделенной области экрана
+maim -s "$TEMP_IMAGE"
+
+# Распознавание текста с помощью Tesseract
+tesseract-ocr "$TEMP_IMAGE" "$TEMP_TEXT" -l rus+eng --psm 6
+
+# Чтение распознанного текста
+OCR_RESULT=$(cat "$TEMP_TEXT.txt")
+
+# Копирование текста в буфер обмена
+echo "$OCR_RESULT" | xclip -selection clipboard
+
+# Уведомление с распознанным текстом
+notify-send "OCR завершено" "$OCR_RESULT"

@@ -20,6 +20,6 @@ if app_name == "emacs" or app_name == "emacs-30-0-50" then
   set_window_geometry(149, 93, 1579, 836)
 end
 
-if window_name == "passwords.kdbx [Locked] - KeePassXC" then
-  os.execute("xdotool mousemove 1208 645 click 1")
-end
+-- if window_name == "passwords.kdbx [Locked] - KeePassXC" then
+--   os.execute("xdotool mousemove 1208 645 click 1")
+-- end
