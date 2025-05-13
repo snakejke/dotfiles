@@ -1,0 +1,4 @@
+- hosts: localhost
+  roles:
+    - dotfiles_manage
+

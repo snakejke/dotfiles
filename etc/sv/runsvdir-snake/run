@@ -4,7 +4,7 @@ export USER="snake"
 export HOME="/home/snake"
 
 groups="$(id -Gn "$USER" | tr ' ' ':')"
-svdir="$HOME/services"
+svdir="$HOME/.local/services"
 
 exec chpst -u "$USER:$groups" runsvdir "$svdir"
 

@@ -1,0 +1,41 @@
+---
+- name: Create dotfiles directories
+  file:
+    path: "{{ dotfiles_dir }}/{{ item }}"
+    state: directory
+  loop:
+    - 'ansible'
+    - 'ansible_main'
+    - 'emacs'
+    - 'emacs/dict'
+    - 'emacs/lisp'
+    - 'zsh'
+    - 'aria2'
+    - 'containers'
+    - 'wireplumber/wireplumber.conf.d'
+
+- name: Create user-specific directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ dotfiles_dir }}/.local/bin", mode: '0775' }
+    - { path: "{{ dotfiles_dir }}/.gnupg", mode: '0700' }
+    - { path: "{{ dotfiles_dir }}/.ssh", mode: '0700' }
+    - { path: "{{ dotfiles_dir }}/.local/rawservices", mode: '0775' }
+
+- name: Create system configuration directories
+  become: true
+  become_method: sudo
+  file:
+    path: "{{ dotfiles_dir }}/etc/{{ item }}"
+    state: directory
+  loop:
+    - pam.d
+    - profile.d
+    - smtpd
+    - sv
+    - dnscrypt-proxy 
+  tags:
+    - create_dirs

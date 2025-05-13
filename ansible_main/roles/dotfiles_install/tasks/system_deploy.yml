@@ -1,0 +1,84 @@
+---
+# Развертывание системных конфигураций
+
+# Создаем временные директории для системных конфигов
+- name: Ensure temp directory exists for system configs
+  become: true
+  become_method: sudo
+  file:
+    path: /tmp/system_config_deploy
+    state: directory
+    mode: '0755'
+  tags:
+    - system
+    - temp
+
+# Сначала копируем конфиги в временную директорию
+- name: Copy system configuration to temp directory
+  synchronize:
+    src: "{{ dotfiles_dir }}/{{system_config_dir}}/"
+    dest: "/tmp/system_config_deploy/"
+  tags:
+    - system
+    - sync
+
+# Развертывание системных конфигурационных директорий
+- name: Deploy system configuration directories
+  become: true
+  become_method: sudo
+  copy:
+    src: "/tmp/system_config_deploy/{{ item }}/"
+    dest: "/{{system_config_dir}}/{{ item }}/"
+    remote_src: yes
+    directory_mode: preserve
+  loop:
+    - 'dracut.conf.d'
+    - 'iptables'
+    - 'sudoers.d'
+    - 'unbound'
+    - 'X11'
+    - 'pam.d'
+    - 'profile.d'
+    - 'smtpd'
+    - 'sv'
+    - 'dnscrypt-proxy'
+  tags:
+    - system
+    - deploy
+
+# Развертывание отдельных системных конфигурационных файлов
+- name: Deploy system configuration files
+  become: true
+  become_method: sudo
+  copy:
+    src: "/tmp/system_config_deploy/{{ item }}"
+    dest: "/{{system_config_dir}}/{{ item }}"
+    remote_src: yes
+    mode: preserve
+  loop:
+    - 'dnscrypt-proxy/dnscrypt-proxy.toml'
+    - 'pam.d/login'
+    - 'profile.d/fixdbus.sh'
+    - 'smtpd/smtpd.conf'
+    - 'sv/agetty-autologin-tty1/run'
+    - 'sv/amneziavpn/run'
+    - 'sv/runsvdir-snake/run'
+    - 'dhcpcd.conf'
+    - 'environment'
+    - 'resolv.conf'
+    - 'rsyslog.conf'
+    - 'sysctl.conf'
+  tags:
+    - system
+    - deploy
+
+# Удаляем временную директорию
+- name: Clean up temporary directory
+  become: true
+  become_method: sudo
+  file:
+    path: /tmp/system_config_deploy
+    state: absent
+  tags:
+    - system
+    - cleanup

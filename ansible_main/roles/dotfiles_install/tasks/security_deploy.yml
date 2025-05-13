@@ -1,0 +1,57 @@
+---
+# Развертывание конфигураций безопасности
+
+- name: Deploy security configuration files
+  synchronize:
+    src: "{{ dotfiles_dir }}/.gnupg/"
+    dest: "{{ home_dir }}/.gnupg/"
+    perms: yes  # Сохраняем разрешения
+  tags:
+    - security
+    - sync
+
+- name: Deploy SSH configuration
+  synchronize:
+    src: "{{ dotfiles_dir }}/.ssh/"
+    dest: "{{ home_dir }}/.ssh/"
+    perms: yes  # Сохраняем разрешения
+  tags:
+    - security
+    - sync
+
+- name: Set proper permissions for .gnupg
+  file:
+    path: "{{ home_dir }}/.gnupg"
+    state: directory
+    mode: '0700'
+    recurse: yes
+  tags:
+    - security
+    - permissions
+
+- name: Set proper permissions for .ssh
+  file:
+    path: "{{ home_dir }}/.ssh"
+    state: directory
+    mode: '0700'
+    recurse: yes
+  tags:
+    - security
+    - permissions
+
+- name: Set restrictive permissions for SSH private keys
+  find:
+    paths: "{{ home_dir }}/.ssh"
+    patterns: "id_*"
+    excludes: "*.pub"
+  register: ssh_private_keys
+
+- name: Fix SSH private key permissions
+  file:
+    path: "{{ item.path }}"
+    mode: '0600'
+  with_items: "{{ ssh_private_keys.files }}"
+  when: ssh_private_keys.matched > 0
+  tags:
+    - security
+    - permissions

@@ -28,8 +28,8 @@ AddToFunc   StartFunction
 #Функция для размещения окон 50/50
 DestroyFunc PlaceEmacsWindows
 AddToFunc PlaceEmacsWindows
-+ I All (emacs, CurrentDesk) ResizeMove 50% -37p 0 0
-+ I Next (emacs, CurrentDesk) ResizeMove 50% -37p 50% 0
++ I All (emacs|emacs-31_0_50, CurrentDesk) ResizeMove 50% -67p 0 0
++ I Next (emacs|emacs-31_0_50, CurrentDesk) ResizeMove 50% -67p 50% 0
 
 # Горячая клавиша для вызова функции
 Silent Key t       A 4  PlaceEmacsWindows
@@ -37,12 +37,12 @@ Silent Key t       A 4  PlaceEmacsWindows
 # Функция для смены мест окон Emacs
 DestroyFunc SwapEmacsWindows
 AddToFunc SwapEmacsWindows
-+ I All (emacs, CurrentDesk) AnimatedMove 50% 0
-+ I Next (emacs, CurrentDesk) AnimatedMove 0 0
++ I All (emacs|emacs-31_0_50, CurrentDesk) AnimatedMove 50% 0
++ I Next (emacs|emacs-31_0_50, CurrentDesk) AnimatedMove 0 0
 + I Focus
-+ I Next (emacs, CurrentDesk) Focus
++ I Next (emacs|emacs-31_0_50, CurrentDesk) Focus
 
-# Бинды для смены мест (теперь одна клавиша, так как эффект одинаковый)
+# Бинды для смены мест
 Silent Key Left    A 4  SwapEmacsWindows
 
 #############
@@ -60,6 +60,14 @@ IgnoreModifiers L25
 ClickTime 250
 MoveThreshold 3
 
+Style * EdgeMoveDelay 30, EdgeMoveResistance 30
+Style * SloppyFocus, MouseFocusClickRaises
+
+Style * !Icon
+Style * Lenience
+Style * MWMFunctions, MWMDecor, HintOverride
+
+
 # Window Specific Styles
 #Style * CursorStyle Bibata-Modern-Classic
 Style ConfirmQuit !Title, PositionPlacement Center, WindowListSkip, Layer 6
@@ -67,18 +75,15 @@ Style FvwmIdent WindowListSkip
 Style xfce4-panel !Title, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
 Style "Whisker Menu" !Title, !Borders
 #Style jetbrains-idea FPLenient
-Style jetbrains-idea ClickToFocus
+# Style "jetbrains-idea" Lenience, ClickToFocus
+Style jetbrains-idea Lenience
+Style "Eclipse Memory Analyzer" ClickToFocus
 Style Steam ClickToFocus, !Title
 Style steam ClickToFocus, !Title 
 Style steamwebhelper ClickToFocus
 Style dota2 InitialMapCommand Maximize fullscreen, !Title, NoHandles, BorderWidth 0
+Style cs2 !FPFocusByProgram
 
-Style * EdgeMoveDelay 30, EdgeMoveResistance 30
-Style * SloppyFocus, MouseFocusClickRaises
-
-Style * !Icon
-Style * Lenience
-Style * MWMFunctions, MWMDecor, HintOverride
 
 # Window Placement
 Style * MinOverlapPlacement, GrabFocusOff, !UsePPosition, PositionPlacement center
@@ -125,10 +130,10 @@ Colorset 14 fg #a8988f, bg #fefcff, hi #aaaaaa, sh #999999, Plain, NoShape
 TitleStyle Centered Height 30 -- Flat
 ###########
 # ButtonStyle All ActiveDown -- !Flat
-ButtonStyle 1 Pixmap thunder.svg  -- Flat
-ButtonStyle 2 Pixmap window-close-symbolic.svg -- Flat
-ButtonStyle 4 Pixmap window-maximize-symbolic.svg -- Flat
-ButtonStyle 6 Pixmap window-minimize-symbolic.svg -- Flat
+ButtonStyle 1 Pixmap thunder.svg:25x25  -- Flat
+ButtonStyle 2 Pixmap close.svg:25x25 -- Flat 
+ButtonStyle 4 Pixmap maximize.svg:25x25 -- Flat
+ButtonStyle 6 Pixmap minimize.svg:25x25 -- Flat
 
 #######
 # 4: Menus

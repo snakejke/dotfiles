@@ -8,9 +8,12 @@ alias e='emacsclient -c -n -a ""'
 # "-c -t"
 alias d='emacsclient -e "(dired default-directory)" -c -a ""'
 alias du=gdu
+alias pt=podman-tui
+alias pg='podman exec -it postgres psql -U postgres -d postgres'
 alias ip='ip -c=always'
 alias ls='ls -A --group-directories-first --color=auto'
 alias lf=lfrun
 alias sbt='sbt -ivy "$XDG_DATA_HOME/ivy2" -sbt-dir "$XDG_DATA_HOME/sbt"'
 alias lazypodman='DOCKER_HOST=unix:///run/user/1000/podman/podman.sock lazydocker'
+alias pn=pnpm
 #alias scala="scala $SCALA_REPL_OPTS"

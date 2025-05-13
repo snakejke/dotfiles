@@ -1,0 +1,93 @@
+---
+# Развертывание пользовательских конфигурационных файлов
+
+- name: Deploy user configuration directories
+  synchronize:
+    src: "{{ dotfiles_dir }}/{{ item }}/"
+    dest: "{{ user_config_dir }}/{{ item }}/"
+    delete: no  # Не удаляем файлы, которые могут быть системными
+  loop:
+    - 'devilspie2'
+    - 'dunst'
+    - 'emacs/lisp'
+    - 'fdm'
+    - 'fvwm'
+    - 'git'
+    - 'gtk-2.0'
+    - 'gtk-3.0'
+    - 'lf'
+    - 'mpv'
+    - 'nix'
+    - 'notmuch'
+    - 'picom'
+    - 'pipewire'
+    - 'python'
+    - 'readline'
+    - 'rebar3'
+    - 'rofi'
+    - 'sx'
+    - 'tmux'
+    - 'wget'
+    - 'xdg-desktop-portal'
+    - 'xsettingsd'
+    - 'zathura'
+  register: dir_sync_result
+  changed_when: dir_sync_result.changed
+  tags:
+    - user_config
+    - sync
+
+- name: Deploy user configuration files
+  synchronize:
+    src: "{{ dotfiles_dir }}/{{ item }}"
+    dest: "{{ user_config_dir }}/{{ item }}"
+  loop:
+    - 'ansible/ansible.cfg'
+    - 'aria2/aria2.conf'
+    - 'containers/registries.conf'
+    - 'containers/storage.conf'
+    - 'emacs/early-init.el'
+    - 'emacs/init-dev.el'
+    - 'emacs/init.el'
+    - 'emacs/init.org'
+    - 'emacs/dict/english-words.txt'
+    - 'wireplumber/wireplumber.conf.d/80-disable-logind.conf'
+    - 'zsh/.zprofile'
+    - 'zsh/.zshenv'
+    - 'zsh/.zshrc'
+    - 'zsh/aliases'
+    - 'mimeapps.list'
+  register: file_sync_result
+  changed_when: file_sync_result.changed
+  tags:
+    - user_config
+    - sync
+
+# Обработка зашифрованного .zhistory
+- name: Check if encrypted .zhistory exists
+  stat:
+    path: "{{ dotfiles_dir }}/zsh/.zhistory.gpg"
+  register: zhistory_gpg_stat
+  tags:
+    - encrypt_zhistory
+
+- name: Decrypt .zhistory if encrypted file exists
+  block:
+    - name: Check if GPG key is available
+      shell: gpg --list-keys "{{ gpg_key_id }}" 2>/dev/null
+      register: gpg_key_check
+      changed_when: false
+      failed_when: false
+
+    - name: Decrypt .zhistory using GPG
+      command: >
+        gpg --batch --yes --output "{{ user_config_dir }}/zsh/.zhistory" 
+        --decrypt "{{ dotfiles_dir }}/zsh/.zhistory.gpg"
+      when: gpg_key_check.rc == 0
+      register: gpg_result
+      changed_when: gpg_result.rc == 0
+      failed_when: false
+  when: zhistory_gpg_stat.stat.exists
+  tags:
+    - encrypt_zhistory
+    - decrypt

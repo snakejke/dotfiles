@@ -1,0 +1,40 @@
+---
+# Развертывание пользовательских бинарников и сервисов
+
+- name: Deploy user binaries
+  synchronize:
+    src: "{{ dotfiles_dir }}/.local/bin/"
+    dest: "{{ home_dir }}/.local/bin/"
+    perms: yes  # Сохраняем разрешения на исполнение
+  tags:
+    - user_bin
+    - sync
+
+- name: Make user binaries executable
+  file:
+    path: "{{ home_dir }}/.local/bin"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  tags:
+    - user_bin
+    - permissions
+
+- name: Deploy raw services
+  synchronize:
+    src: "{{ dotfiles_dir }}/.local/rawservices/"
+    dest: "{{ home_dir }}/.local/rawservices/"
+    perms: yes  # Сохраняем разрешения на исполнение
+  tags:
+    - user_bin
+    - sync
+
+- name: Make raw services executable
+  file:
+    path: "{{ home_dir }}/.local/rawservices"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  tags:
+    - user_bin
+    - permissions

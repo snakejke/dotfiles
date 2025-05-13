@@ -1,0 +1,2 @@
+/home/snake/Documents/Videos/**/*
+/home/snake/.local/services/**/*

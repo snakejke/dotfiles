@@ -1,0 +1,44 @@
+---
+# Основной файл задач для роли dotfiles_deploy
+
+- name: Import pre-flight checks
+  import_tasks: pre_checks.yml
+  tags:
+    - always
+    - preflight
+
+- name: Import directory setup tasks
+  import_tasks: directory_setup.yml
+  tags:
+    - setup
+    - directories
+
+- name: Import user configuration deployment tasks
+  import_tasks: user_config_deploy.yml
+  tags:
+    - deploy
+    - user_config
+
+- name: Import user binaries deployment tasks
+  import_tasks: user_bin_deploy.yml
+  tags:
+    - deploy
+    - user_bin
+
+- name: Import security configuration deployment tasks
+  import_tasks: security_deploy.yml
+  tags:
+    - deploy
+    - security
+
+- name: Import system configuration deployment tasks
+  import_tasks: system_deploy.yml
+  tags:
+    - deploy
+    - system
+
+- name: Import permissions tasks
+  import_tasks: permissions.yml
+  tags:
+    - deploy
+    - permissions

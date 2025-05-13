@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Set the location to save screenshots
+SCREENSHOT_DIR="$HOME/Documents/Pictures/Screenshots"
+mkdir -p "$SCREENSHOT_DIR"
+
+# Temporary file for the screenshot
+TEMP_FILE=$(mktemp /tmp/screenshot-XXXXXX.png)
+
+# Take a screenshot with maim and save to the temporary file
+maim -s | tee >(xclip -selection clipboard -t image/png) > "$TEMP_FILE"
+
+# -- strip ??
+FINAL_FILE="$SCREENSHOT_DIR/screenshot-$(date +%Y-%m-%d-%H-%M-%S).png"
+pngquant --quality=65-80 --force --output "$FINAL_FILE" "$TEMP_FILE"
+
+# Remove the temporary file
+rm "$TEMP_FILE"
+
+# # Notify the user
+# echo "Screenshot saved and compressed to: $FINAL_FILE"
+
+
+
+# #!/bin/bash
+
+# # Set the location to save screenshots
+# SCREENSHOT_DIR="$HOME/Documents/Pictures/Screenshots"
+
+# # Take a screenshot with maim. JPG vs PNG ?
+# maim -s | tee >(xclip -selection clipboard -t image/png) > "$SCREENSHOT_DIR/screenshot-$(date +%Y-%m-%d-%H-%M-%S).png"
+
+# # Notify the user that the screenshot was saved
+# #notify-send "Screenshot saved to $SCREENSHOT_DIR"

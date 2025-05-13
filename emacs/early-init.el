@@ -5,6 +5,8 @@
 (setq inhibit-default-init nil)
 
 (setq native-comp-async-report-warnings-errors nil)
+;; (debug-on-entry 'emacs-repository-branch-git)
+;; (debug-on-entry 'emacs-repository-version-git)
 
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
@@ -53,6 +55,9 @@
 (set-face-font 'default "JetBrainsMono Nerd Font")
 (set-face-font 'variable-pitch "IBM Plex Serif")
 (copy-face 'default 'fixed-pitch)
+
+;; emoji without VARIATION SELECTOR-16 (U+FE0F)
+;; (set-fontset-font t 'unicode "Noto Color Emoji" nil 'prepend)
 
 (setq ring-bell-function #'ignore
       inhibit-startup-screen t)

@@ -1,0 +1,29 @@
+---
+# Основные директории
+# home_dir: "{{ ansible_env.HOME }}"
+# dotfiles_dir: "{{ home_dir }}/.local/dotfiles"  # Расположение клонированного репозитория дотфайлов
+# user_config_dir: "{{ home_dir }}/.config"
+# system_config_dir: "/etc"
+
+# test env 
+home_dir: "{{ansible_env.HOME}}/target_home"
+dotfiles_dir: "{{ home_dir }}/.local/dotfiles"  # Расположение клонированного репозитория дотфайлов
+user_config_dir: "{{ home_dir }}/.config"
+system_config_dir: "{{ansible_env.HOME}}/target_etc"
+
+
+
+# Настройки безопасности
+gpg_key_id: "snake05865@mail.ru"  # Переопределите в переменных инвентаря
+
+# Разрешения для файлов
+default_dir_mode: "0775"
+secure_dir_mode: "0700"
+
+# Настройки git
+# dotfiles_repo_url: "https://github.com/yourusername/dotfiles.git"  # URL вашего репозитория
+# dotfiles_repo_branch: "main"  # Ветка для клонирования
+
+# Пользователь и группа
+system_user: "snake"
+system_group: "snake"

@@ -1,0 +1,13 @@
+- cabal-*
+- exercism
+- ghcup
+- google-java-format.jar
+- mise
+- rebar3
+- rtimer
+- stack-*
+- uv
+- uvx
+- __erlang_ls
+- elp
+- org.eclipse.lemminx-uber.jar 

@@ -10,7 +10,7 @@
 
 (setq initial-buffer-choice t) ;;*scratch*
 
-(defvar elpaca-installer-version 0.8)
+(defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -259,6 +259,7 @@
 
 (+general-global-menu! "searchhh" "s"
   "b" 'consult-line
+  "h" 'consult-outline
   "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
@@ -536,44 +537,7 @@ if one already exists."
             (eshell-mode))
           buf))))
   
-  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))) 
-
-;; (setq eshell-prompt-function
-;;   (lambda ()
-;;     (concat
-;;      (propertize "┌─[" 'face `(:foreground "#2aa198"))
-;;      (propertize (user-login-name) 'face `(:foreground "#dc322f"))
-;;      (propertize "@" 'face `(:foreground "#2aa198"))
-;;      (propertize (system-name) 'face `(:foreground "#268bd2"))
-;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
-;;      (propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "#b58900"))
-;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
-;;      (propertize (concat (eshell/pwd)) 'face `(:foreground "#93a1a1"))
-;;      (propertize "]\n" 'face `(:foreground "#2aa198"))
-;;      (propertize "└─>" 'face `(:foreground "#2aa198"))
-;;      (propertize (if (boundp 'venv-current-name)
-;;             (concat " (" venv-current-name ")")
-;;           "")
-;;         'face `(:foreground "#00dc00"))
-;;      (propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "#2aa198"))
-;;      ))))
-
-;; (setq eshell-prompt-function
-;;   (lambda ()
-;;     (concat
-;;      (propertize "┌─[" 'face `(:foreground "#2aa198"))
-;;      (propertize (user-login-name) 'face `(:foreground "#dc322f"))
-;;      (propertize "@" 'face `(:foreground "#2aa198"))
-;;      (propertize (system-name) 'face `(:foreground "#268bd2"))
-;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
-;;      (propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "#b58900"))
-;;      (propertize "]──[" 'face `(:foreground "#2aa198"))
-;;      (propertize (concat (eshell/pwd)) 'face `(:foreground "#93a1a1"))
-;;      (propertize "]\n" 'face `(:foreground "#2aa198"))
-;;      (propertize "└─>" 'face `(:foreground "#2aa198"))
-;;      (propertize (if venv-current-name (concat " (" venv-current-name ")")  "") 'face `(:foreground "#00dc00"))
-;;      (propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "#2aa198"))
-;;      )))
+  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color"))))
 
 ;; Adapted from: rougier/nano-emacs
 (defun +what-faces (pos)
@@ -585,6 +549,10 @@ if one already exists."
                       (get-char-property pos 'face)
                       (plist-get (text-properties-at pos) 'face)))))
     (message "Faces: %s" faces)))
+
+(use-feature treesit 
+  :custom
+  (treesit-font-lock-level 4))
 
 (use-package modus-themes
   :config 
@@ -615,7 +583,8 @@ if one already exists."
     (setq modus-vivendi-palette-overrides
         '((bg-main  "#1e1f22");;idea
           (fg-main "#bcbec4")
-          (constant "#bcbec4")
+          (constant "#E8BA36")
+          ;; (constant "#bcbec4")
           (fnname "#57aaf7")
           (keyword "#fa8072") ;; light salmon 
           (string "#6AAB73")
@@ -714,21 +683,6 @@ if one already exists."
 
 (use-package nerd-icons-dired
   :hook (dired-mode . nerd-icons-dired-mode)
-;;   :config
-;;   (defun +dired-disable-icons-in-wdired-mode-a (&rest _)
-;;     "Disable nerd-icons-dired-mode in wdired-mode."
-;;     (when (eq major-mode 'wdired-mode)
-;;       (setq-local +wdired-icons-enabled (if nerd-icons-dired-mode 1 -1))
-;;       (when nerd-icons-dired-mode
-;;         (nerd-icons-dired-mode -1))))
-
-;;   (defun +dired-restore-icons-after-wdired-mode-a (&rest _)
-;;     "Restore nerd-icons-dired-mode after leaving wdired-mode."
-;;     (when (eq major-mode 'dired-mode)
-;;       (when (and nerd-icons-dired-mode (boundp '+wdired-icons-enabled))
-;;         (nerd-icons-dired-mode +wdired-icons-enabled))))
-;; (advice-add 'wdired-change-to-wdired-mode :before #'+dired-disable-icons-in-wdired-mode-a)
-;; (advice-add 'wdired-change-to-dired-mode :after #'+dired-restore-icons-after-wdired-mode-a)
 )
 
 (use-feature dired-aux
@@ -762,6 +716,7 @@ if one already exists."
   (+general-global-toggle
     "f" 'auto-fill-mode)
   :custom
+  (mail-user-agent 'notmuch-user-agent)
   (eval-expression-debug-on-error nil)
   (fill-column 80 "Wrap at 80 columns."))
 
@@ -782,6 +737,10 @@ if one already exists."
           "^\\*shell.*\\*.*$"  shell-mode
           "^\\*terminal.*\\*.*$" term-mode
           "^\\*vterm.*\\*.*$"  vterm-mode
+          "\\*erlang\\*"
+          "\\*cargo-rustfix\\*"
+          "\\*cargo-run\\*"
+          "\\*rustic-compilation\\*"
 
           helpful-mode
           help-mode
@@ -938,12 +897,13 @@ if one already exists."
             (set-visited-file-name new-name)
             (set-buffer-modified-p nil))))))
   :custom
+  ;; (auto-save-default nil) ;; disable auto save files 
   (require-final-newline t "Automatically add newline at end of file")
   (backup-by-copying t)
   (backup-directory-alist `((".*" . ,(expand-file-name
                                       (concat user-emacs-directory "backups"))))
                           "Keep backups in their own directory")
-  (auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosaves/") t)))
+  (auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosaves/") t))) 
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
@@ -953,9 +913,30 @@ if one already exists."
      (org-clean-refile-inherit-tags))
    "Store safe local variables here instead of in emacs-custom.el"))
 
-(auto-save-visited-mode 1)
-;; (setq auto-save-visited-interval 15) ;default is 5s
-(add-function :after after-focus-change-function (lambda () (save-some-buffers t)))
+(use-feature files
+  :custom 
+  (auto-save-visited-mode 1)
+  :init 
+  (add-function :after after-focus-change-function (lambda () (save-some-buffers t)))
+  (setq auto-save-visited-predicate
+        (lambda ()
+          (not (and (boundp 'major-mode)
+                   (stringp (symbol-name major-mode))
+                   (string-match-p "^notmuch-" (symbol-name major-mode)))))))
+;; ;; (setq auto-save-visited-interval 15) ;default is 5s
+
+;; (defun disable-auto-save-for-notmuch ()
+;;   "Disable auto-save-mode in Notmuch buffers."
+;;   (when (derived-mode-p 'notmuch-show-mode
+;;                         'notmuch-search-mode
+;;                         'notmuch-tree-mode
+;;                         'notmuch-message-mode)
+;;     (auto-save-mode -1)))
+
+;; (add-hook 'notmuch-show-mode-hook #'disable-auto-save-for-notmuch)
+;; (add-hook 'notmuch-search-mode-hook #'disable-auto-save-for-notmuch)
+;; (add-hook 'notmuch-tree-mode-hook #'disable-auto-save-for-notmuch)
+;; (add-hook 'notmuch-message-mode-hook #'disable-auto-save-for-notmuch)
 
 ;; Temp files (save-place, recenf, undo-tree)
 (defconst my-temp (expand-file-name "my-temp" user-emacs-directory))
@@ -966,6 +947,8 @@ if one already exists."
 
 (use-package undo-fu
   :defer t)
+
+(use-package delight)
 
 (use-package undo-fu-session
   :defer t
@@ -1103,34 +1086,9 @@ if one already exists."
 (use-package vertico
   :demand t
   :custom (vertico-cycle t)
-  ;;:general
-  ;;        (   "C-j" 'vertico-next
-  ;;           "C-k" 'vertico-previous
-  ;;           "<escape>" #'minibuffer-keyboard-quit 
-  ;;           "M-<backspace>" 'vertico-directory-delete-word)
-
-  ;; (:keymaps 'vertico-map
-  ;;           "C-j" 'vertico-next
-  ;;           "C-k" 'vertico-previous
-  ;;           "<escape>" 'minibuffer-keyboard-quit 
-  ;;           "M-<backspace>" 'vertico-directory-delete-word
-  ;;           )
-  ;; (general-define-key :states '(normal) :keymaps 'vertico-map
-  ;;                      (kbd "<escape>") #'minibuffer-keyboard-quit
-  ;;                      )
-  ;; (global-leader
-  ;;   :keymaps '(vertico-map)
-  ;;   "<escape>" 'minibuffer-keyboard-quit)
-
-
   :config
   (setf (car vertico-multiline) "\n") ;; don't replace newlines
   (vertico-mode)
-  ;; в офф доках такое есть
-  ;; (setq minibuffer-prompt-properties
-  ;;       '(read-only t cursor-intangible t face minibuffer-prompt))
-  ;; (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
   (define-key vertico-map (kbd "C-h") #'+minibuffer-up-dir)
 )
 
@@ -1161,9 +1119,6 @@ if one already exists."
     "b" 'consult-buffer)
   :init
 
-;; Use Consult to select xref locations with preview
-;; получше чем дефолт
-  ;; definitions хм 
  (setq
   xref-show-xrefs-function #'consult-xref 
   xref-show-definitions-function #'consult-xref)
@@ -1192,6 +1147,9 @@ if one already exists."
 
 
 
+;; (use-package emojify
+;;   :hook (after-init . global-emojify-mode))
+
 (use-package embark
   :after (vertico)
   :general
@@ -1217,7 +1175,8 @@ if one already exists."
   :custom
   (corfu-cycle t)
   (corfu-auto t)
-  (corfu-auto-prefix 1)
+  (corfu-auto-delay 0.1) ;; 0.2 def
+  (corfu-auto-prefix 2) 
   ;;(corfu-seperator ?-)
   (corfu-seperator ?\s)
   :config
@@ -1234,11 +1193,18 @@ if one already exists."
   (setq corfu-popinfo-delay '(0.5 . 1.0)))
 
 (use-package cape
-  ;; :general (:prefix "M-c"               ; Particular completion function
-  ;;           "p" 'completion-at-point
-  ;;           "t" 'complete-tag           ; etags
-  ;;           "d" 'cape-dabbrev           ; or dabbrev-completion
-  ;;           )
+  :init 
+  ;;(defun vd/setup-lsp-completion ()
+    ;;(setq-local completion-at-point-functions (list (cape-super-capf #'tempel-complete
+      ;;                                                               #'lsp-completion-at-point)
+        ;;                                            #'cape-file
+          ;;                                          #'cape-dabbrev)))
+  ;; :hook
+ ;; (prog-mode . vd/setup-lsp-completion)
+;;  :hook(((prog-mode) .
+  ;;       (lambda ()
+    ;;       (add-to-list 'completion-at-point-functions
+      ;;                  (cape-super-capf #'tempel-complete)))))
   :custom
   (cape-dabbrev-min-length 3)
   (cape-dabbrev-check-other-buffers nil)
@@ -1263,6 +1229,143 @@ if one already exists."
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
 
+(use-package apheleia
+  :defer t
+  :config
+  (setf (alist-get 'google-java-format apheleia-formatters)
+        '("google-java-format" "-a" "-"))
+    ;; Добавляем новый форматтер
+  (setf (alist-get 'rebar3 apheleia-formatters)
+      '("rebar3" "fmt" "-"))
+
+  ;; Привязываем его к erlang-mode
+  (setf (alist-get 'erlang-mode apheleia-mode-alist)
+        'rebar3)       
+  )
+
+(use-package lsp-mode
+  :hook ((c-mode . lsp)
+         (c++-mode . lsp)
+         (c-or-c++-mode . lsp)
+         (js-mode . lsp)
+         (js-jsx-mode . lsp)
+         (typescript-mode . lsp)
+         ;; (python-ts-mode . lsp)
+         (erlang-mode . lsp)
+         (web-mode . lsp)
+         ;; (haskell-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  ;; . lsp-deferred
+  ;;:commands lsp
+  :custom
+  (lsp-completion-provider :none) 
+  (lsp-completion-show-kind nil)
+  (lsp-completion-show-detail nil)
+  (lsp-semgrep-languages nil)
+  ;; (lsp-enable-snippet nil)
+  ;; :init
+  ;;   (setq lsp-enabled-clients '(jedi 
+  ;;                             sqls
+  ;;                             jdtls
+  ;;                             ))
+  :config
+  ;; (setq lsp-disabled-clients '(tfls clangd rls rnix-lsp semgrep-ls deno-ls))
+  ;; (setq lsp-disabled-clients '(semgrep-ls ))
+  (setq lsp-semgrep-languages nil)
+    ;; Enable LSP automatically for Erlang files
+  ;; (add-hook 'erlang-mode-hook #'lsp)
+
+  ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
+  ;; (lsp-register-client
+  ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+  ;;                   :major-modes '(erlang-mode)
+  ;;                   :priority 0
+  ;;                   :server-id 'erlang-language-platform)) 
+  (setq lsp-auto-guess-root t)
+  ;; (add-to-list 'lsp-enabled-clients 'jdtls)
+  ;; (setq lsp-enabled-clients '(jdtls jedi elp))
+  ;; (setq lsp-disabled-clients '(pyls pylsp))
+  ;; (setq lsp-log-io nil)
+  (setq lsp-restart 'auto-restart)
+  ;;TODO: 
+  ;; (setq lsp-semgrep-languages '())
+  ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
+  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
+  ;; (setq lsp-enable-on-type-formatting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+  ;; (setq lsp-signature-render-documentation nil)
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-modeline-code-actions-enable nil)
+  ;; (setq lsp-modeline-diagnostics-enable nil)
+  ;; (setq lsp-headerline-breadcrumb-enable nil)
+  ;; (setq lsp-semantic-tokens-enable nil)
+  ;; (setq lsp-enable-folding nil)
+  ;; (setq lsp-enable-imenu nil)
+  ;; (setq lsp-enable-snippet nil)
+  (setq read-process-output-max (* 1024 1024)) ;; 1MB
+  (setq lsp-idle-delay 0.5)
+  
+  ;; Enable LSP automatically for Erlang files
+  ;; (add-hook 'erlang-mode-hook #'lsp)
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
+                    :major-modes '(erlang-mode)
+                    :priority 0
+                    :server-id 'erlang-language-platform))
+  
+  ;;emacs-lsp-booster
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+;; TODO: semgrep error 
+;; (defun ak-lsp-ignore-semgrep-rulesRefreshed (workspace notification)
+;;   "Ignore semgrep/rulesRefreshed notification."
+;;   (when (equal (gethash "method" notification) "semgrep/rulesRefreshed")
+;;     (lsp--info "Ignored semgrep/rulesRefreshed notification")
+;;     t)) ;; Return t to indicate the notification is handled
+
+;; (advice-add 'lsp--on-notification :before-until #'ak-lsp-ignore-semgrep-rulesRefreshed)
+
+  )
+
+;; (with-eval-after-load 'lsp-mode
+;;   (defun ak-lsp-ignore-semgrep-rulesRefreshed (workspace notification)
+;;     "Ignore semgrep/rulesRefreshed notification."
+;;     (when (equal (gethash "method" notification) "semgrep/rulesRefreshed")
+;;       (lsp--info "Ignored semgrep/rulesRefreshed notification")
+;;       t)) ;; Return t to indicate the notification is handled
+
+;;   (advice-add 'lsp--on-notification :before-until #'ak-lsp-ignore-semgrep-rulesRefreshed))
+
 ;; (with-eval-after-load 'lsp-mode
 ;;   ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
 ;;   (lsp-register-client
@@ -1283,15 +1386,87 @@ if one already exists."
   (setq lsp-ui-sideline-show-code-actions t)
   (setq lsp-ui-sideline-delay 0.05))
 
+(use-package lsp-jedi
+  :after lsp-mode
+  ;; :config
+  ;; (add-to-list 'lsp-disabled-clients 'pyls)
+  ;; (add-to-list 'lsp-disabled-clients 'pylsp)
+  ;; (add-to-list 'lsp-enabled-clients 'jedi)
+  )
+
+(use-package lsp-java
+  :after lsp
+  :hook ((java-mode java-ts-mode jdee-mode) . (lambda () (require 'lsp-java)))
+  :config
+  ;; (setq lsp-java-java-path "/usr/lib/jvm/java-17-openjdk/bin/java")
+  (setq lsp-java-java-path "/home/snake/.local/devjava/sdkman/candidates/java/current/bin/java")
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-21"
+                                               :path "/home/snake/.local/devjava/sdkman/candidates/java/current"
+                                               :default t)])
+  )
+  ;; :hook (java-ts-mode . lsp-deferred)
+
+(use-package lsp-metals
+  :custom
+  ;; You might set metals server options via -J arguments. This might not always work, for instance when
+  ;; metals is installed using nix. In this case you can use JAVA_TOOL_OPTIONS environment variable.
+  (lsp-metals-server-args '(;; Metals claims to support range formatting by default but it supports range
+                            ;; formatting of multiline strings only. You might want to disable it so that
+                            ;; emacs can use indentation provided by scala-mode.
+                            "-J-Dmetals.allow-multiline-string-formatting=off"
+                            ;; Enable unicode icons. But be warned that emacs might not render unicode
+                            ;; correctly in all cases.
+                            "-J-Dmetals.icons=unicode"))
+  ;; In case you want semantic highlighting. This also has to be enabled in lsp-mode using
+  ;; `lsp-semantic-tokens-enable' variable. Also you might want to disable highlighting of modifiers
+  ;; setting `lsp-semantic-tokens-apply-modifiers' to `nil' because metals sends `abstract' modifier
+  ;; which is mapped to `keyword' face.
+  (lsp-metals-enable-semantic-highlighting t)
+  :hook (scala-mode . lsp))
+
+(use-package lsp-treemacs
+  :after (lsp-mode)
+  :init
+  (lsp-treemacs-sync-mode 1))
+
+;; (use-feature lsp-sqls
+;;   :after lsp
+;;   :custom
+;;   (lsp-sqls-connections
+;;         '(((driver . "mysql") (dataSourceName . "local:local@tcp(localhost:3306)/testdb"))
+;;           ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5433 user=postgres password=machaon dbname=postgres sslmode=disable")))))
+
+(use-package lsp-haskell
+  :after lsp
+  
+  :config
+  ;; (add-hook 'haskell-mode-hook #'lsp)
+  ;; (add-hook 'haskell-literate-mode-hook #'lsp)
+  (setq lsp-haskell-server-path "haskell-language-server-wrapper")
+  ;; (setq lsp-haskell-plugin-ghcide-type-lenses-global-on nil)
+  ;; (setq lsp-haskell-plugin-class-code-lens-on nil)
+  ;; (setq lsp-haskell-plugin-import-lens-code-lens-on nil)
+  ;; (setq lsp-haskell-plugin-import-lens-code-actions-on nil)
+  ;; (setq lsp-haskell-plugin-ghcide-type-lenses-config-mode nil)
+  ;; (setq lsp-haskell-plugin-stan-global-on nil)
+  )
+
+(add-hook 'sql-mode-hook 'lsp)
+(setq lsp-sqls-workspace-config-path nil)
+(setq lsp-sqls-connections
+    '(
+       ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=machaon dbname=postgres sslmode=disable"))
+      ))
+
 (use-feature eglot
-  :hook
-  (
-   ;;(python-mode . eglot-ensure)
-   ;;(c-mode . eglot-ensure)
-   ;;(c++-mode . eglot-ensure)
-   ;(java-ts-mode . eglot-ensure)
-   (scala . eglot-ensure
-   ))
+  ;; :hook
+  ;; (
+  ;;  ;;(python-mode . eglot-ensure)
+  ;;  ;;(c-mode . eglot-ensure)
+  ;;  ;;(c++-mode . eglot-ensure)
+  ;;  ;(java-ts-mode . eglot-ensure)
+  ;;  ;; (scala . eglot-ensure
+  ;;  ))
   :custom
   (eglot-autoshutdown t)
   (eglot-report-progress nil)
@@ -1357,8 +1532,19 @@ if one already exists."
   :ensure (eglot-hierarchy :host github :repo "dolmens/eglot-hierarchy")
   :defer t)
 
+(use-package haskell-mode
+  :defer t
+  :delight "󰲒")
+
 ;; (use-feature java-ts-mode
 ;;   :mode "\\.java\\'")
+
+;; (use-package python-mode 
+;;   :init 
+;;     (add-hook 'python-ts-mode-hook
+;;             (lambda ()
+;;               (set (make-local-variable 'compile-command)
+;;                    (concat "python3 " (buffer-name))))))
 
 (use-package groovy-mode 
 :mode (("build\\.gradle" . groovy-mode)
@@ -1377,15 +1563,43 @@ if one already exists."
 
 (use-package erlang
   :defer t
+  :config
+  (setq erlang-root-dir (concat (getenv "XDG_DATA_HOME") "/mise/installs/erlang/latest/"))
+  (setenv "MANPATH" (concat erlang-root-dir "man"))
+
+  (defun erlang-run-main()
+  "Компилирует текущий модуль и вызывает main/0 в шелле."
+  (interactive)
+  ;; Сохраняем буфер и подготавливаем оболочку
+  (save-some-buffers)
+  (inferior-erlang-prepare-for-input)
+  ;; Компилируем текущий файл (тот же механизм, что и C-c C-k)
+  (let* ((file-name (erlang-local-buffer-file-name))
+         (module-name (file-name-base file-name))
+         (erl-shell (get-buffer inferior-erlang-buffer))
+         (compile-command (inferior-erlang-compute-compile-command
+                           (substring file-name 0 -4)
+                           (append (list (cons 'outdir (inferior-erlang-compile-outdir)))
+                                   erlang-compile-extra-opts))))
+    ;; Отправляем команду компиляции
+    (inferior-erlang-send-command compile-command nil)
+    ;; Затем вызываем main/0
+    (sit-for 0.2) ; маленькая задержка, чтобы успело скомпилироваться
+    (comint-send-string erl-shell (format "%s:main().\n" module-name))))
+  )
   ;; :config
   ;; (+eglot-register '(erlang-mode) "elp-server"))
-  )
+
   ;; :init
  ;; (lsp-register-client
  ;;   (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
  ;;                    :major-modes '(erlang-mode)
  ;;                    :priority 0
  ;;                    :server-id 'erlang-language-platform))
+
+(use-package rustic
+  :ensure (rustic :host github :repo "emacs-rustic/rustic")
+  :defer t)
 
 (use-package scala-mode
   :defer t
@@ -1442,13 +1656,6 @@ if one already exists."
   ;;   "M" #'macrostep-geiser-expand-all)
   )
 
-(add-hook 'sql-mode-hook 'lsp)
-(setq lsp-sqls-workspace-config-path nil)
-(setq lsp-sqls-connections
-    '(
-       ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=root dbname=testdb sslmode=disable"))
-      ))
-
 (use-package web-mode
   :defer t
   :mode
@@ -1474,6 +1681,10 @@ if one already exists."
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
+
+(use-package treesit-fold
+  :ensure (treesit-fold :host github :repo "emacs-tree-sitter/treesit-fold")
+  :defer t)
 
 ;;(use-package jsonrpc)
 
@@ -1812,14 +2023,6 @@ Use `treemacs' command for old functionality."
     "i"  '(:ignore t :which-key "insert")
     "id" 'org-insert-drawer
     "ie" 'org-set-effort
-    "if" 'org-footnote-new
-    "iH" 'org-insert-heading-after-current
-    "ih" 'org-insert-heading
-    "ii" 'org-insert-item
-    "in" 'org-add-note
-    "ip" 'org-set-property
-    "is" 'org-insert-structure-template
-    "it" 'org-set-tags-command
 
     "l" '(:ignore t :which-key "links")
     "lc" 'org-cliplink
@@ -1835,21 +2038,6 @@ Use `treemacs' command for old functionality."
     "s"  '(:ignore t :which-key "trees/subtrees")
     "sA" 'org-archive-subtree
     "sa" 'org-toggle-archive-tag
-    "sb" 'org-tree-to-indirect-buffer
-    "sc" 'org-cut-subtree
-    "sh" 'org-promote-subtree
-    "sj" 'org-move-subtree-down
-    "sk" 'org-move-subtree-up
-    "sl" 'org-demote-subtree
-    "sp" '(:ignore t :which-key "priority")
-    "spu" 'org-priority-up
-    "spd" 'org-priority-down
-    "sps" 'org-priority-show
-    "sm" 'org-match-sparse-tree
-    "sn" 'org-toggle-narrow-to-subtree
-    "sr" 'org-refile
-    "sS" 'org-sort
-    "ss" '+org-sparse-tree
 
     "t"   '(:ignore t :which-key "tables")
     "ta"  'org-table-align
@@ -1905,9 +2093,22 @@ Use `treemacs' command for old functionality."
     "-"   'org-ctrl-c-minus
     "A"   'org-attach)
   :config
-  (setq org-tags-column -120) ;; так лучше 
-  (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
-  (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ? 
+    (add-to-list 'org-src-lang-modes '("xml" . sgml))
+    (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
+    (add-to-list 'org-src-lang-modes '("json" . json-ts))
+    (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
+    (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
+    (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
+    (add-to-list 'org-src-lang-modes '("go" . go-ts))
+    (add-to-list 'org-src-lang-modes '("mermaid" . mermaid-ts))
+    (add-to-list 'org-src-lang-modes '("tsx" . tsx-ts))
+    (add-to-list 'org-src-lang-modes '("html" . html-ts))
+    (add-to-list 'org-src-lang-modes '("css" . css-ts))
+    (add-to-list 'org-src-lang-modes '("gherkin" . feature))
+  
+    (setq org-tags-column -120) ;; так лучше 
+    (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
+    (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ? 
 
   (defun +md-to-org-region (start end)
     "Convert region from markdown to org, replacing selection"
@@ -1919,15 +2120,10 @@ Use `treemacs' command for old functionality."
   (interactive "r")
   (shell-command-on-region 
    start end 
-   "python3 /home/snake/md_to_org_debug.py" 
+      (format "python3 %s" 
+           (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
    t t))
-  
-  ;; better 
-  ;; (defun +md-to-org-region (start end)
-  ;;   "Convert region from markdown to org, replacing selection"
-  ;;   (interactive "r")
-  ;;   (shell-command-on-region start end "python3 /home/snake/md_to_org.py" t t))
-
+  ;;    "python3 /home/snake/md_to_org_debug.py" 
 
   ;; (defun +md-to-org-region (start end)
   ;; "Convert region from markdown to org, replacing selection"
@@ -2007,30 +2203,6 @@ Use `treemacs' command for old functionality."
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
 
-(defvar org-mouse-bold-mode nil
-  "Флаг для включения/выключения выделения текста в режиме org.")
-
-(define-advice mouse-set-region (:after (click) org-highlight ())
-  (when (and org-mouse-bold-mode
-             (derived-mode-p 'org-mode)
-             (use-region-p))
-    (let ((origin (buffer-substring (region-beginning) (region-end)))
-          (emphasis-char "*"))
-      (delete-region (region-beginning) (region-end))
-      (insert emphasis-char origin emphasis-char))))
-
-(defun org-mouse-bold-mode-enable ()
-  "Включить режим выделения текста в режиме org."
-  (interactive)
-  (setq org-mouse-bold-mode t)
-  (message "Режим выделения текста в режиме org включен."))
-
-(defun org-mouse-bold-mode-disable ()
-  "Выключить режим выделения текста в режиме org."
-  (interactive)
-  (setq org-mouse-bold-mode nil)
-  (message "Режим выделения текста в режиме org выключен."))
-
 (use-package org-cliplink
   :defer t)
 
@@ -2063,7 +2235,6 @@ Use `treemacs' command for old functionality."
 
 (use-feature ob-tangle
   :after (org)
-  :ensure nil
   :custom
   (org-src-window-setup 'current-window)
   (org-src-preserve-indentation t)
@@ -2081,16 +2252,20 @@ Use `treemacs' command for old functionality."
                     ("ss" . "src shell")
                     ("sj" . "src javascript")))
   (add-to-list 'org-structure-template-alist template))
-(use-feature ob-js
-  :commands (org-babel-execute:js))
-(use-feature ob-python
-  :commands (org-babel-execute:python))
-(use-feature ob-shell
-  :commands (org-babel-execute:bash
-             org-babel-execute:shell
-             org-babel-expand-body:generic)
-  :config (add-to-list 'org-babel-load-languages '(shell . t))
-  (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+  (use-feature ob-js
+    :commands (org-babel-execute:js))
+  (use-feature ob-clojure
+    :commands (org-babel-execute:clojure))
+
+  (use-feature ob-python
+    :commands (org-babel-execute:python))
+  (use-feature ob-shell
+    :commands (org-babel-execute:bash
+               org-babel-execute:shell
+               org-babel-execute:sh
+               org-babel-expand-body:generic)
+    :config (add-to-list 'org-babel-load-languages '(shell . t))
+    (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
                 )
 
 (use-package org-roam
@@ -2274,6 +2449,7 @@ Speeds up `org-agenda' remote operations."
            (images-dir (expand-file-name "Attachments" file-dir)))
       (setq-local org-download-image-dir 
                   (expand-file-name (concat file-name "-img") images-dir))))
+  (advice-add 'org-id-get-create :override (lambda () nil))
   )
 
 (use-package org-appear
@@ -2333,10 +2509,38 @@ Speeds up `org-agenda' remote operations."
     "r" 'winner-redo)
   :config (winner-mode))
 
-(use-package yasnippet
-  :commands (yas-global-mode)
+;; (use-package yasnippet
+;;   :commands (yas-global-mode)
+;;   :custom
+;;   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
+
+;; Configure Tempel
+(use-package tempel
+  ;; Require trigger prefix before template name when completing.
+  :bind (("M-=" . tempel-complete) ;; Alternative tempel-expand
+         ("M--" . tempel-insert)
+         ("M-]" . tempel-next))
   :custom
-  (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
+  (tempel-trigger-prefix "=") ;; Require trigger prefix before template name when completing.
+  :hook ((prog-mode text-mode) . +tempel-setup-capf-h)
+  :hook (prog-mode . tempel-abbrev-mode)
+  :config
+  (defun +tempel-setup-capf-h ()
+    (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
+;;)
+;; Optional: Add tempel-collection.
+;; The package is young and doesn't have comprehensive coverage.
+(use-package tempel-collection
+  :after tempel)
+
+(use-package lsp-snippet-tempel
+  :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
+  ;; :after lsp-mode tempel 
+  :config
+  ;; (lsp-snippet-tempel-lsp-mode-init)
+  (when (featurep 'lsp-mode)
+    (lsp-snippet-tempel-lsp-mode-init))
+  )
 
 (use-package doom-snippets
 :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
@@ -2373,13 +2577,11 @@ Speeds up `org-agenda' remote operations."
    '("\\*Help\\*" "\\*Calendar\\*" "\\*mu4e-last-update\\*"
      "\\*Messages\\*" "\\*scratch\\*" "\\magit-.*")))
 
-;;; Emacs 28+ (native-comp) stuff
-;; (when (and (fboundp 'native-comp-available-p) (native-comp-available-p))
-;;   (progn
-;;     (setq native-comp-async-report-warnings-errors nil)
-;;     (setq native-comp-deferred-compilation t)
-;;     (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory))
-;;     (setq package-native-compile t)))
+(use-feature erc
+  :defines erc-autojoin-channels-alist
+  :init (setq erc-interpret-mirc-color t
+              erc-lurker-hide-list '("JOIN" "PART" "QUIT")
+              erc-autojoin-channels-alist '(("freenode.net" "#emacs"))))
 
 (use-package package-lint
   :defer t
@@ -2413,6 +2615,7 @@ Speeds up `org-agenda' remote operations."
    '(".projectile.el" ".project.el" ".project" ; Emacs
      ".repo" ; Repo workspaces
      "autogen.sh" ; Autotools
+     "rebar.config"
      ".dir-locals.el"
      "*.csproj" "*.vbproj" "*.vcxproj" "*.vdproj" ".code-workspace" ; Visual Studio
      "requirements.txt" ; Python
@@ -2425,10 +2628,6 @@ Speeds up `org-agenda' remote operations."
   (interactive)
   (magit-status (project-root (project-current))))
 )
-
-;; (use-package image-roll
-;;   :ensure (image-roll :host github :repo "dalanicolai/image-roll.el")
-;;   :defer t)
 
 (use-package pass
   :defer t
@@ -2525,8 +2724,20 @@ append it to ENTRY."
       (when (not password-store-otp-screenshots-path)
         (delete-file qr-image-filename)))))
 
-(use-package rainbow-mode
-  :commands (rainbow-mode))
+;; (use-package rainbow-mode
+;;   :commands (rainbow-mode))
+(use-package colorful-mode
+  :commands(colorful-mode)
+  ;; :diminish
+  ;; :ensure t ; Optional
+  ;; :custom
+  ;; (colorful-use-prefix t)
+  ;; (colorful-only-strings 'only-prog)
+  ;; (css-fontify-colors nil)
+  ;; :config
+  ;; (global-colorful-mode t)
+  ;; (add-to-list 'global-colorful-modes 'helpful-mode)
+  )
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -2542,6 +2753,39 @@ append it to ENTRY."
   :custom
   (recentf-max-menu-items 1000 "Offer more recent files in menu")
   (recentf-max-saved-items 1000 "Save more recent files"))
+
+(use-package restclient
+  :commands (restclient-mode +web/restclient-new-buffer)
+  :config
+  (use-package company-restclient
+    :config
+    (add-to-list 'company-backends 'company-restclient))
+  (defun +web/restclient-new-buffer ()
+    "Create a restclient buffer."
+    (interactive)
+    (let* ((restclient-buffer-name "*restclient*")
+           (restclient-buffer (get-buffer restclient-buffer-name)))
+      (unless restclient-buffer
+        (setq restclient-buffer (generate-new-buffer restclient-buffer-name))
+        (with-current-buffer restclient-buffer
+          (restclient-mode)
+          (when (functionp 'cape-company-to-capf)
+            (setq-local completion-at-point-functions
+                        (push (cape-company-to-capf 'company-restclient) completion-at-point-functions)))
+          (insert "# -*- restclient -*-
+# https://github.com/pashky/restclient.el
+#
+# GET https://api.github.com
+# User-Agent: Emacs Restclient
+# #
+# POST https://jira.atlassian.com/rest/api/2/search
+# Content-Type: application/json
+# {}
+# #
+# POST https://somehost/api
+# Content-Type: application/x-www-form-urlencoded
+# param1=value1¶m2=value2\n")))
+      (switch-to-buffer restclient-buffer))))
 
 (use-feature cus-edit
   :custom
@@ -2678,16 +2922,6 @@ append it to ENTRY."
   :ensure (fountain-mode :host github :repo "rnkn/fountain-mode")
   :mode "\\.fountain\\'")
 
-(use-package transient :defer t
-  :ensure(transient :host github :repo "magit/transient"))
-
-(use-package forge
-  :ensure (:files (:defaults "docs/*"))
-  :after magit
-  :init (setq forge-add-default-bindings nil
-              forge-display-in-status-buffer nil
-              forge-add-pullreq-refspec nil))
-
 (use-feature help
   :defer 1
   :custom
@@ -2700,14 +2934,6 @@ append it to ENTRY."
     ([remap describe-command] . helpful-command)
     ([remap describe-variable] . helpful-variable)
     ([remap describe-key] . helpful-key))
-  ;; :general
-  ;; (general-define-key
-  ;; :bind (("C-h e F" . helpful-function)
-  ;;        ("C-h e C" . helpful-command)
-  ;;        ("C-h e M" . helpful-macro)
-  ;;        ("C-h e L" . helpful-callable)
-  ;;        ("C-h e S" . helpful-at-point)
-  ;;        ("C-h e V" . helpful-variable)))
 
 (use-feature holidays
   :commands (org-agenda)
@@ -2748,6 +2974,11 @@ append it to ENTRY."
                    (next-buffer)
                    (switch-to-buffer-other-window i))))))
 
+(use-feature fontset
+  :config
+  (set-fontset-font t 'unicode "Noto Color Emoji" nil 'prepend)
+  )
+
 (use-package keycast
   :defer t)
 
@@ -2778,6 +3009,36 @@ append it to ENTRY."
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   :config
   (transient-bind-q-to-quit))
+
+(use-package llama
+  :ensure (llama :host github :repo "tarsius/llama" )
+  :defer t)
+
+(use-package transient :defer t
+  :ensure(transient :host github :repo "magit/transient")
+  :defer t)
+
+(use-package forge
+  ;; :ensure (:files (:defaults "docs/*"))
+  :ensure (forge :host github :repo "magit/forge")
+  :after magit
+  :init
+  (setq forge-add-default-bindings nil
+              forge-display-in-status-buffer nil
+              forge-add-pullreq-refspec nil)
+  (setq forge-owned-accounts '(("snakejke")))
+  )
+
+;; (use-package compat
+;;   :ensure (compat :host github :repo  "emacs-compat/compat"))
+
+(use-package with-editor
+  :ensure (with-editor :host github :repo  "magit/with-editor")
+  :defer t)
+
+(use-package ghub
+  :ensure (ghub :host github :repo  "magit/ghub")
+  :defer t)
 
 (use-package macrostep
   :general
@@ -2828,68 +3089,47 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
-(use-package notmuch
+(defun my/notmuch-toggle-trash ()
+(interactive)
+(evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
+
+(use-feature notmuch
   :commands (notmuch)
   :defer t
-  :general
-  (+general-global-open
-    "m" '(notmuch :which-key "Notmuch"))
   :init
-  ;; (setq mail-user-agent 'message-user-agent
-  ;;       message-mail-user-agent t
-  ;;       )
   (setq notmuch-search-oldest-first nil
         message-send-mail-function 'message-send-mail-with-sendmail
-        notmuch-always-prompt-for-sender t ;;test 
+        notmuch-always-prompt-for-sender t 
         message-kill-buffer-on-exit t
+        notmuch-hello-logo nil 
+        notmuch-hello-url nil
+        notmuch-show-relative-dates t
+        notmuch-show-empty-saved-searches t
         message-directory "~/Mail"
         message-sendmail-envelope-from 'header
         mail-envelope-from 'header
         notmuch-show-all-tags-list t 
         mail-specify-envelope-from t)
-;; (defun my/notmuch-draft-save-on-buffer-save (&optional arg)
-;;   "Use `notmuch-draft-save` instead of `save-buffer` in draft buffers."
-;;   (when (and (derived-mode-p 'notmuch-message-mode)
-;;              (string-match-p "\\*message\\*" (buffer-name)))
-;;     (notmuch-draft-save)
-;;     (message "Draft saved correctly with `notmuch-draft-save`!")
-;;     t))
-
-;; (advice-add 'basic-save-buffer :before-until #'my/notmuch-draft-save-on-buffer-save)
-
-)
+  (setq notmuch-saved-searches
+        `(( :name "📥 Входящие"
+            :query "tag:inbox and tag:unread"
+            :key "i")
+          ( :name "🛫 Отправленные"
+            :query "tag:sent"
+            :key "t")
+          ( :name "📝 Черновики"
+            :query "tag:draft"
+            :key "d")
+          ( :name "📦 Все письма"
+            :query "*"
+            :key "a")))
+  )
 
 (use-feature whitespace
   :custom
   (whitespace-display-mappings '((tab-mark ?\t [?› ?\t])))
-  ;;(whitespace-global-modes '(prog-mode text-mode))
   (whitespace-line-column nil)
   (whitespace-style '(empty face lines-tail tab-mark tabs trailing))
-;;   :init 
-;;   (defface hs-ellipsis
-;;   '((((class color) (background light)) (:underline t))
-;;     (((class color) (background dark)) (:underline t))
-;;     (t (:underline t)))
-;;   "Face for ellipsis in hideshow mode.")
-
-;;   ;; Use this in whitespace-mode
-;; (defun whitespace-change-ellipsis ()
-;;   "Change ellipsis when used with `whitespace-mode'."
-;;   (when buffer-display-table
-;;     (set-display-table-slot buffer-display-table
-;;                             'selective-display
-;;                             ;;(string-to-vector " … ")
-;;                             (let ((face-offset (* (face-id 'hs-ellipsis) (lsh 1 22))))
-;;                               (vconcat (mapcar (lambda (c) (+ face-offset c)) " … ")))
-;;                             )))
-;; (add-hook 'whitespace-mode-hook #'whitespace-change-ellipsis)
-
-;; ;; Use this in non-whitespace modes
-;; (set-display-table-slot
-;;  standard-display-table
-;;  'selective-display
-;;  (let ((face-offset (* (face-id 'hs-ellipsis) (lsh 1 22))))
-;;    (vconcat (mapcar (lambda (c) (+ face-offset c)) " … ")))))
   )
 
 (use-feature xref

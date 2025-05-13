@@ -1,0 +1,10 @@
+---
+- name: Copy security configuration files
+  synchronize:
+    src: "{{ home_dir }}/{{ item.src }}"
+    dest: "{{ dotfiles_dir }}/{{ item.dest }}"
+    delete: yes
+  loop:
+    - { src: '.gnupg/common.conf', dest: '.gnupg/' }
+    - { src: '.gnupg/gpg-agent.conf', dest: '.gnupg/' }
+    - { src: '.ssh/config', dest: '.ssh/' }

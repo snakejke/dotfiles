@@ -1,0 +1,62 @@
+---
+# Предварительные проверки перед развертыванием
+
+- name: Ensure essential packages are installed
+  become: true
+  become_method: sudo
+  package:
+    name:
+      - git
+      - rsync
+      - gnupg2
+    state: present
+  tags:
+    - packages
+    - preflight
+
+- name: Check if dotfiles directory exists
+  stat:
+    path: "{{ dotfiles_dir }}"
+  register: dotfiles_dir_check
+
+# - name: Clone dotfiles repository if not exists
+#   git:
+#     repo: "{{ dotfiles_repo_url }}"
+#     dest: "{{ dotfiles_dir }}"
+#     version: "{{ dotfiles_repo_branch }}"
+#   when: not dotfiles_dir_check.stat.exists
+#   tags:
+#     - git
+#     - clone
+
+# - name: Update dotfiles repository if exists
+#   git:
+#     repo: "{{ dotfiles_repo_url }}"
+#     dest: "{{ dotfiles_dir }}"
+#     version: "{{ dotfiles_repo_branch }}"
+#     update: yes
+#   when: dotfiles_dir_check.stat.exists
+#   tags:
+#     - git
+#     - update
+
+# - name: Verify user and group exist
+#   become: true
+#   become_method: sudo
+#   block:
+#     - name: Check if user exists
+#       getent:
+#         database: passwd
+#         key: "{{ system_user }}"
+#       register: user_exists
+#       failed_when: false
+
+#     - name: Create user if not exists
+#       user:
+#         name: "{{ system_user }}"
+#         create_home: true
+#         shell: /bin/bash
+#       when: user_exists.ansible_facts.getent_passwd is not defined or user_exists.ansible_facts.getent_passwd[system_user] is not defined
+#   tags:
+#     - user
+#     - preflight

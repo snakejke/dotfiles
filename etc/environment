@@ -1,6 +1,2 @@
-#
-# This file is parsed by pam_env module
-#
-# Syntax: simple "KEY=VAL" pairs on separate lines
-#####
+GTK2_RC_FILES=/home/snake/.config/gtk-2.0/gtkrc-2.0
 ZDOTDIR=/home/snake/.config/zsh

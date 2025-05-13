@@ -1,0 +1,2 @@
+#!/bin/sh
+exec java -jar ~/.local/bin/google-java-format.jar "$@"

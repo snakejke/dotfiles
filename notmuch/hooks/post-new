@@ -1,1 +1,23 @@
 #!/bin/bash
+
+notmuch tag +cron -inbox -unread -- 'from:"Cron Daemon"'
+# notmuch tag -inbox -unread +sent -- "from:snake05865@gmail.com" or "from:snake05865@mail.ru"
+
+notmuch tag -inbox -unread +inbox -- folder:spam
+notmuch tag -inbox -unread +inbox -- folder:trash
+
+# Можно добавить очистку "inbox" для спама и удалённых
+# notmuch tag -inbox -unread -- tag:spam
+# notmuch tag -inbox -unread -- tag:deleted
+
+fdm -f ~/.config/fdm/.fdm.conf -v fetch
+
+# notmuch search --output=files tag:deleted | grep -v "$HOME/Mail/trash/cur/" | while read file; do
+#     mv "$file" "$HOME/Mail/trash/cur/"
+# done
+
+# # Move sent emails to sent folder
+# for file in $(notmuch search --output=files tag:sent); do
+#     filename=$(basename "$file")
+#     mv "$file" ~/Mail/sent/cur/$filename
+# done

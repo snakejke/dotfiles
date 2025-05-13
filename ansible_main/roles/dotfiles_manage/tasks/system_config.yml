@@ -1,0 +1,49 @@
+---
+- name: Copy system configuration directories
+  become: true
+  become_method: sudo
+  synchronize:
+    src: "{{ system_config_dir }}/{{ item }}/"
+    dest: "{{ dotfiles_dir }}/etc/{{ item }}/"
+    delete: yes
+  loop:
+    - 'dracut.conf.d'
+    - 'iptables'
+    - 'sudoers.d'
+    - 'unbound'
+    - 'X11'
+
+- name: Ensure parent directories exist for individual files
+  become: true
+  become_method: sudo
+  file:
+    path: "{{ dotfiles_dir }}/etc/{{ item | dirname }}"
+    state: directory
+  loop:
+    - 'pam.d/login'
+    - 'profile.d/fixdbus.sh'
+    - 'smtpd/smtpd.conf'
+    - 'sv/agetty-autologin-tty1/run'
+    - 'sv/amneziavpn/run'
+    - 'sv/runsvdir-snake/run'
+
+- name: Copy system configuration files
+  become: true
+  become_method: sudo
+  copy:
+    src: "{{ system_config_dir }}/{{ item }}"
+    dest: "{{ dotfiles_dir }}/etc/{{ item }}"
+    remote_src: yes
+  loop:
+    - 'dnscrypt-proxy/dnscrypt-proxy.toml'
+    - 'pam.d/login'
+    - 'profile.d/fixdbus.sh'
+    - 'smtpd/smtpd.conf'
+    - 'sv/agetty-autologin-tty1/run'
+    - 'sv/amneziavpn/run'
+    - 'sv/runsvdir-snake/run'
+    - 'dhcpcd.conf'
+    - 'environment'
+    - 'resolv.conf'
+    - 'rsyslog.conf'
+    - 'sysctl.conf'

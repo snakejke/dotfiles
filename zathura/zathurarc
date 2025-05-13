@@ -2,7 +2,7 @@ set selection-clipboard clipboard
 #set adjust-open "best-fit"
 set adjust-open width
 #set smooth-scroll "true" вроде как этой опции уже нет
-set sandbox none
+#set sandbox none
 set statusbar-h-padding 0
 set statusbar-v-padding 0
 set page-padding 1

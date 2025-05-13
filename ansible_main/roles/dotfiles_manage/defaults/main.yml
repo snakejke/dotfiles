@@ -1,0 +1,9 @@
+home_dir: "{{ ansible_env.HOME }}"
+dotfiles_dir: "{{ home_dir }}/.local/dotfiles"
+user_config_dir: "{{ home_dir }}/.config"
+system_config_dir: "/etc"
+gpg_key_id: "snake05865@mail.ru"
+
+# File permissions
+# default_dir_mode: "0775"
+# secure_dir_mode: "0700"

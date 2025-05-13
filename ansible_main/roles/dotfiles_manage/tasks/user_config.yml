@@ -1,0 +1,298 @@
+---
+# # Копирование пользовательских конфигов из ~/.config в ~/.local/dotfiles/
+# - name: Sync user configuration files and directories
+#   vars:
+#     config_directories:
+#       - devilspie2
+#       - dunst
+#       - emacs/lisp
+#       - fdm
+#       - fvwm
+#       - git
+#       - gtk-2.0
+#       - gtk-3.0
+#       - lf
+#       - mpv
+#       - nix
+#       - notmuch
+#       - picom
+#       - pipewire
+#       - python
+#       - readline
+#       - rebar3
+#       - rofi
+#       - sx
+#       - tmux
+#       - wget
+#       - xdg-desktop-portal
+#       - xsettingsd
+#       - zathura
+#     config_files:
+#       - ansible/ansible.cfg
+#       - aria2/aria2.conf
+#       - containers/registries.conf
+#       - containers/storage.conf
+#       - emacs/early-init.el
+#       - emacs/init-dev.el
+#       - emacs/init.el
+#       - emacs/init.org
+#       - emacs/dict/english-words.txt
+#       - wireplumber/wireplumber.conf.d/80-disable-logind.conf
+#       - zsh/.zprofile
+#       - zsh/.zshenv
+#       - zsh/.zshrc
+#       - zsh/aliases
+#       - mimeapps.list
+#     sensitive_files:
+#       - { src: "{{ user_config_dir }}/zsh/.zhistory", dest: "{{ dotfiles_dir }}/zsh/.zhistory.gpg" }
+#       - { src: "{{ user_config_dir }}/zsh/.z", dest: "{{ dotfiles_dir }}/zsh/.z.gpg" }
+#   block:
+#     - name: Sync config directories
+#       synchronize:
+#         src: "{{ user_config_dir }}/{{ item }}/"
+#         dest: "{{ dotfiles_dir }}/{{ item }}/"
+#         delete: yes
+#         recursive: yes
+#       loop: "{{ config_directories }}"
+#       register: dir_sync_result
+#       changed_when: dir_sync_result.changed
+
+#     - name: Sync config files
+#       synchronize:
+#         src: "{{ user_config_dir }}/{{ item }}"
+#         dest: "{{ dotfiles_dir }}/{{ item }}"
+#         delete: yes
+#       loop: "{{ config_files }}"
+#       register: file_sync_result
+#       changed_when: file_sync_result.changed
+
+#     - name: Encrypt sensitive files
+#       tags: encrypt_sensitive
+#       block:
+#         - name: Check if source sensitive files exist
+#           stat:
+#             path: "{{ item.src }}"
+#             get_checksum: yes  # Получаем контрольную сумму для сравнения
+#           register: source_stats
+#           loop: "{{ sensitive_files }}"
+#           loop_control:
+#             label: "{{ item.src }}"
+
+#         - name: Check if encrypted files exist
+#           stat:
+#             path: "{{ item.dest }}"
+#           register: dest_stats
+#           loop: "{{ sensitive_files }}"
+#           loop_control:
+#             label: "{{ item.dest }}"
+
+#         # Создаем временные файлы для хранения хеш-сумм
+#         - name: Create temp directory for hash files
+#           tempfile:
+#             state: directory
+#             suffix: hashdir
+#           register: temp_hash_dir
+#           changed_when: false
+
+#         # Для уже существующих зашифрованных файлов создаём временную расшифрованную копию для проверки
+#         - name: Decrypt existing files to compare with source
+#           block:
+#             - name: Decrypt to temp file for comparison
+#               shell: >
+#                 gpg --batch --quiet --decrypt "{{ item.1.item.dest }}" > "{{ temp_hash_dir.path }}/{{ item.0 }}"
+#               loop: "{{ range(sensitive_files|length)|list|zip(dest_stats.results)|list }}"
+#               loop_control:
+#                 label: "{{ item.1.item.dest }}"
+#               when: 
+#                 - item.1.stat.exists
+#                 - source_stats.results[item.0].stat.exists
+#               register: decrypt_result
+#               changed_when: false
+#               failed_when: decrypt_result.rc != 0 and decrypt_result.rc != 2
+#               ignore_errors: true
+#           rescue:
+#             - name: Clean up temp files on error
+#               file:
+#                 path: "{{ temp_hash_dir.path }}"
+#                 state: absent
+#               changed_when: false
+
+#         # Получаем хеш-суммы расшифрованных файлов
+#         - name: Get decrypted file checksums
+#           stat:
+#             path: "{{ temp_hash_dir.path }}/{{ item.0 }}"
+#             get_checksum: yes
+#           loop: "{{ range(sensitive_files|length)|list }}"
+#           register: decrypted_stats
+#           failed_when: false
+#           changed_when: false
+
+#         # Шифруем только если файл не существует или содержимое изменилось
+#         - name: Encrypt sensitive files only when needed
+#           command: >
+#             gpg --batch --yes --output "{{ item.1.item.dest }}" --encrypt --recipient "{{ gpg_key_id }}" "{{ item.1.item.src }}"
+#           loop: "{{ range(sensitive_files|length)|list|zip(source_stats.results)|list }}"
+#           when: >
+#             item.1.stat.exists and 
+#             (not dest_stats.results[item.0].stat.exists or 
+#              not decrypted_stats.results[item.0].stat.exists or 
+#              item.1.stat.checksum != decrypted_stats.results[item.0].stat.checksum)
+#           register: gpg_encrypt_result
+#           changed_when: gpg_encrypt_result.rc == 0
+#           failed_when: gpg_encrypt_result.rc != 0
+
+#         - name: Clean up temp directory
+#           file:
+#             path: "{{ temp_hash_dir.path }}"
+#             state: absent
+#           changed_when: false
+
+#         - name: Log encryption status
+#           debug:
+#             msg: "Encryption status: {{ item.changed | ternary('updated', 'unchanged') }} for {{ sensitive_files[item.item.0].src }} -> {{ sensitive_files[item.item.0].dest }}"
+#           loop: "{{ gpg_encrypt_result.results }}"
+#           loop_control:
+#             label: "{{ sensitive_files[item.item.0].src if item.item is defined else 'skipped' }}"
+#           when: item.skipped is not defined
+#Копирование пользовательских конфигов из ~/.config в ~/.local/dotfiles/
+- name: Sync user configuration files and directories
+  vars:
+    config_directories:
+      - devilspie2
+      - dunst
+      - emacs/lisp
+      - fdm
+      - fvwm
+      - git
+      - gtk-2.0
+      - gtk-3.0
+      - lf
+      - mpv
+      - nix
+      - notmuch
+      - picom
+      - pipewire
+      - python
+      - readline
+      - rebar3
+      - rofi
+      - sx
+      - tmux
+      - wget
+      - xdg-desktop-portal
+      - xsettingsd
+      - zathura
+
+    config_files:
+      - ansible/ansible.cfg
+      - aria2/aria2.conf
+      - containers/registries.conf
+      - containers/storage.conf
+      - emacs/early-init.el
+      - emacs/init-dev.el
+      - emacs/init.el
+      - emacs/init.org
+      - emacs/dict/english-words.txt
+      - wireplumber/wireplumber.conf.d/80-disable-logind.conf
+      - zsh/.zprofile
+      - zsh/.zshenv
+      - zsh/.zshrc
+      - zsh/aliases
+      - mimeapps.list
+    ansible_main_files:
+      - ansible_main
+
+  block:
+    - name: Sync config directories
+      synchronize:
+        src: "{{ user_config_dir }}/{{ item }}/"
+        dest: "{{ dotfiles_dir }}/{{ item }}/"
+        delete: yes
+        recursive: yes
+      loop: "{{ config_directories }}"
+      register: dir_sync_result
+      changed_when: dir_sync_result.changed
+
+    - name: Sync ansible_main_files
+      synchronize:
+        src: "{{ home_dir}}/.local/{{ item }}/"
+        dest: "{{ dotfiles_dir }}/{{ item }}/"
+        delete: yes
+        recursive: yes
+      loop: "{{ ansible_main_files }}"
+      register: dir_sync_result
+      changed_when: dir_sync_result.changed
+
+
+    - name: Sync config files
+      synchronize:
+        src: "{{ user_config_dir }}/{{ item }}"
+        dest: "{{ dotfiles_dir }}/{{ item }}"
+        delete: yes
+      loop: "{{ config_files }}"
+      register: file_sync_result
+      changed_when: file_sync_result.changed
+
+    - name: Encrypt sensitive files
+      tags: encrypt_sensitive
+      block:
+        - name: Define sensitive files
+          set_fact:
+            sensitive_files:
+              - { src: "{{ user_config_dir }}/zsh/.zhistory", dest: "{{ dotfiles_dir }}/zsh/.zhistory.gpg" }
+              - { src: "{{ user_config_dir }}/zsh/.z", dest: "{{ dotfiles_dir }}/zsh/.z.gpg" }
+
+        - name: Check if sensitive files exist
+          stat:
+            path: "{{ item.src }}"
+          register: sensitive_stat
+          loop: "{{ sensitive_files }}"
+          loop_control:
+            label: "{{ item.src }}"
+
+        - name: Encrypt sensitive files with GPG
+          command: >
+            gpg --batch --yes --output "{{ item.item.dest }}" --encrypt --recipient "{{ gpg_key_id }}" "{{ item.item.src }}"
+          when: item.stat.exists
+          loop: "{{ sensitive_stat.results }}"
+          register: gpg_encrypt_result
+          changed_when: gpg_encrypt_result.rc == 0
+          failed_when: gpg_encrypt_result.rc != 0 and gpg_encrypt_result.rc != 2
+
+        - name: Notify about GPG encryption result
+          debug:
+            msg: "Encryption for {{ item.cmd[item.cmd|length - 1] }} completed."
+          loop: "{{ gpg_encrypt_result.results }}"
+          when: item.rc is defined and item.rc == 0
+
+      # Специальная обработка для .zhistory - шифрование GPG
+    # - name: Encrypt and sync .zhistory file
+    #   tags: encrypt_zhistory
+    #   block:
+    #     - name: Check if .zhistory exists
+    #       stat:
+    #         path: "{{ user_config_dir }}/zsh/.zhistory"
+    #       register: zhistory_stat
+
+    #     - name: Encrypt .zhistory using GPG
+    #       command: >
+    #         gpg --batch --yes --output "{{ dotfiles_dir }}/zsh/.zhistory.gpg" \
+    #         --encrypt --recipient "{{ gpg_key_id }}" "{{ user_config_dir }}/zsh/.zhistory"
+    #       when: zhistory_stat.stat.exists
+    #       register: gpg_result
+    #       changed_when: gpg_result.rc == 0
+    #       failed_when: gpg_result.rc != 0 and gpg_result.rc != 2
+    #   rescue:
+    #     - name: Handle GPG encryption failure
+    #       debug:
+    #         msg: "Failed to encrypt .zhistory. Make sure GPG key '{{ gpg_key_id }}' exists in your keyring."
+
+    #     - name: Record GPG encryption failure
+    #       set_fact:
+    #         gpg_encryption_failed: true
+
+    #   always:
+    #     - name: Notify about GPG status
+    #       debug:
+    #         msg: "GPG encryption process completed. Check logs for details."
+    #       when: gpg_result is defined

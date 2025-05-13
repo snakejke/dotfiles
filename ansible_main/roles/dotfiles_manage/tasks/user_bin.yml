@@ -1,0 +1,50 @@
+---
+- name: Ensure rsync filter file exists
+  stat:
+    path: "{{ dotfiles_dir }}/.rsync-filter"
+  register: rsync_filter
+  
+- name: Create default rsync filter if not exists
+  copy:
+    content: |
+      - cabal-*
+      - exercism
+      - ghcup
+      - google-java-format.jar
+      - mise
+      - rebar3
+      - rtimer
+      - stack-*
+      - uv
+      - uvx
+      - __erlang_ls
+      - elp
+      - org.eclipse.lemminx-uber.jar 
+    dest: "{{ dotfiles_dir }}/.rsync-filter"
+    force: no
+  when: not rsync_filter.stat.exists
+  
+- name: Copy user binaries and service files
+  synchronize:
+    src: "{{ home_dir }}/.local/bin/"
+    dest: "{{ dotfiles_dir }}/.local/bin/"
+    delete: yes
+    recursive: yes
+    rsync_opts:
+      # - "--exclude-from={{ dotfiles_dir }}/.rsync-filter"
+      - "--filter=\"merge {{ dotfiles_dir }}/.rsync-filter\""
+      - "--no-links"
+      # - "--exclude=cabal-3.12.1.0"
+      # - "-vvv"
+    # copy_links: no #not working
+    # copy_links: false # default false 
+    # archive: true # not need such default true
+    # compress: true # not need. default true
+
+
+- name: Copy raw services
+  synchronize:
+    src: "{{ home_dir }}/.local/rawservices/"
+    dest: "{{ dotfiles_dir }}/.local/rawservices/"
+    delete: yes
+    recursive: yes      

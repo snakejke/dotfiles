@@ -1,6 +1,9 @@
 [user]
-	name = Daniel Hall
-	email = snake05865@mail.ru
+	name = Artem Bliznetsov
+	email = snakejke@proton.me
 
 [core]
 quotepath = off
+
+[github]
+	user = snakejke

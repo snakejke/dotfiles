@@ -1,0 +1,70 @@
+---
+# Создание необходимых директорий для развертывания
+
+- name: Ensure user config directory exists
+  file:
+    path: "{{ user_config_dir }}"
+    state: directory
+    owner: "{{ system_user }}"
+    group: "{{ system_group }}"
+    mode: "{{ default_dir_mode }}"
+  tags:
+    - directories
+
+- name: Create user-specific directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ system_user }}"
+    group: "{{ system_group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ home_dir }}/.local/bin", mode: '0775' }
+    - { path: "{{ home_dir }}/.gnupg", mode: '0700' }
+    - { path: "{{ home_dir }}/.ssh", mode: '0700' }
+    - { path: "{{ home_dir }}/.local/rawservices", mode: '0775' }
+  tags:
+    - directories
+    - security
+
+- name: Ensure user configuration subdirectories exist
+  file:
+    path: "{{ user_config_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ system_user }}"
+    group: "{{ system_group }}"
+  loop:
+    - 'ansible'
+    - 'emacs'
+    - 'emacs/dict'
+    - 'emacs/lisp'
+    - 'zsh'
+    - 'aria2'
+    - 'containers'
+    - 'wireplumber/wireplumber.conf.d'
+    - 'devilspie2'
+    - 'dunst'
+    - 'fdm'
+    - 'fvwm'
+    - 'git'
+    - 'gtk-2.0'
+    - 'gtk-3.0'
+    - 'lf'
+    - 'mpv'
+    - 'nix'
+    - 'notmuch'
+    - 'picom'
+    - 'pipewire'
+    - 'python'
+    - 'readline'
+    - 'rebar3'
+    - 'rofi'
+    - 'sx'
+    - 'tmux'
+    - 'wget'
+    - 'xdg-desktop-portal'
+    - 'xsettingsd'
+    - 'zathura'
+  tags:
+    - directories
+    - config

@@ -52,23 +52,35 @@ AddToFunc   ChangeDesk
 + I SendToModule FvwmButtons ChangeButton desk$0 Colorset 11
 
 #ALT+TAB as in Windows 
-InfoStoreAdd TabDir Next
+# InfoStoreAdd TabDir Next
 
-DestroyFunc FocusRaiseAndStuff
-AddToFunc   FocusRaiseAndStuff
+# DestroyFunc FocusRaiseAndStuff
+# AddToFunc   FocusRaiseAndStuff
+# + I Iconify off
+# + I Focus
+# + I Raise
+
+# DestroyFunc SwitchDirection
+# AddToFunc   SwitchDirection
+# + I Test (EnvMatch infostore.TabDir Next) InfoStoreAdd TabDir Prev
+# + I TestRc (NoMatch) InfoStoreAdd TabDir Next
+
+# DestroyFunc SwitchWindow
+# AddToFunc   SwitchWindow
+# + I $[infostore.TabDir] (CurrentPage, !Iconic, !Sticky) FocusRaiseAndStuff
+# + I Deschedule 134000
+# + I Schedule 700 134000 SwitchDirection
+
+# Key Tab A M  SwitchWindow
+#######################################################
+# Custom Focus Function
+DestroyFunc MyFocusFunc
+AddToFunc MyFocusFunc
 + I Iconify off
-+ I Focus
++ I FlipFocus
 + I Raise
++ I WarpToWindow !raise 5 5
 
-DestroyFunc SwitchDirection
-AddToFunc   SwitchDirection
-+ I Test (EnvMatch infostore.TabDir Next) InfoStoreAdd TabDir Prev
-+ I TestRc (NoMatch) InfoStoreAdd TabDir Next
-
-DestroyFunc SwitchWindow
-AddToFunc   SwitchWindow
-+ I $[infostore.TabDir] (CurrentPage, !Iconic, !Sticky) FocusRaiseAndStuff
-+ I Deschedule 134000
-+ I Schedule 700 134000 SwitchDirection
-
-Key Tab A M  SwitchWindow
+# Key Bindings
+Key Tab A M Next (CurrentDesk, AcceptsFocus) MyFocusFunc
+Key Tab A SM Prev (CurrentDesk, AcceptsFocus) MyFocusFunc

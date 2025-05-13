@@ -1,0 +1,10 @@
+---
+- name: Set proper ownership for system configuration files
+  become: true
+  become_method: sudo 
+  file:
+    path: "{{ dotfiles_dir }}/etc/"
+    owner: snake
+    group: snake
+    state: directory
+    recurse: yes

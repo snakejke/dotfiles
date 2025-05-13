@@ -1,0 +1,73 @@
+---
+# Настройка прав доступа для развернутых файлов
+
+- name: Set user ownership for home directory files
+  file:
+    path: "{{ home_dir }}"
+    owner: "{{ system_user }}"
+    group: "{{ system_group }}"
+    recurse: yes
+  tags:
+    - permissions
+    - home
+
+- name: Set execute permissions for scripts in bin
+  find:
+    paths: "{{ home_dir }}/.local/bin"
+    patterns: 
+      - "*.sh"
+      - "*.py"
+      - "*.rb"
+    recurse: yes
+  register: script_files
+
+- name: Make scripts executable
+  file:
+    path: "{{ item.path }}"
+    mode: '0755'
+  with_items: "{{ script_files.files }}"
+  when: script_files.matched > 0
+  tags:
+    - permissions
+    - executable
+
+- name: Set correct permissions for service files
+  find:
+    paths: "{{ home_dir }}/.local/rawservices"
+    patterns: 
+      - "*"
+    recurse: yes
+  register: service_files
+
+- name: Make service files executable
+  file:
+    path: "{{ item.path }}"
+    mode: '0755'
+  with_items: "{{ service_files.files }}"
+  when: service_files.matched > 0
+  tags:
+    - permissions
+    - executable
+
+- name: Set correct permissions for system runit services
+  become: true
+  become_method: sudo
+  find:
+    paths: "/etc/sv"
+    patterns: 
+      - "run"
+    recurse: yes
+  register: runit_files
+
+- name: Make runit service files executable
+  become: true
+  become_method: sudo
+  file:
+    path: "{{ item.path }}"
+    mode: '0755'
+  with_items: "{{ runit_files.files }}"
+  when: runit_files.matched > 0
+  tags:
+    - permissions
+    - executable
+    - runit

@@ -1,0 +1,19 @@
+# roles/dotfiles/tasks/main.yml
+---
+- name: Import directory setup tasks
+  import_tasks: directory_setup.yml
+
+- name: Import user configuration tasks
+  import_tasks: user_config.yml
+
+- name: Import user binaries tasks
+  import_tasks: user_bin.yml
+
+- name: Import security configuration tasks
+  import_tasks: security_config.yml
+
+- name: Import system configuration tasks
+  import_tasks: system_config.yml
+
+- name: Import permissions tasks
+  import_tasks: permissions.yml
