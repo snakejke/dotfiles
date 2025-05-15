@@ -4,9 +4,9 @@
     path: "{{ dotfiles_dir }}/.rsync-filter"
   register: rsync_filter
   
-- name: Create default rsync filter if not exists
-  copy:
-    content: |
+- name: Define desired rsync filter content
+  set_fact:
+    desired_filter_content: |
       - cabal-*
       - exercism
       - ghcup
@@ -19,11 +19,23 @@
       - uvx
       - __erlang_ls
       - elp
-      - org.eclipse.lemminx-uber.jar 
-    dest: "{{ dotfiles_dir }}/.rsync-filter"
-    force: no
-  when: not rsync_filter.stat.exists
+      - org.eclipse.lemminx-uber.jar
+      - */supervise
+      - */*/supervise
+
+- name: Read current rsync filter if exists
+  slurp:
+    src: "{{ dotfiles_dir }}/.rsync-filter"
+  register: current_filter
+  when: rsync_filter.stat.exists
   
+- name: Create or update rsync filter
+  copy:
+    content: "{{ desired_filter_content }}"
+    dest: "{{ dotfiles_dir }}/.rsync-filter"
+  when: not rsync_filter.stat.exists or 
+        (current_filter.content | b64decode | trim) != desired_filter_content | trim
+
 - name: Copy user binaries and service files
   synchronize:
     src: "{{ home_dir }}/.local/bin/"
@@ -47,4 +59,7 @@
     src: "{{ home_dir }}/.local/rawservices/"
     dest: "{{ dotfiles_dir }}/.local/rawservices/"
     delete: yes
-    recursive: yes      
+    recursive: yes
+    rsync_opts:
+      - "--filter=\"merge {{ dotfiles_dir }}/.rsync-filter\""
+

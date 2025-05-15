@@ -10,7 +10,7 @@
     - 'dracut.conf.d'
     - 'iptables'
     - 'sudoers.d'
-    - 'unbound'
+    # - 'unbound'
     - 'X11'
 
 - name: Ensure parent directories exist for individual files
@@ -36,8 +36,10 @@
     remote_src: yes
   loop:
     - 'dnscrypt-proxy/dnscrypt-proxy.toml'
+    - 'unbound/unbound.conf'
     - 'pam.d/login'
     - 'profile.d/fixdbus.sh'
+    - 'profile.d/nix.sh'
     - 'smtpd/smtpd.conf'
     - 'sv/agetty-autologin-tty1/run'
     - 'sv/amneziavpn/run'
