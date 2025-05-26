@@ -3,17 +3,14 @@
 - name: Sync user configuration files and directories
   vars:
     config_directories:
-      - devilspie2
       - dunst
       - emacs/lisp
-      - fdm
       - fvwm
-      - git
+      - home-manager 
       - gtk-2.0
       - gtk-3.0
       - lf
       - mpv
-      - nix
       - notmuch
       - picom
       - pipewire
@@ -26,7 +23,6 @@
       - wget
       - xdg-desktop-portal
       - xsettingsd
-      - zathura
 
     config_files:
       - ansible/ansible.cfg

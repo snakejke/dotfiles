@@ -1,9 +1,0 @@
-[user]
-	name = Artem Bliznetsov
-	email = snakejke@proton.me
-
-[core]
-quotepath = off
-
-[github]
-	user = snakejke

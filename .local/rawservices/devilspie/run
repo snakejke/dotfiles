@@ -6,4 +6,4 @@ export XAUTHORITY=/home/snake/.local/share/sx/xauthority
 
 cd $HOME
 
-exec /usr/bin/devilspie2
+exec /home/snake/.local/state/nix/profile/bin/devilspie2

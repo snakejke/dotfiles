@@ -2769,7 +2769,11 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 #+end_src
-
+* nix
+#+begin_src emacs-lisp :lexical t
+(use-package nix-mode
+  :mode "\\.nix\\'")
+#+end_src
 * racket scheme guile geiser
 HTDP + SICP
 #+begin_src emacs-lisp :lexical t

@@ -1,3 +1,7 @@
+{
+    services.devilspie2 = {
+    enable = true;
+    config = ''
 local window_name = get_window_name()
 local app_name = get_application_name()
 local class_name = get_class_instance_name()
@@ -28,3 +32,6 @@ end
 -- if window_name == "passwords.kdbx [Locked] - KeePassXC" then
 --   os.execute("xdotool mousemove 1208 645 click 1")
 -- end
+'';
+};
+}

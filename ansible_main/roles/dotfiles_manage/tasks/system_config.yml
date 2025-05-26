@@ -10,7 +10,6 @@
     - 'dracut.conf.d'
     - 'iptables'
     - 'sudoers.d'
-    # - 'unbound'
     - 'X11'
 
 - name: Ensure parent directories exist for individual files
@@ -23,6 +22,7 @@
     - 'pam.d/login'
     - 'profile.d/fixdbus.sh'
     - 'smtpd/smtpd.conf'
+    - 'zsh/zshenv'
     - 'sv/agetty-autologin-tty1/run'
     - 'sv/amneziavpn/run'
     - 'sv/runsvdir-snake/run'
@@ -45,6 +45,7 @@
     - 'sv/amneziavpn/run'
     - 'sv/runsvdir-snake/run'
     - 'dhcpcd.conf'
+    - 'zshenv'
     - 'environment'
     - 'resolv.conf'
     - 'rsyslog.conf'

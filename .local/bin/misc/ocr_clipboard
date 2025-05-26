@@ -8,7 +8,7 @@ TEMP_TEXT="/tmp/ocr_result.txt"
 maim -s "$TEMP_IMAGE"
 
 # Распознавание текста с помощью Tesseract
-tesseract-ocr "$TEMP_IMAGE" "$TEMP_TEXT" -l rus+eng --psm 6
+tesseract "$TEMP_IMAGE" "$TEMP_TEXT" -l rus+eng --psm 6
 
 # Чтение распознанного текста
 OCR_RESULT=$(cat "$TEMP_TEXT.txt")

@@ -1,2 +1,5 @@
 #!/bin/sh
-col -bx < "$1" | bat --language man -p
+ESC=$(printf '\033')
+sed -u -e "s/${ESC}\[[0-9;]*m//g; s/.\x08//g" | bat -p -l man
+# void linux 
+# col -bx < "$1" | bat --language man -p

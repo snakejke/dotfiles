@@ -257,10 +257,10 @@
   "d" 'delete-frame
   "Q" 'kill-emacs)
 
-(+general-global-menu! "searchhh" "s"
-  "b" 'consult-line
-  "h" 'consult-outline
-  "p" 'consult-ripgrep)
+ (+general-global-menu! "searchhh" "s"
+   "b" 'consult-line
+   "h" 'consult-outline
+   "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
   "i" 'insert-char
@@ -418,8 +418,8 @@
   
   )
 
-;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  ;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
 (use-package which-key
   :demand t
@@ -1229,19 +1229,19 @@ if one already exists."
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
 
-(use-package apheleia
-  :defer t
-  :config
-  (setf (alist-get 'google-java-format apheleia-formatters)
-        '("google-java-format" "-a" "-"))
-    ;; Добавляем новый форматтер
-  (setf (alist-get 'rebar3 apheleia-formatters)
-      '("rebar3" "fmt" "-"))
+  (use-package apheleia
+    :defer t
+    :config
+    (setf (alist-get 'google-java-format apheleia-formatters)
+          '("google-java-format" "-a" "-"))
+      ;; Добавляем новый форматтер
+    (setf (alist-get 'rebar3 apheleia-formatters)
+        '("rebar3" "fmt" "-"))
 
-  ;; Привязываем его к erlang-mode
-  (setf (alist-get 'erlang-mode apheleia-mode-alist)
-        'rebar3)       
-  )
+    ;; Привязываем его к erlang-mode
+    (setf (alist-get 'erlang-mode apheleia-mode-alist)
+          'rebar3)       
+    )
 
 (use-package lsp-mode
   :hook ((c-mode . lsp)
@@ -1618,6 +1618,9 @@ if one already exists."
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 
+(use-package nix-mode
+  :mode "\\.nix\\'")
+
 (use-package racket-mode
   :defer t
   :hook (racket-mode . racket-xp-mode)
@@ -1840,9 +1843,9 @@ if one already exists."
    )
 )
 
-;; (use-feature sql
-;;    :config
-;;    (+eglot-register '(sql-mode) "sqls"))
+  ;; (use-feature sql
+  ;;    :config
+  ;;    (+eglot-register '(sql-mode) "sqls"))
 
 (use-package flycheck
   :commands (flycheck-mode)
@@ -2542,10 +2545,10 @@ Speeds up `org-agenda' remote operations."
     (lsp-snippet-tempel-lsp-mode-init))
   )
 
-(use-package doom-snippets
-:ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
-;;:load-path "~/.config/vanilla/snippets"
-:after yasnippet)
+  (use-package doom-snippets
+  :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
+  ;;:load-path "~/.config/vanilla/snippets"
+  :after yasnippet)
 
 (use-feature tramp
   :defer t
@@ -3089,9 +3092,9 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
-(defun my/notmuch-toggle-trash ()
-(interactive)
-(evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
+  (defun my/notmuch-toggle-trash ()
+  (interactive)
+  (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
 
 (use-feature notmuch
   :commands (notmuch)
