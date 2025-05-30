@@ -13,31 +13,28 @@ bindkey -e
 zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 # TODO: less 
 export MANPAGER="BATPAGER"
-# TODO: 
+
 . "$ZDOTDIR/aliases"
-# . "$ZDOTDIR/.functions"
-. "$ZDOTDIR/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
-. "/usr/share/fzf/key-bindings.zsh"
-. "$ZDOTDIR/zsh-z/zsh-z.plugin.zsh"
+
+nix_source() {
+  local plugin_path
+  for profile in ${=NIX_PROFILES}; do
+    plugin_path="$profile/share/$1"
+    [[ -f "$plugin_path" ]] && { source "$plugin_path"; return 0 }
+  done
+  return 1
+}
+
+nix_source "zsh-autosuggestions/zsh-autosuggestions.zsh"
+nix_source "zsh-z/zsh-z.plugin.zsh"
+nix_source "fzf/key-bindings.zsh"
 
 # TODO:
 autoload -Uz +X compinit && compinit
 
-## case insensitive path-completion
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' menu select
 
-# history
-setopt append_history     
-setopt extended_history
-setopt inc_append_history
-setopt hist_ignore_all_dups
-setopt hist_find_no_dups
-setopt hist_reduce_blanks
-setopt hist_ignore_space # 
-setopt share_history
-HIST_STAMPS="%F %T"
-#
 setopt autocd
 
 download() { aria2c -d ~/Downloads "$1"; }
@@ -66,11 +63,7 @@ sbt_opts_arr=(
 )
 export SBT_OPTS="${sbt_opts_arr}"
 
-# :TODO 
-# sdk() {
-#   unset -f sdk
-#   source "$SDKMAN_DIR/bin/sdkman-init.sh"
-#   sdk "$@"
-# }
 [[ -s "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh" ]] && source "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh"
+
+eval "$(atuin init zsh)"
 #zprof

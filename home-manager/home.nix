@@ -8,6 +8,8 @@
     ./config/zathura.nix
     ./config/dbeaver.nix
     ./config/wget.nix
+    ./config/aria2.nix
+    ./config/dunst.nix
     # ./config/zsh.nix
     ];
     
@@ -19,9 +21,9 @@
 
   home.packages = with pkgs; [
     ueberzugpp
-    # jdt-language-server
     fd
     jq
+    fzf
     ripgrep
     bat
     gdu
@@ -30,7 +32,6 @@
     ranger
     xdotool
     wmname
-    aria2
     vlc
     strace
     speedtest-cli
@@ -52,7 +53,6 @@
     nsxiv
     maim 
     lnav
-    dunst
     neovim
     i3lock
     hdparm
@@ -68,6 +68,7 @@
     dig
     tree
     nil 
+    curl 
 
     ansible
     ansible-lint
@@ -77,10 +78,6 @@
     #google-chrome
     #discord need gpu accel 
 
-    # xfce.thunar
-    # xfce.thunar-volman
-    # xfce.thunar-archive-plugin
-    
     nettools
 
     (tesseract5.override {
@@ -102,7 +99,22 @@
     btop
     htop
 
+    zsh-z
+    zsh-autosuggestions
+
   ];
+
+    programs.atuin = {
+    enable = true;
+    enableZshIntegration = true;
+    daemon.enable = false;
+    
+    settings = {
+      style = "compact";
+      inline_height = 23;
+      show_help = false;
+    };
+  };
   
   home.sessionVariables = {
     # EDITOR = "emacs";

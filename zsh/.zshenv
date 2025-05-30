@@ -116,6 +116,8 @@ export EMACS_SOCKET_NAME="/run/user/1000/emacs/vanilla"
 #emacs-lsp
 export LSP_USE_PLISTS=true
 #
+export ZSHZ_DATA="$ZDOTDIR/.z"
+#
 export TMUX_CONF=~/.config/tmux/tmux.conf
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc"
 export LYNX_CFG=~/.config/lynx/lynx.cfg

@@ -3,7 +3,6 @@
 - name: Sync user configuration files and directories
   vars:
     config_directories:
-      - dunst
       - emacs/lisp
       - fvwm
       - home-manager 
@@ -20,13 +19,11 @@
       - rofi
       - sx
       - tmux
-      - wget
       - xdg-desktop-portal
       - xsettingsd
 
     config_files:
       - ansible/ansible.cfg
-      - aria2/aria2.conf
       - containers/registries.conf
       - containers/storage.conf
       - emacs/early-init.el

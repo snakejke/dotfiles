@@ -10,7 +10,6 @@
     - 'emacs/dict'
     - 'emacs/lisp'
     - 'zsh'
-    - 'aria2'
     - 'containers'
     - 'wireplumber/wireplumber.conf.d'
 
