@@ -10,6 +10,7 @@
     ./config/wget.nix
     ./config/aria2.nix
     ./config/dunst.nix
+    ./config/tmux.nix 
     # ./config/zsh.nix
     ];
     
