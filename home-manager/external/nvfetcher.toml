@@ -1,0 +1,4 @@
+[palantir-cli]
+src.github = "jsonschema2dataclass/palantir-cli"
+fetch.url = "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/$ver/palantir-cli-$ver-standalone.jar"
+url.name = "palantir-cli-$ver-standalone.jar"

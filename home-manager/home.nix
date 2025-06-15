@@ -1,4 +1,14 @@
-{ config,lib,pkgs, ... }:
+{ config, lib, pkgs, ... }:
+
+let
+  # Импортируем сгенерированные nvfetcher источники
+  sources = pkgs.callPackage ./external/_sources/generated.nix {};
+  
+  # Создаем palantir-cli пакет
+  palantir-cli = pkgs.callPackage ./external/packages/palantir-cli.nix {
+    inherit sources;
+  };
+in
 
 {
     imports = [
@@ -55,7 +65,7 @@
     maim 
     lnav
     neovim
-    i3lock
+    # i3lock https://github.com/nix-community/home-manager/issues/7027
     hdparm
     keepassxc
     flameshot
@@ -75,6 +85,11 @@
     ansible-lint
 
     foliate
+
+    mate.mate-themes
+
+    exercism
+    koodo-reader
     
     #google-chrome
     #discord need gpu accel 
@@ -103,6 +118,9 @@
     zsh-z
     zsh-autosuggestions
 
+    nvfetcher
+    palantir-cli
+
   ];
 
     programs.atuin = {
@@ -114,6 +132,30 @@
       style = "compact";
       inline_height = 23;
       show_help = false;
+    };
+  };
+
+  # SSH конфигурация
+  programs.ssh = {
+    enable = true;
+    package = null;  # Используем системный SSH из Void Linux
+    
+    addKeysToAgent = "yes";
+    
+    matchBlocks = {
+      "github-gmail" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519_gmail";
+        identitiesOnly = true;
+      };
+      
+      # Можете добавить другие хосты
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";  # основной ключ
+      };
     };
   };
   

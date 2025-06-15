@@ -511,6 +511,7 @@ And a macro to ease the creation of nested menu bindings:
 (+general-global-menu! "project" "p"
    ;;"b" '(:ignore t :which-key "buffer")
   "p" 'project-switch-project
+  "o" '+treemacs/toggle
   )
 #+end_src
 *** q quit
@@ -2773,6 +2774,16 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 #+begin_src emacs-lisp :lexical t
 (use-package nix-mode
   :mode "\\.nix\\'")
+#+end_src
+* just
+#+begin_src emacs-lisp :lexical t
+ (use-package justl
+  :defer t)
+#+end_src
+* just-mode
+#+begin_src emacs-lisp :lexical t
+ (use-package just-mode
+  :defer t)
 #+end_src
 * racket scheme guile geiser
 HTDP + SICP

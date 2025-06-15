@@ -7,4 +7,3 @@
   loop:
     - { src: '.gnupg/common.conf', dest: '.gnupg/' }
     - { src: '.gnupg/gpg-agent.conf', dest: '.gnupg/' }
-    - { src: '.ssh/config', dest: '.ssh/' }

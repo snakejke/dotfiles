@@ -1,5 +1,5 @@
 [Added Associations]
-image/gif=nsxiv.desktop;gimp.desktop;firefox.desktop;engineer.atlas.Nyxt.desktop;
+image/gif=nsxiv.desktop;gimp.desktop;firefox.desktop;engineer.atlas.Nyxt.desktop;feh.desktop;
 image/jpeg=nsxiv.desktop;google-chrome.desktop;firefox.desktop;gimp.desktop;
 image/png=google-chrome.desktop;nsxiv.desktop;nsxiv-2.desktop;gimp.desktop;engineer.atlas.Nyxt.desktop;feh.desktop;firefox.desktop;
 x-scheme-handler/http=google-chrome.desktop;userapp-Firefox-UXEVZ2.desktop;
@@ -41,10 +41,10 @@ image/heif=nsxiv.desktop;
 video/mp4=mpv.desktop;vlc.desktop;
 video/x-matroska=mpv.desktop;vlc.desktop;org.xfce.Parole.desktop;
 image/vnd.djvu+multipage=com.github.johnfactotum.Foliate.desktop;org.pwmt.zathura-pdf-mupdf.desktop;
-text/markdown=nvim.desktop;
+text/markdown=emacsclient.desktop;nvim.desktop;
 
 [Default Applications]
-image/gif=nsxiv.desktop;
+image/gif=nsxiv.desktop
 image/jpeg=nsxiv.desktop;
 image/png=nsxiv.desktop;
 text/html=google-chrome.desktop

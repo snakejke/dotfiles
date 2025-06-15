@@ -26,6 +26,8 @@
     - 'sv/agetty-autologin-tty1/run'
     - 'sv/amneziavpn/run'
     - 'sv/runsvdir-snake/run'
+    - 'sv/determinate-nixd/run'
+    - 'sv/nix-daemon/run'
 
 - name: Copy system configuration files
   become: true
@@ -44,6 +46,8 @@
     - 'sv/agetty-autologin-tty1/run'
     - 'sv/amneziavpn/run'
     - 'sv/runsvdir-snake/run'
+    - 'sv/nix-daemon/run'
+    - 'sv/determinate-nixd/run'
     - 'dhcpcd.conf'
     - 'zshenv'
     - 'environment'

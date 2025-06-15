@@ -1,3 +1,4 @@
+
 # Nix
 if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
@@ -5,7 +6,14 @@ fi
 # End Nix
 
         
-# Only execute this file once per shell.
+
+# Nix
+if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+fi
+# End Nix
+
+        # Only execute this file once per shell.
 # This file is tested by tests/installer/default.nix.
 # if [ -n "${__ETC_PROFILE_NIX_SOURCED:-}" ]; then return; fi
 # export __ETC_PROFILE_NIX_SOURCED=1
