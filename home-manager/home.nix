@@ -1,10 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  # Импортируем сгенерированные nvfetcher источники
   sources = pkgs.callPackage ./external/_sources/generated.nix {};
   
-  # Создаем palantir-cli пакет
   palantir-cli = pkgs.callPackage ./external/packages/palantir-cli.nix {
     inherit sources;
   };
@@ -21,6 +19,7 @@ in
     ./config/aria2.nix
     ./config/dunst.nix
     ./config/tmux.nix 
+    ./config/rofi.nix
     # ./config/zsh.nix
     ];
     
@@ -48,7 +47,6 @@ in
     speedtest-cli
     scrot
     rsync
-    rofi
     fastfetch
     restic
     rclone
@@ -123,6 +121,18 @@ in
 
   ];
 
+   programs.mise = {
+    enable = true;
+    
+    globalConfig = {
+      tools = {
+        babashka = "latest";
+        elixir = "latest";
+        erlang = "latest";
+      };
+    };
+   };
+
     programs.atuin = {
     enable = true;
     enableZshIntegration = true;
@@ -135,10 +145,9 @@ in
     };
   };
 
-  # SSH конфигурация
   programs.ssh = {
     enable = true;
-    package = null;  # Используем системный SSH из Void Linux
+    package = null;
     
     addKeysToAgent = "yes";
     
@@ -150,11 +159,10 @@ in
         identitiesOnly = true;
       };
       
-      # Можете добавить другие хосты
       "github.com" = {
         hostname = "github.com";
         user = "git";
-        identityFile = "~/.ssh/id_ed25519";  # основной ключ
+        identityFile = "~/.ssh/id_ed25519";
       };
     };
   };

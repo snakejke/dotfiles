@@ -1,28 +1,37 @@
-{ stdenv, makeWrapper, lib, sources, ... }:
+{ stdenv, makeWrapper, writeShellScript, lib, sources, ... }:
 
+let
+  palantirScript = writeShellScript "palantir-cli" ''
+    exec java -jar @out@/share/java/palantir-cli.jar "$@"
+  '';
+  
+  googleJavaFormatScript = writeShellScript "google-java-format" ''
+    exec java -jar @out@/share/java/palantir-cli.jar "$@"
+  '';
+in
 stdenv.mkDerivation {
   pname = sources.palantir-cli.pname;
   version = sources.palantir-cli.version;
   src = sources.palantir-cli.src;
-  
-  nativeBuildInputs = [ makeWrapper ];
   
   dontUnpack = true;
   dontBuild = true;
   
   installPhase = ''
     mkdir -p $out/bin $out/share/java
+    
     cp ${sources.palantir-cli.src} $out/share/java/palantir-cli.jar
     
-    # Находим системную java (если есть в PATH при сборке)
-    # Или используем простой подход - makeWrapper прямо с java
-    makeWrapper ${stdenv.shell} $out/bin/palantir-cli \
-      --add-flags "-c" \
-      --add-flags "java -jar $out/share/java/palantir-cli.jar \"\$@\""
-      
-    makeWrapper ${stdenv.shell} $out/bin/google-java-format \
-      --add-flags "-c" \
-      --add-flags "java -jar $out/share/java/palantir-cli.jar \"\$@\""
+    cp ${palantirScript} $out/bin/palantir-cli
+    cp ${googleJavaFormatScript} $out/bin/google-java-format
+    
+    substituteInPlace $out/bin/palantir-cli \
+      --replace "@out@" "$out"
+    substituteInPlace $out/bin/google-java-format \
+      --replace "@out@" "$out"
+    
+    chmod +x $out/bin/palantir-cli
+    chmod +x $out/bin/google-java-format
   '';
   
   meta = {

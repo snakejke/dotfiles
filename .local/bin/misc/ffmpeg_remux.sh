@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Directory containing the MKV files
-#INPUT_DIR="/home/snake/Documents/Projects/Python/YouTubeAPI/videos_to_upload"
-INPUT_DIR="/home/snake/Documents/interviews"
+INPUT_DIR="/home/snake/Documents/Projects/Python/YouTubeAPI/videos_to_upload"
+#INPUT_DIR="/home/snake/Documents/interviews"
 
 # Check if ffmpeg is installed
 if ! command -v ffmpeg &> /dev/null; then

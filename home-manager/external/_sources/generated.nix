@@ -3,11 +3,11 @@
 {
   palantir-cli = {
     pname = "palantir-cli";
-    version = "2.67.0";
+    version = "2.68.0";
     src = fetchurl {
-      url = "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/2.67.0/palantir-cli-2.67.0-standalone.jar";
-      name = "palantir-cli-2.67.0-standalone.jar";
-      sha256 = "sha256-hdeqCes0K19L2NdYjOhMD4brwu+nu0cgXbXYVAhDH6E=";
+      url = "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/2.68.0/palantir-cli-2.68.0-standalone.jar";
+      name = "palantir-cli-2.68.0-standalone.jar";
+      sha256 = "sha256-pORMF2oIGCCNmH6nT7OsU2c6FXVhhiwjn6XVAvdefsw=";
     };
   };
 }

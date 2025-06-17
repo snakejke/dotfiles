@@ -16,7 +16,6 @@
       - python
       - readline
       - rebar3
-      - rofi
       - sx
       - xdg-desktop-portal
       - xsettingsd

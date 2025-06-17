@@ -1,20 +1,23 @@
 { config, pkgs, ... }:
-
 {
   services.dunst = {
     enable = true;
-    iconTheme = {
-      package = pkgs.adwaita-icon-theme;
-      name = "Adwaita";
-    };
+    # iconTheme = {
+    #   # package = pkgs.adwaita-icon-theme;
+    #   # name = "Adwaita";
+    #   name = "Tela";
+    #   package = pkgs.tela-icon-theme;
+    #   size = "22x22";
+    # };
     settings = {
       global = {
         monitor = 0;
+        icon_theme = "Papirus";
         follow = "none";
-        width = 300;
-        height = 300;
+        width = 400;
+        height = "(0, 400)";
         origin = "top-right";
-        offset = "10x50";
+        offset = "(10, 50)";
         scale = 0;
         notification_limit = 20;
         progress_bar = true;
@@ -35,7 +38,7 @@
         gap_size = 0;
         separator_color = "frame";
         sort = true;
-        font = "Monospace 8";
+        font = "Monospace 11";
         line_height = 0;
         markup = "full";
         format = "<b>%s</b>: %b";
@@ -51,7 +54,6 @@
         icon_position = "left";
         min_icon_size = 32;
         max_icon_size = 128;
-        # icon_path будет автоматически сгенерирован Home Manager'ом
         sticky_history = true;
         history_length = 20;
         dmenu = "/usr/bin/dmenu -p dunst:";
@@ -67,24 +69,20 @@
         mouse_middle_click = "do_action, close_current";
         mouse_right_click = "close_all";
       };
-
       experimental = {
         per_monitor_dpi = false;
       };
-
       urgency_low = {
         background = "#222222";
         foreground = "#888888";
         timeout = 10;
       };
-
       urgency_normal = {
-        background = "#285577";
-        foreground = "#ffffff";
+        background = "#ffffff";
+        foreground = "#595959";
         timeout = 10;
         override_pause_level = 30;
       };
-
       urgency_critical = {
         background = "#900000";
         foreground = "#ffffff";
