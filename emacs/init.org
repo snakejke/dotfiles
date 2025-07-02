@@ -951,11 +951,12 @@ if one already exists."
 ;;         (bg-line-number-inactive unspecified)
 ;;         (bg-line-number-active unspecified)))
 ;;TODO
-(setq modus-themes-vivendi-palette-overrides
-      '((fg-line-number-inactive "gray50")
-        (fg-line-number-active fg-main)
-        (bg-line-number-inactive unspecified)
-        (bg-line-number-active unspecified)))
+    ;; Вот это ?
+;; (setq modus-themes-vivendi-palette-overrides
+;;       '((fg-line-number-inactive "gray50")
+;;         (fg-line-number-active fg-main)
+;;         (bg-line-number-inactive unspecified)
+;;         (bg-line-number-active unspecified)))
 ;;TODO
 (defun my-modus-themes-invisible-dividers (&rest _)
   "Make window dividers for THEME invisible."
@@ -1981,6 +1982,7 @@ for your search query.
   :config
   ;; (setq lsp-disabled-clients '(tfls clangd rls rnix-lsp semgrep-ls deno-ls))
   ;; (setq lsp-disabled-clients '(semgrep-ls ))
+  (add-to-list 'exec-path (concat (getenv "HOME") "/.local/state/nix/profile/release"))
   (setq lsp-semgrep-languages nil)
     ;; Enable LSP automatically for Erlang files
   ;; (add-hook 'erlang-mode-hook #'lsp)
@@ -2200,7 +2202,7 @@ for your search query.
 #+end_src
 * eglot
 ** general 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-feature eglot
   ;; :hook
   ;; (
@@ -2241,7 +2243,7 @@ for your search query.
 #+end_src
 
 ** eglot-java
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t :tangle no 
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
   ;; :custom
@@ -2594,7 +2596,7 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 #+end_src
 
 ** eglot-booster
-#+begin_src emacs-lisp :lexical t :tangle yes
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package eglot-booster
   :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
 	:after eglot
@@ -2789,19 +2791,25 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 HTDP + SICP
 #+begin_src emacs-lisp :lexical t
 (use-package racket-mode
-  :defer t
   :hook (racket-mode . racket-xp-mode)
  ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
  ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
+  :config
+  (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
   )
+
+(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
 #+end_src
 
 #+begin_src emacs-lisp :lexical t
 (use-package geiser
   :defer t
-  
-  :custom
-  (geiser-default-implementation 'guile))
+  ;; :config
+  ;; (setq geiser-default-implementation 'racket)
+  ;; (setq geiser-active-implementations '(racket))
+  ;; (setq geiser-implementations-alist '(((regexp "\\.scm$") racket))))
+  )
+  ;; (geiser-default-implementation 'guile))
 #+end_src
 
 #+begin_src emacs-lisp :lexical t
@@ -2823,9 +2831,15 @@ HTDP + SICP
 #+end_src
 
 #+begin_src emacs-lisp :lexical t
-;(use-package geiser-racket
-;  :defer t
-;  )
+  ;; (use-package geiser-racket
+  ;;  ;; :ensure (geiser-racket :host github :repo "emacsmirror/geiser-racket"
+  ;;  ;;                        :files (:defaults ("src" "src/*" "bin" "bin/*")))
+  ;;  ;; :ensure (geiser-racket :files (:defaults ("src/geiser" "bin" ) :wait t))
+  ;;   :load-path ("~/.config/emacs/geiser-racket"))
+  ;; (elpaca '(geiser-racket :repo "~/.config/emacs/geiser-racket"))
+  ;; (elpaca-test
+  ;;   :init (elpaca (geiser-racket :files (:defaults "src" "bin") :wait t))
+  ;;   (princ (elpaca-log "geiser-racket | ")))
 #+end_src
 
 #+begin_src emacs-lisp :lexical t
@@ -4326,6 +4340,14 @@ https://github.com/org-mime/org-mime
 
 #+end_src
 
+* latex
+#+begin_src emacs-lisp :lexical t
+(use-feature ox-latex
+  :after org-mode
+  :custom
+  (org-latex-compiler "lualatex"))
+#+end_src
+
 * doct
 #+begin_src emacs-lisp :lexical t
 (use-package doct
@@ -4384,10 +4406,10 @@ https://github.com/org-mime/org-mime
 #+end_src
 * yasnippets (заменить на tempel)
 #+begin_src emacs-lisp :lexical t
-;; (use-package yasnippet
-;;   :commands (yas-global-mode)
-;;   :custom
-;;   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
+(use-package yasnippet
+  :commands (yas-global-mode)
+  :custom
+  (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
 #+end_src
 * tempel
 #+begin_src emacs-lisp :lexical t :tangle yes
@@ -5331,6 +5353,8 @@ https://github.com/joddie/macrostep
 * zsh aliases highlight
 #+begin_src emacs-lisp :lexical t 
 (add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
+
 #+end_src
 * extras
 #+begin_src emacs-lisp :lexical t

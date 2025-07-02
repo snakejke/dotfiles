@@ -1,4 +1,34 @@
 {
+    "elixir-ls": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "elixir-ls",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-mFOpcLgGDI25ZW33ZwhKLsfyz/8Afdrh7RfN/brC+JQ=",
+            "type": "url",
+            "url": "https://github.com/elixir-lsp/elixir-ls/releases/download/v0.28.0/elixir-ls-v0.28.0.zip"
+        },
+        "version": "v0.28.0"
+    },
+    "erlang-lsp": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "erlang-lsp",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-BBEB4rDXY8r2PRQJ9NZFncMg8hjdOP1tnfBXQj3tC+0=",
+            "type": "url",
+            "url": "https://github.com/WhatsApp/erlang-language-platform/releases/download/2025-05-29/elp-linux-x86_64-unknown-linux-gnu-otp-27.1.tar.gz"
+        },
+        "version": "2025-05-29"
+    },
     "palantir-cli": {
         "cargoLocks": null,
         "date": null,

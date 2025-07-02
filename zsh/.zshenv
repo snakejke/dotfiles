@@ -118,6 +118,10 @@ export LSP_USE_PLISTS=true
 #
 export ZSHZ_DATA="$ZDOTDIR/.z"
 #
+export TEXMFHOME="$XDG_DATA_HOME/texmf"
+export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
+export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"
+#
 export TMUX_CONF=~/.config/tmux/tmux.conf
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc"
 export LYNX_CFG=~/.config/lynx/lynx.cfg
