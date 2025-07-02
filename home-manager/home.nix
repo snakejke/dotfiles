@@ -1,11 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  sources = pkgs.callPackage ./external/_sources/generated.nix {};
-  
-  palantir-cli = pkgs.callPackage ./external/packages/palantir-cli.nix {
-    inherit sources;
-  };
+  externalPackages = pkgs.callPackage ./external {};
 in
 
 {
@@ -37,7 +33,7 @@ in
     ripgrep
     bat
     gdu
-    firefox
+    #firefox
     lf
     ranger
     xdotool
@@ -51,7 +47,7 @@ in
     restic
     rclone
     qtpass
-    nyxt
+    #nyxt
     qbittorrent
     podman-tui
     pngquant
@@ -76,8 +72,10 @@ in
     lynx
     dig
     tree
-    nil 
-    curl 
+    curl
+
+    #lsp
+    nil # nix 
 
     ansible
     ansible-lint
@@ -107,7 +105,10 @@ in
     #mail
     #fdm
     
-    p7zip # bin 7z
+    #p7zip # bin 7z
+    _7zz-rar # 7zz 
+
+    hexapdf # pdf cover 
     
     #monitoring
     btop
@@ -117,9 +118,14 @@ in
     zsh-autosuggestions
 
     nvfetcher
-    palantir-cli
+    #palantir-cli
+    # aider-chat-full
 
-  ];
+    mitschemeX11
+    guile
+    fpc #pascal 
+
+  ] ++ externalPackages;
 
    programs.mise = {
     enable = true;
@@ -129,6 +135,14 @@ in
         babashka = "latest";
         elixir = "latest";
         erlang = "latest";
+        rebar = "latest";
+      };
+      tasks."update:hex" = {
+      description = "Обновляет Hex и Rebar для Elixir";
+      run = [
+        "mix local.hex --force"
+        "mix local.rebar --force"
+      ];
       };
     };
    };
@@ -164,6 +178,54 @@ in
         user = "git";
         identityFile = "~/.ssh/id_ed25519";
       };
+    };
+  };
+
+  programs.texlive = {
+    enable = true;
+    extraPackages = tpkgs: {
+      inherit (tpkgs)
+        # Основа
+        collection-basic
+        collection-latex
+        collection-fontsextra
+        
+        # Русский язык (обязательно)
+        babel-russian
+        hyphen-russian
+        cyrillic
+        lh
+        cm-super
+        luahyphenrules
+        
+        # Для резюме
+        moderncv
+        fontawesome
+        
+        # Базовое форматирование
+        geometry
+        enumitem
+        hyperref
+        xcolor
+        graphics
+        
+        # for preview and export as html
+        dvisvgm
+        dvipng
+        
+        # Утилиты
+        tools
+        oberdiek
+        scheme-medium
+        titlesec
+
+        wrapfig
+        multirow
+        ulem
+        booktabs
+        amsmath
+        capt-of
+        amsfonts;
     };
   };
   

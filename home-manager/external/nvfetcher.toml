@@ -2,3 +2,11 @@
 src.github = "jsonschema2dataclass/palantir-cli"
 fetch.url = "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/$ver/palantir-cli-$ver-standalone.jar"
 url.name = "palantir-cli-$ver-standalone.jar"
+
+[elixir-ls]
+src.github = "elixir-lsp/elixir-ls"
+fetch.url = "https://github.com/elixir-lsp/elixir-ls/releases/download/$ver/elixir-ls-$ver.zip"
+
+[erlang-lsp]
+src.github = "WhatsApp/erlang-language-platform"
+fetch.url = "https://github.com/WhatsApp/erlang-language-platform/releases/download/$ver/elp-linux-x86_64-unknown-linux-gnu-otp-27.1.tar.gz"

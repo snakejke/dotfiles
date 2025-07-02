@@ -616,11 +616,12 @@ if one already exists."
 ;;         (bg-line-number-inactive unspecified)
 ;;         (bg-line-number-active unspecified)))
 ;;TODO
-(setq modus-themes-vivendi-palette-overrides
-      '((fg-line-number-inactive "gray50")
-        (fg-line-number-active fg-main)
-        (bg-line-number-inactive unspecified)
-        (bg-line-number-active unspecified)))
+    ;; Вот это ?
+;; (setq modus-themes-vivendi-palette-overrides
+;;       '((fg-line-number-inactive "gray50")
+;;         (fg-line-number-active fg-main)
+;;         (bg-line-number-inactive unspecified)
+;;         (bg-line-number-active unspecified)))
 ;;TODO
 (defun my-modus-themes-invisible-dividers (&rest _)
   "Make window dividers for THEME invisible."
@@ -1272,6 +1273,7 @@ if one already exists."
   :config
   ;; (setq lsp-disabled-clients '(tfls clangd rls rnix-lsp semgrep-ls deno-ls))
   ;; (setq lsp-disabled-clients '(semgrep-ls ))
+  (add-to-list 'exec-path (concat (getenv "HOME") "/.local/state/nix/profile/release"))
   (setq lsp-semgrep-languages nil)
     ;; Enable LSP automatically for Erlang files
   ;; (add-hook 'erlang-mode-hook #'lsp)
@@ -1459,76 +1461,6 @@ if one already exists."
        ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=machaon dbname=postgres sslmode=disable"))
       ))
 
-(use-feature eglot
-  ;; :hook
-  ;; (
-  ;;  ;;(python-mode . eglot-ensure)
-  ;;  ;;(c-mode . eglot-ensure)
-  ;;  ;;(c++-mode . eglot-ensure)
-  ;;  ;(java-ts-mode . eglot-ensure)
-  ;;  ;; (scala . eglot-ensure
-  ;;  ))
-  :custom
-  (eglot-autoshutdown t)
-  (eglot-report-progress nil)
-  (eglot-stay-out-of '())
-  (eglot-extend-to-xref t)
-  (eglot-send-changes-idle-time 0.5)
-                     
-  :config
-  (setq eglot-ignored-server-capabilities '(:documentHighlightProvider
-                                            :foldingRangeProvider))
-  (cl-callf plist-put eglot-events-buffer-config :size 0)
-  (push '((java-mode java-ts-mode) . jdtls-command-contact) eglot-server-programs)
-  :init
-  (defun +eglot-register (modes &rest servers)
-    "Register MODES with LSP SERVERS.
-     Examples:
-     (+eglot-register 'vhdl-mode \"vhdl_ls\")
-     (+eglot-register 'lua-mode \"lua-language-server\" \"lua-lsp\")
-     (+eglot-register '(c-mode c++-mode) '(\"clangd\" \"--clang-tidy\" \"-j=12\") \"ccls\")"
-    (declare (indent 0))
-    (with-eval-after-load 'eglot
-      (add-to-list
-       'eglot-server-programs
-       (cons modes (if (length> servers 1)
-                       (eglot-alternatives (ensure-list servers))
-                     (ensure-list (car servers)))))))
-
-)
-
-(use-package eglot-java
-  :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
-  ;; :custom
-  ;; (eglot-java-eclipse-jdt-args
-  ;;  '("-XX:+UseAdaptiveSizePolicy"
-  ;;    "-XX:GCTimeRatio=4"
-  ;;    "-XX:AdaptiveSizePolicyWeight=90"
-  ;;    "-Xmx8G"
-  ;;    "-Xms2G"
-  ;;    ))
-  :config
-  (defun eglot-java-run-main-fork ()
-    "Run a main class."
-    (interactive)
-    (let* ((fqcn (eglot-java--class-fqcn))
-           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
-      (if fqcn
-          (compile
-           (concat "java -cp "
-                   (mapconcat #'identity cp path-separator)
-                   " "
-                   fqcn)
-           t)
-        (user-error "No main method found in this file! Is the file saved?!"))))
-  ;; :hook (java-ts-mode . eglot-java-mode)
-  )
-
-(use-package eglot-booster
-  :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-	:after eglot
-	:config	(eglot-booster-mode))
-
 (use-package eglot-hierarchy
   :ensure (eglot-hierarchy :host github :repo "dolmens/eglot-hierarchy")
   :defer t)
@@ -1629,17 +1561,23 @@ if one already exists."
  :defer t)
 
 (use-package racket-mode
-  :defer t
   :hook (racket-mode . racket-xp-mode)
  ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
  ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
+  :config
+  (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
   )
+
+(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
 
 (use-package geiser
   :defer t
-  
-  :custom
-  (geiser-default-implementation 'guile))
+  ;; :config
+  ;; (setq geiser-default-implementation 'racket)
+  ;; (setq geiser-active-implementations '(racket))
+  ;; (setq geiser-implementations-alist '(((regexp "\\.scm$") racket))))
+  )
+  ;; (geiser-default-implementation 'guile))
 
 (use-package geiser-chez
   :defer t
@@ -1653,9 +1591,15 @@ if one already exists."
   :defer t
   )
 
-;(use-package geiser-racket
-;  :defer t
-;  )
+;; (use-package geiser-racket
+;;  ;; :ensure (geiser-racket :host github :repo "emacsmirror/geiser-racket"
+;;  ;;                        :files (:defaults ("src" "src/*" "bin" "bin/*")))
+;;  ;; :ensure (geiser-racket :files (:defaults ("src/geiser" "bin" ) :wait t))
+;;   :load-path ("~/.config/emacs/geiser-racket"))
+;; (elpaca '(geiser-racket :repo "~/.config/emacs/geiser-racket"))
+;; (elpaca-test
+;;   :init (elpaca (geiser-racket :files (:defaults "src" "bin") :wait t))
+;;   (princ (elpaca-log "geiser-racket | ")))
 
 (use-package macrostep-geiser
   :after (geiser)
@@ -2473,6 +2417,11 @@ Speeds up `org-agenda' remote operations."
   ;; needs to be run after other hooks have acted.
   (run-at-time nil nil #'org-appear--set-elements))
 
+(use-feature ox-latex
+  :after org-mode
+  :custom
+  (org-latex-compiler "lualatex"))
+
 (use-package doct
   :defer t
   :commands (doct))
@@ -2519,10 +2468,10 @@ Speeds up `org-agenda' remote operations."
     "r" 'winner-redo)
   :config (winner-mode))
 
-;; (use-package yasnippet
-;;   :commands (yas-global-mode)
-;;   :custom
-;;   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
+(use-package yasnippet
+  :commands (yas-global-mode)
+  :custom
+  (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
 
 ;; Configure Tempel
 (use-package tempel
@@ -3155,6 +3104,7 @@ append it to ENTRY."
   (disabled-command-function nil "Enable all commands"))
 
 (add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
 
 (require 'extras)
 

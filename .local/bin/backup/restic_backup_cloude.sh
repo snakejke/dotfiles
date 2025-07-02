@@ -6,11 +6,35 @@ readonly REPO_PATH="rclone:$RCLONE_REPO"
 readonly PASSWORD_FILE="$USER_HOME/.password-store/.restic"
 readonly LOG_FILE="$USER_HOME/.local/var/log/restic_cloud_backup.log"
 readonly LOCK_FILE="/tmp/restic_cloud_backup.lock"
-readonly KEEP_LAST=7  # Количество сохраняемых бэкапов
-readonly EXCLUDE_FILE="$USER_HOME/.local/.restic-ignore"
+readonly KEEP_LAST=2  # Количество сохраняемых бэкапов
+readonly EXCLUDE_FILE="$USER_HOME/.local/bin/backup/restic-ignore.txt"
 
-# Настройка логирования
-exec >> "$LOG_FILE" 2>&1
+
+# Опции (инициализация до настройки логирования)
+DRY_RUN=""
+VERBOSE=""
+INTERACTIVE=false
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --dry-run) DRY_RUN="--dry-run"; echo "Запущено в режиме dry-run";;
+        --verbose|-v) VERBOSE="-v"; echo "Включено подробное логирование";;
+        -vv) VERBOSE="-vv"; echo "Включено максимальное подробное логирование";;
+        -vvv) VERBOSE="-vvv"; echo "Включено супер-подробное логирование";;
+        --interactive|-i) INTERACTIVE=true; echo "Включен интерактивный режим";;
+        *) echo "Неизвестный аргумент: $1" >&2; exit 1;;
+    esac
+    shift
+done
+
+# Настройка логирования в зависимости от режима
+if [ "$INTERACTIVE" = false ]; then
+    # В неинтерактивном режиме перенаправляем в лог
+    exec >> "$LOG_FILE" 2>&1
+else
+    # В интерактивном режиме дублируем вывод
+    exec > >(tee -a "$LOG_FILE") 2>&1
+fi
 
 # Проверка наличия необходимых программ
 for cmd in restic rclone; do
@@ -60,20 +84,20 @@ if ! restic -r "$REPO_PATH" --password-file "$PASSWORD_FILE" snapshots &>/dev/nu
     fi
 fi
 
-# Массивы файлов/директорий для резервного копирования
 home_files=(
-    ".pki"
-    "git_backup.log"
+    ".gnupg"
+    ".password-store"
+    ".ssh"
+    "Documents"
+    "Downloads"
+    "Mail"
+    "OrgFiles"
 )
 
 config_files=(
-    "ansible"
-    "btop"
 )
 
 etc_files=(
-    "dnscrypt-proxy"
-    "logrotate.d"
 )
 
 # Формируем массив всех путей для бэкапа
@@ -119,12 +143,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') Начало облачного резерв�
 if [ ${#backup_paths[@]} -gt 0 ]; then
     echo "Создание облачной резервной копии следующих путей:"
     printf '%s\n' "${backup_paths[@]}"
-    
+
+    #             --limit-upload 1024 \
     # Добавляем ограничение скорости для облака
     if ! restic -r "$REPO_PATH" \
             --password-file "$PASSWORD_FILE" \
-            --limit-upload 1024 \
-            backup "${backup_paths[@]}" \
+            backup $DRY_RUN $VERBOSE "${backup_paths[@]}" \
             "${EXCLUDE_ARGS[@]}"; then
         echo "Error: ошибка при создании резервной копии" >&2
         exit 1
@@ -142,4 +166,5 @@ fi
 
 # Вывод статистики
 print_stats
+
 echo "$(date '+%Y-%m-%d %H:%M:%S') Облачное резервное копирование завершено"

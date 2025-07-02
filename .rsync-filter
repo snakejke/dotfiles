@@ -8,6 +8,8 @@
 - stack-*
 - uv
 - uvx
+- hlint
+- noisetorch
 - __erlang_ls
 - elp
 - org.eclipse.lemminx-uber.jar
