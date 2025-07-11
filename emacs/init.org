@@ -2794,6 +2794,10 @@ HTDP + SICP
   :hook (racket-mode . racket-xp-mode)
  ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
  ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
+  :general
+  (general-define-key :states '(normal) :keymaps 'racket-mode-map
+                      (kbd "E") 'racket-eval-last-sexp)
+
   :config
   (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
   )
@@ -2892,7 +2896,16 @@ HTDP + SICP
   :config
   (global-eldoc-mode))
 #+end_src
-
+* eldoc-box
+#+begin_src emacs-lisp :lexical t
+(use-package eldoc-box
+  :hook (prog-mode . +eldoc-box-hover-at-point-mode-maybe)
+  ;; :hook (eglot-managed-mode . +eldoc-box-hover-at-point-mode-maybe)
+  :init
+  (defun +eldoc-box-hover-at-point-mode-maybe (&optional arg)
+    (when (display-graphic-p)
+      (eldoc-box-hover-at-point-mode arg))))
+#+end_src
 * treesit-auto
 #+begin_src emacs-lisp :lexical t :tangle yes 
 (use-package treesit-auto
@@ -3065,6 +3078,13 @@ HTDP + SICP
       (if (bound-and-true-p indent-line-function)
           (funcall indent-line-function)
         (back-to-indentation))))
+#+end_src
+
+* lispy
+#+begin_src emacs-lisp :lexical t
+(use-package lispy
+  :ensure (:host github :repo "enzuru/lispy")
+  :defer t)
 #+end_src
 
 * ejc-sql 
@@ -3648,7 +3668,23 @@ https://github.com/marsmining/ox-twbs
   :after (org)
   :defer t)
 #+end_src
-
+* ox-publish
+#+begin_src emacs-lisp :lexical t
+(use-feature ox-publish
+  :after org
+  :config
+  (setq org-publish-project-alist
+      '(("org"
+         :base-directory "~/OrgFiles/"
+         :publishing-function org-html-publish-to-html
+         :publishing-directory "~/public_html"
+         :section-numbers nil
+         :with-toc nil
+         :html-head "<link rel=\"stylesheet\"
+                    href=\"../other/mystyle.css\"
+                    type=\"text/css\"/>")))
+  )
+#+end_src
 * olivetti
 #+begin_quote
 A simple Emacs minor mode for a nice writing environment.
@@ -4432,16 +4468,16 @@ https://github.com/org-mime/org-mime
 (use-package tempel-collection
   :after tempel)
 #+end_src
-* lsp-snippet
+* TODO lsp-snippet
 #+begin_src emacs-lisp :lexical t
-(use-package lsp-snippet-tempel
-  :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
-  ;; :after lsp-mode tempel 
-  :config
-  ;; (lsp-snippet-tempel-lsp-mode-init)
-  (when (featurep 'lsp-mode)
-    (lsp-snippet-tempel-lsp-mode-init))
-  )
+;; (use-package lsp-snippet-tempel
+;;   :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
+;;   ;; :after lsp-mode tempel 
+;;   :config
+;;   ;; (lsp-snippet-tempel-lsp-mode-init)
+;;   (when (featurep 'lsp-mode)
+;;     (lsp-snippet-tempel-lsp-mode-init))
+;;   )
 #+end_src
 * doom-snippets
 #+begin_src emacs-lisp :lexical t

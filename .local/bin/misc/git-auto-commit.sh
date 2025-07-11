@@ -8,7 +8,7 @@ exec 1> >(logger -s -t $(basename $0)) 2>&1
 
 # Определение переменных окружения
 export HOME=/home/snake  # Укажите правильный путь
-export PATH=/usr/local/bin:/usr/bin:/bin
+# export PATH=/usr/local/bin:/usr/bin:/bin
 
 # Пути
 REPO_PATH="/home/snake/OrgFiles"
@@ -81,51 +81,3 @@ fi
 # Запись даты выполнения
 echo "$today" > "$TODAY_FILE"
 log_message "Скрипт успешно выполнен"
-
-
-# #!/bin/bash
-
-# REPO_PATH="/home/snake/OrgFiles"
-# LOCK_FILE="/tmp/git_commit.lock"
-# TODAY_FILE="/tmp/git_commit_today"
-
-# # Проверяем, не выполнялся ли скрипт сегодня
-# today=$(date +%Y-%m-%d)
-# if [ -f "$TODAY_FILE" ]; then
-#     saved_date=$(cat "$TODAY_FILE")
-#     if [ "$saved_date" = "$today" ]; then
-#         exit 0
-#     fi
-# fi
-
-# # Создаем lock-файл или выходим, если он существует
-# if ! mkdir "$LOCK_FILE" 2>/dev/null; then
-#     exit 0
-# fi
-
-# # Удаляем lock-файл при выходе
-# trap 'rm -rf "$LOCK_FILE"' EXIT
-
-# # Переходим в директорию репозитория
-# cd "$REPO_PATH" || exit 1
-
-# # Получаем текущее состояние репозитория
-# git fetch origin
-# git add -A
-
-# # Проверяем, есть ли изменения
-# if git diff --staged --quiet; then
-#     # Если изменений нет, создаем пустой коммит для активности
-#     echo "$(date)" > activity.txt
-#     git add activity.txt
-#     git commit -m "Добавлена отметка активности: $(date)"
-# else
-#     # Если есть изменения, коммитим их
-#     git commit -m "Добавлено: $(date)"
-# fi
-
-# # Пушим изменения
-# git push origin master
-
-# # Записываем дату выполнения
-# echo "$today" > "$TODAY_FILE"

@@ -1,7 +1,5 @@
 { config, lib, pkgs, ... }:
-
 with lib;
-
 let
   cfg = config.programs.dbeaver;
   
@@ -18,21 +16,30 @@ let
     prePatch = ''
       ${oldAttrs.prePatch or ""}
       
-      # Добавляем пользовательскую настройку после -vmargs
+      # Добавляем -vm опцию перед -vmargs, затем пользовательскую настройку после -vmargs
       awk '
       {
-        print $0;
         if ($0 == "-vmargs") {
+          print "-vm";
+          print "${cfg.vmPath}";
+          print $0;
           print "${cfg.userHome}";
+        } else {
+          print $0;
         }
       }' dbeaver.ini > dbeaver.ini.new
       mv dbeaver.ini.new dbeaver.ini
     '';
   });
-
 in {
   options.programs.dbeaver = {
     enable = mkEnableOption "DBeaver database tool";
+    
+    vmPath = mkOption {
+      type = types.str;
+      default = "${homeDir}/.local/devjava/sdkman/candidates/java/current/bin";
+      description = "Path to Java VM binary directory.";
+    };
     
     userHome = mkOption {
       type = types.str;

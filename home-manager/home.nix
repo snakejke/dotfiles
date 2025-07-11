@@ -123,6 +123,7 @@ in
 
     mitschemeX11
     guile
+    racket
     fpc #pascal 
 
   ] ++ externalPackages;

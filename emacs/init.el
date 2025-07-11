@@ -1564,6 +1564,10 @@ if one already exists."
   :hook (racket-mode . racket-xp-mode)
  ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
  ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
+  :general
+  (general-define-key :states '(normal) :keymaps 'racket-mode-map
+                      (kbd "E") 'racket-eval-last-sexp)
+
   :config
   (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
   )
@@ -1628,6 +1632,14 @@ if one already exists."
   :bind (("M-p" . move-text-up)
          ("M-n" . move-text-down))
   :config (move-text-default-bindings))
+
+(use-package eldoc-box
+  :hook (prog-mode . +eldoc-box-hover-at-point-mode-maybe)
+  ;; :hook (eglot-managed-mode . +eldoc-box-hover-at-point-mode-maybe)
+  :init
+  (defun +eldoc-box-hover-at-point-mode-maybe (&optional arg)
+    (when (display-graphic-p)
+      (eldoc-box-hover-at-point-mode arg))))
 
 (use-package treesit-auto
   :custom
@@ -1764,6 +1776,10 @@ if one already exists."
       (if (bound-and-true-p indent-line-function)
           (funcall indent-line-function)
         (back-to-indentation))))
+
+(use-package lispy
+  :ensure (:host github :repo "enzuru/lispy")
+  :defer t)
 
 (use-package ejc-sql
   :defer t
@@ -2237,6 +2253,21 @@ Use `treemacs' command for old functionality."
   :after (org)
   :defer t)
 
+(use-feature ox-publish
+  :after org
+  :config
+  (setq org-publish-project-alist
+      '(("org"
+         :base-directory "~/OrgFiles/"
+         :publishing-function org-html-publish-to-html
+         :publishing-directory "~/public_html"
+         :section-numbers nil
+         :with-toc nil
+         :html-head "<link rel=\"stylesheet\"
+                    href=\"../other/mystyle.css\"
+                    type=\"text/css\"/>")))
+  )
+
 (use-package olivetti
   :commands (olivetti-mode))
 
@@ -2492,14 +2523,14 @@ Speeds up `org-agenda' remote operations."
 (use-package tempel-collection
   :after tempel)
 
-(use-package lsp-snippet-tempel
-  :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
-  ;; :after lsp-mode tempel 
-  :config
-  ;; (lsp-snippet-tempel-lsp-mode-init)
-  (when (featurep 'lsp-mode)
-    (lsp-snippet-tempel-lsp-mode-init))
-  )
+;; (use-package lsp-snippet-tempel
+;;   :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
+;;   ;; :after lsp-mode tempel 
+;;   :config
+;;   ;; (lsp-snippet-tempel-lsp-mode-init)
+;;   (when (featurep 'lsp-mode)
+;;     (lsp-snippet-tempel-lsp-mode-init))
+;;   )
 
 (use-package doom-snippets
 :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
