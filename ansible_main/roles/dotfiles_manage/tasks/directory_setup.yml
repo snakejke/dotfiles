@@ -30,11 +30,21 @@
     path: "{{ dotfiles_dir }}/etc/{{ item }}"
     state: directory
   loop:
-    - pam.d
-    - profile.d
-    - smtpd
-    - sv
-    - dnscrypt-proxy 
-    - unbound 
+    - 'pam.d'
+    - 'profile.d'
+    - 'smtpd'
+    - 'dnscrypt-proxy'
+    - 'unbound'
+    - 'sv'
+    - 'sv/agetty-autologin-tty1'
+    - 'sv/amneziavpn'
+    - 'sv/runsvdir-snake'
+    - 'sv/determinate-nixd'
+    - 'sv/nix-daemon'
+    - 'dracut.conf.d'
+    - 'iptables'
+    - 'sudoers.d'
+    - 'X11'
+    - 'zsh'
   tags:
     - create_dirs

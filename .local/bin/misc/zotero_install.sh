@@ -1,8 +1,4 @@
-#!/bin/bash
-
-# Указываем последнюю версию Zotero для автоматического обновления в будущем
-ZOTERO_VERSION="7.0.3"
-DOWNLOAD_URL="https://download.zotero.org/client/release/$ZOTERO_VERSION/Zotero-${ZOTERO_VERSION}_linux-x86_64.tar.bz2"
+ero.org/client/release/$ZOTERO_VERSION/Zotero-${ZOTERO_VERSION}_linux-x86_64.tar.bz2"
 TMP_DIR="/tmp/zotero_install"
 INSTALL_DIR="/opt/zotero"
 

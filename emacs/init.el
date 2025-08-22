@@ -1264,7 +1264,7 @@ if one already exists."
   (lsp-completion-show-kind nil)
   (lsp-completion-show-detail nil)
   (lsp-semgrep-languages nil)
-  ;; (lsp-enable-snippet nil)
+  (lsp-enable-snippet t)
   ;; :init
   ;;   (setq lsp-enabled-clients '(jedi 
   ;;                             sqls
@@ -2078,7 +2078,8 @@ Use `treemacs' command for old functionality."
   
     (setq org-tags-column -120) ;; так лучше 
     (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
-    (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ? 
+    (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ?
+    (setq org-bookmark-names-plist nil)  ;;org-capture. don't automatically set bookmarks
 
   (defun +md-to-org-region (start end)
     "Convert region from markdown to org, replacing selection"
@@ -2125,17 +2126,18 @@ Use `treemacs' command for old functionality."
     (org-update-statistics-cookies "ALL"))
 
   ;; Offered a patch to fix this upstream. Too much bikeshedding for such a simple fix.
-  (defun +org-tags-crm (fn &rest args)
-    "Workaround for bug which excludes \",\" when reading tags via `completing-read-multiple'.
-  I offered a patch to fix this, but it was met with too much resistance to be
-  worth pursuing."
-    (let ((crm-separator "\\(?:[[:space:]]*[,:][[:space:]]*\\)"))
-      (unwind-protect (apply fn args)
-        (advice-remove #'completing-read-multiple #'+org-tags-crm))))
+  ;; TODO:
+  ;; (defun +org-tags-crm (fn &rest args)
+  ;;   "Workaround for bug which excludes \",\" when reading tags via `completing-read-multiple'.
+  ;; I offered a patch to fix this, but it was met with too much resistance to be
+  ;; worth pursuing."
+  ;;   (let ((crm-separator "\\(?:[[:space:]]*[,:][[:space:]]*\\)"))
+  ;;     (unwind-protect (apply fn args)
+  ;;       (advice-remove #'completing-read-multiple #'+org-tags-crm))))
 
-  (define-advice org-set-tags-command (:around (fn &rest args) comma-for-crm)
-    (advice-add #'completing-read-multiple :around #'+org-tags-crm)
-    (apply fn args))
+  ;; (define-advice org-set-tags-command (:around (fn &rest args) comma-for-crm)
+  ;;   (advice-add #'completing-read-multiple :around #'+org-tags-crm)
+  ;;   (apply fn args))
 
   (add-to-list 'org-emphasis-alist
              '("*" (bold :foreground "#f1e00a")
@@ -2236,15 +2238,40 @@ Use `treemacs' command for old functionality."
                org-babel-expand-body:generic)
     :config (add-to-list 'org-babel-load-languages '(shell . t))
     (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
-                )
+  (use-feature ob-java
+    :commands (org-babel-execute:java)
+    :config
+    (nconc org-babel-default-header-args:java
+           '((:dir . nil)
+             (:results . "output")))
+  ))
 
-(use-package org-roam
-  :ensure (org-roam :host github :repo "org-roam/org-roam")
-  :disabled t
-  :general
-  (+general-global-application
-    "or" '(:ignore t :which-key "org-roam-setup"))
-  :init (setq org-roam-v2-ack t))
+(use-package ob-mermaid
+  :after org
+  :config
+  ;; Add mermaid to org-babel languages once ob-mermaid is available
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((mermaid . t)))))
+
+(use-package denote
+  :hook (dired-mode . denote-dired-mode)
+  :bind
+  (("C-c n n" . denote)
+   ("C-c n r" . denote-rename-file)
+   ("C-c n l" . denote-link)
+   ("C-c n b" . denote-backlinks)
+   ("C-c n d" . denote-dired)
+   ("C-c n g" . denote-grep))
+  :config
+  (setq denote-directory (expand-file-name "~/OrgFiles/"))
+
+  ;; Automatically rename Denote buffers when opening them so that
+  ;; instead of their long file name they have, for example, a literal
+  ;; "[D]" followed by the file's title.  Read the doc string of
+  ;; `denote-rename-buffer-format' for how to modify this.
+  (denote-rename-buffer-mode 1))
 
 (use-package ox-gfm :defer t)
 
@@ -2256,20 +2283,363 @@ Use `treemacs' command for old functionality."
 (use-feature ox-publish
   :after org
   :config
+  ;; (setq my-html-preamble
+  ;;     (if (file-exists-p "~/Documents/mysite/template/preamble.html")
+  ;;         (with-temp-buffer
+  ;;           (insert-file-contents "~/Documents/mysite/template/preamble.html")
+  ;;           (buffer-string))
+  ;;       ""))
+  (setq org-publish-timestamp-directory "~/Documents/mysite/")
+
+  (defun my-html-postamble (_plist)
+    "Return HTML postamble with a link to external JS file."
+    (concat "<script src=\"static/js/main.js\"></script>\n"))
+
+  (defun my-html-preamble (plist)
+    "Load preamble from ~/Documents/mysite/template/preamble.html dynamically"
+    (let ((preamble-file "~/Documents/mysite/template/preamble.html"))
+      (if (file-exists-p preamble-file)
+          (with-temp-buffer
+            (insert-file-contents preamble-file)
+            (buffer-string))
+        "")))
+  
+  (setq org-export-use-babel nil)
   (setq org-publish-project-alist
-      '(("org"
-         :base-directory "~/OrgFiles/"
+      `(
+        ("orgfiles"
+         :base-directory "~/OrgFiles/Java_Вопросы/Reworked_Questions/"
+         :base-extension "org"
+         :publishing-directory "~/Documents/mysite/"
          :publishing-function org-html-publish-to-html
-         :publishing-directory "~/public_html"
-         :section-numbers nil
+         :html-preamble my-html-preamble
+         :html-postamble my-html-postamble
+         ;; :html-preamble ,my-html-preamble
+         :with-broken-links t
          :with-toc nil
-         :html-head "<link rel=\"stylesheet\"
-                    href=\"../other/mystyle.css\"
-                    type=\"text/css\"/>")))
-  )
+         :section-numbers nil
+         :html-head "<link rel=\"stylesheet\" href=\"static/css/main.css\" type=\"text/css\"/>
+<link rel=\"stylesheet\" href=\"static/css/spa.css\" type=\"text/css\"/>")
+        
+        ("images"
+         :base-directory "~/OrgFiles/Java_Вопросы/Reworked_Questions/Attachments/"
+         :recursive t
+         :base-extension "jpg\\|gif\\|png"
+         :publishing-directory "~/Documents/mysite/Attachments/"
+         :publishing-function org-publish-attachment)
+        ("static"
+         :base-directory "~/Documents/mysite/static/"
+         :base-extension "js\\|css"
+         :recursive t
+         :base-extension ""
+         :publishing-function org-publish-attachment
+
+
+        ))))
 
 (use-package olivetti
   :commands (olivetti-mode))
+
+(use-feature org-capture
+  :config
+  ;; (define-advice org-capture-fill-template (:around (fn &rest args) comma-for-crm)
+  ;;   (advice-add #'completing-read-multiple :around #'+org-tags-crm)
+  ;;   (apply fn args))
+  ;; (add-hook 'org-capture-mode-hook #'evil-insert-state)
+
+;;Utility functions for use inside Org capture templates.
+;; (defun +org-schedule-relative-to-deadline ()
+;;   "For use with my appointment capture template. User is first prompted for an
+;;   optional deadline. Then an optional schedule time. The scheduled default time is
+;;   the deadline. This makes it easier to schedule relative to the deadline using
+;;   the -- or ++ operators.
+
+;;   Quitting during either date prompt results in an empty string for that prompt."
+;;   (interactive)
+;;   (condition-case nil
+;;       (org-deadline nil)
+;;     (quit nil))
+;;   (let ((org-overriding-default-time (or (org-get-deadline-time (point))
+;;                                          org-overriding-default-time)))
+;;     (org-schedule nil (org-element-interpret-data
+;;                        (org-timestamp-from-time
+;;                         org-overriding-default-time
+;;                         (and org-overriding-default-time 'with-time))))
+;;     (let ((org-log-reschedule nil))
+;;       (condition-case nil
+;;           (org-schedule nil)
+;;         (quit (org-schedule '(4)))))))
+
+;; (defun +org-capture-again (&optional arg)
+;;   "Call `org-capture' with last selected template.
+;;   Pass ARG to `org-capture'.
+;;   If there is no previous template, call `org-capture'."
+;;   (interactive "P")
+;;   (org-capture arg (plist-get org-capture-plist :key)))
+
+(defun +org-capture-here ()
+  "Convenience command to insert a template at point"
+  (interactive)
+  (org-capture 0))
+
+;; (defun +org-capture-property-drawer ()
+;;   "Hook function run durning `org-capture-mode-hook'.
+;;   If a template has a :properties keyword, add them to the entry."
+;;   (when (eq (org-capture-get :type 'local) 'entry)
+;;     (when-let ((properties (doct-get :properties t)))
+;;       (dolist (property properties)
+;;         (org-set-property
+;;          (symbol-name (car property))
+;;          (replace-regexp-in-string
+;;           "\n.*" ""
+;;           (org-capture-fill-template
+;;            (doct--replace-template-strings (cadr property)))))))))
+
+;; (defun +org-capture-todo ()
+;;   "Set capture entry to TODO automatically"
+;;   (org-todo "TODO"))
+
+(setq org-capture-templates
+      (doct `(("Appointment"
+               :keys "a"
+               :id "2cd2f75e-b600-4e9b-95eb-6baefeaa61ac"
+               :properties ((Created "%U"))
+               ;; :template ("* %^{appointment} %^g" "%?")
+               ;; :hook (lambda ()
+               ;;         (+org-capture-property-drawer)
+               ;;         (unless org-note-abort (+org-schedule-relative-to-deadline)))
+               )
+
+              ("Interview Task"
+               :keys "i"
+               :file "~/Documents/interview-tasks.org" ; Specify your target Org file
+               ;; :headline "Tasks"            ; Optional: Specify a headline to file under
+               :type plain                  ; Entry type is an Org node with a headline
+               :function (lambda () (org-back-to-heading t) (org-end-of-meta-data t)) ; После существующего :PROPERTIES:
+               :template (
+                          ":PROPERTIES:"
+                          ":TaskType: %^{TaskType| |algorithm|system design|sql|writecode|review}"
+                          ":Difficulty: %^{Difficulty| |easy|medium|hard}"
+                          ":Topics: %^{Topics| |array|hashmap|tree|graph|DP|transactions|spring|java_core|}"
+                          ":Company: %^{Company}"
+                          ":Interviewers: %^{Interviewers}"
+                          ":Date: %^{Date|%t}"
+                          ":END:"
+                          "%?")
+               ;; :prepend t                   ; Insert at the beginning of the headline
+               :immediate-finish t ; Завершить сразу после заполнения
+               )
+              
+              ;; ("Account"
+              ;;  :keys "A"
+              ;;  :properties ((Created "%U"))
+              ;;  :template ("* TODO %^{description} %^g" "%?")
+              ;;  :hook +org-capture-property-drawer
+              ;;  :children (("Buy"
+              ;;              :keys "b"
+              ;;              :id "e1dcca6e-6d85-4c8e-b935-d50492b2cc58")
+              ;;             ("Borrow"
+              ;;              :keys "B"
+              ;;              :id "a318b8ba-ed1a-4767-84bd-4f45eb409aab"
+              ;;              :template ("* TODO Return %^{description} to %^{person} %^g"
+              ;;                         "DEADLINE: %^T"
+              ;;                         "%?"))
+              ;;             ("Loan"
+              ;;              :keys "l"
+              ;;              :id "cfdd301d-c437-4aae-9738-da022eae8056"
+              ;;              :template ("* TODO Get %^{item} back from %^{person} %^g"
+              ;;                         "DEADLINE: %^T"
+              ;;                         "%?"))
+              ;;             ("Favor"
+              ;;              :keys "f"
+              ;;              :id "9cd02444-2465-4692-958b-f73edacd997f")
+              ;;             ("Sell"
+              ;;              :keys "s"
+              ;;              :id "9c4a39c5-3ba6-4665-ac43-67e72f461c15")))
+              ;; ("Bookmark"
+              ;;  :keys "b"
+              ;;  :hook +org-capture-property-drawer
+              ;;  :id "7c20c705-80a3-4f5a-9181-2ea14a18fa75"
+              ;;  :properties ((Created "%U"))
+              ;;  :template ("* [[%x][%^{title}]] %^g" "%?"))
+              ;; ("Health"
+              ;;  :keys "h"
+              ;;  :children (("Blood Pressure"
+              ;;              :keys "b"
+              ;;              :type table-line
+              ;;              :id "4d0c16dd-ce99-4e1b-bf9f-fb10802e48a1"
+              ;;              :template "%(+compute-blood-pressure-table-row)|%?|"
+              ;;              :table-line-pos "II-1")))
+              ;; ("Listen"
+              ;;  :keys "l"
+              ;;  :hook (lambda () (+org-capture-property-drawer) (+org-capture-todo))
+              ;;  :template ("* TODO %^{Title} %^g" "%^{Genre}")
+              ;;  :children (("Audio Book"
+              ;;              :keys "a"
+              ;;              :id "55a01ad5-24f5-40ec-947c-ed0bc507d4e8"
+              ;;              :template "* TODO %^{Title} %^g %^{Author}p %^{Year}p %^{Genre}p")
+              ;;             ("Music"
+              ;;              :keys "m"
+              ;;              :id "dc9cfb0f-c65b-4ebe-a082-e751bb3261a6"
+              ;;              :template "%(wikinforg-capture \"album\")")
+              ;;             ("Podcast"
+              ;;              :keys "p"
+              ;;              :id "881ee183-37aa-4e76-a5af-5be8446fc346"
+              ;;              :properties ((URL "[[%^{URL}][%^{Description}]]")))
+              ;;             ("Radio"
+              ;;              :keys "r"
+              ;;              :id "78da1d3e-c83a-4769-9fb2-91e8ff7ab5da")))
+              ;; ("Note"
+              ;;  :keys "n"
+              ;;  :file ,(defun +org-capture-repo-note-file ()
+              ;;           "Find note for current repository."
+              ;;           (require 'projectile)
+              ;;           (let* ((coding-system-for-write 'utf-8)
+              ;;                  ;;@MAYBE: extract this to a global variable.
+              ;;                  (notedir "~/Documents/devops/repo-notes/")
+              ;;                  (project-root (projectile-project-root))
+              ;;                  (name (concat (file-name-base (directory-file-name project-root)) ".org"))
+              ;;                  (path (expand-file-name name (file-truename notedir))))
+              ;;             (with-current-buffer (find-file-noselect path)
+              ;;               (unless (derived-mode-p 'org-mode) (org-mode)
+              ;;                       ;;set to utf-8 because we may be visiting raw file
+              ;;                       (setq buffer-file-coding-system 'utf-8-unix))
+              ;;               (when-let ((headline (doct-get :headline)))
+              ;;                 (unless (org-find-exact-headline-in-buffer headline)
+              ;;                   (goto-char (point-max))
+              ;;                   (insert "* " headline)
+              ;;                   (org-set-tags (downcase headline))))
+              ;;               (unless (file-exists-p path) (write-file path))
+              ;;               path)))
+              ;;  :template (lambda () (concat  "* %{todo-state} " (when (y-or-n-p "Link? ") "%A\n") "%?"))
+              ;;  :todo-state "TODO"
+              ;;  :children (("bug" :keys "b" :headline "Bug")
+              ;;             ("design"        :keys "d" :headline "Design")
+              ;;             ("documentation" :keys "D" :headline "Documentation")
+              ;;             ("enhancement"   :keys "e" :headline "Enhancement" :todo-state "IDEA")
+              ;;             ("feature"       :keys "f" :headline "Feature"     :todo-state "IDEA")
+              ;;             ("optimization"  :keys "o" :headline "Optimization")
+              ;;             ("miscellaneous" :keys "m" :headline "Miscellaneous")
+              ;;             ("security"      :keys "s" :headline "Security")))
+              ;; ("Play"
+              ;;  :keys "p"
+              ;;  :id "be517275-3779-477f-93cb-ebfe0204b614"
+              ;;  :hook +org-capture-todo
+              ;;  :template "%(wikinforg-capture \"game\")")
+              ;; ("Read"
+              ;;  :keys "r"
+              ;;  :template "%(wikinforg-capture \"book\")"
+              ;;  :hook +org-capture-todo
+              ;;  :children (("fiction"
+              ;;              :keys "f"
+              ;;              :id "0be106fc-a920-4ab3-8585-77ce3fb793e8")
+              ;;             ("non-fiction"
+              ;;              :keys "n"
+              ;;              :id "73c29c94-fb19-4012-ab33-f51158c0e59b")))
+              ;; ("Say"
+              ;;  :keys "s"
+              ;;  :children (("word" :keys "w"
+              ;;              :id "55e43a15-5523-49a6-b16c-b6fbae337f05"
+              ;;              :template ("* %^{Word}" "%?"))
+              ;;             ("Phrase" :keys "p"
+              ;;              :id "c3dabe22-db69-423a-9737-f90bfc47238a"
+              ;;              :template ("* %^{Phrase}" "%?"))
+              ;;             ("Quote" :keys "q"
+              ;;              :id "8825807d-9662-4d6c-a28f-6392d3c4dbe2"
+              ;;              :template ("* %^{Quote}" "%^{Quotee}p"))))
+              ;; ("Todo" :keys "t"
+              ;;  :id "0aeb95eb-25ee-44de-9ef5-2698514f6208"
+              ;;  :hook (lambda ()
+              ;;          (+org-capture-property-drawer)
+              ;;          ;;swallow org-todo quit so we don't abort the whole capture
+              ;;          (condition-case nil (org-todo) (quit nil)))
+              ;;  :properties ((Created "%U"))
+              ;;  :template ("* %^{description} %^g" "%?"))
+              ;; ("use-package" :keys "u"
+              ;;  :file ,(expand-file-name "init.org" user-emacs-directory)
+              ;;  :function
+              ;;  ,(defun +org-capture-use-package-form ()
+              ;;     "place point for use-package capture template."
+              ;;     (org-fold-show-all)
+              ;;     (goto-char (org-find-entry-with-id "f8affafe-3a4c-490c-a066-006aeb76f628"))
+              ;;     (org-narrow-to-subtree)
+              ;;     ;;popping off parent headline, evil and general.el since they are order dependent.
+              ;;     (when-let* ((name (read-string "package name: "))
+              ;;                 (headlines (nthcdr 4 (caddr (org-element-parse-buffer 'headline 'visible))))
+              ;;                 (packages (mapcar (lambda (headline) (cons (plist-get (cadr headline) :raw-value)
+              ;;                                                            (plist-get (cadr headline) :contents-end)))
+              ;;                                   headlines))
+              ;;                 (target (let ((n (downcase name)))
+              ;;                           (cdr
+              ;;                            (cl-some (lambda (package) (and (string-greaterp n (downcase (car package))) package))
+              ;;                                     (nreverse packages))))))
+              ;;       ;;put name on template's doct plist
+              ;;       (setq org-capture-plist
+              ;;             (plist-put org-capture-plist :doct
+              ;;                        (plist-put (org-capture-get :doct) :use-package name)))
+              ;;       (goto-char target)
+              ;;       (org-end-of-subtree)
+              ;;       (open-line 1)
+              ;;       (forward-line 1)))
+              ;;  :type plain
+              ;;  :empty-lines-after 1
+              ;;  :template ("** %(doct-get :use-package)"
+              ;;             "#+begin_quote"
+              ;;             "%(read-string \"package description:\")"
+              ;;             "#+end_quote"
+              ;;             "#+begin_src emacs-lisp"
+              ;;             "(use-package %(doct-get :use-package)%?)"
+              ;;             "#+end_src"))
+
+            ;;  ("Watch":keys "w"
+            ;;   :template "%(wikinforg-capture \"%{entity}\")"
+            ;;   :hook +org-capture-todo
+            ;;   :children (("Film" :keys "f" :id "a730a2db-7033-40af-82c1-9b73528ab7d9" :entity "film")
+            ;;              ("TV" :keys "t" :id "4a18a50e-909e-4d36-aa7a-b09e8c3b01f8" :entity "show")
+            ;;              ("Presentation" :keys "p" :id "343fe4f4-867a-4033-b31a-8b57aba0345e"
+            ;;               :template "* %^{Title} %^g %^{Year}p")))
+
+              )))
+
+;; =make-capture-frame= cobbled together from:
+;; - http://cestlaz.github.io/posts/using-emacs-24-capture-2/
+;; - https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection
+;; Don't use this within Emacs. Rather, invoke it when connecting an Emacs client to a server with:
+;;emacsclient --create-frame \
+;;            --socket-name 'capture' \
+;;            --alternate-editor='' \
+;;            --frame-parameters='(quote (name . "capture"))' \
+;;            --no-wait \
+;;            --eval "(+org-capture-make-frame)"
+
+;; (defun +org-capture-delete-frame (&rest _args)
+;;   "Delete frame with a name frame-parameter set to \"capture\""
+;;   (when (and (daemonp) (string= (frame-parameter (selected-frame) 'name) "capture"))
+;;     (delete-frame)))
+;; (add-hook 'org-capture-after-finalize-hook #'+org-capture-delete-frame 100)
+
+;; (defun +org-capture-make-frame ()
+;;   "Create a new frame and run org-capture."
+;;   (interactive)
+;;   (select-frame-by-name "capture")
+;;   (delete-other-windows)
+;;   (cl-letf (((symbol-function 'switch-to-buffer-other-window) #'switch-to-buffer))
+;;     (condition-case err
+;;         (org-capture)
+;;       ;; "q" signals (error "Abort") in `org-capture'
+;;       ;; delete the newly created frame in this scenario.
+;;       (user-error (when (string= (cadr err) "Abort") (delete-frame))))))
+
+;; :commands (+org-capture-make-frame)
+:general
+(:states 'normal
+         :keymaps 'org-capture-mode-map
+         ",c" 'org-capture-finalize
+         ",k" 'org-capture-kill
+         ",r" 'org-capture-refile)
+;; :custom
+;; (org-capture-dir (concat (getenv "HOME") "/Documents/todo/"))
+)
 
 (use-package org-fancy-priorities
   :commands (org-fancy-priorities-mode)
@@ -2408,10 +2778,6 @@ Speeds up `org-agenda' remote operations."
 
 (use-package org-download
   :after org 
-  ;; :hook (
-  ;;        (org-mode . org-download-enable)
-  ;;        (org-mode . my-org-download-set-dir)
-  ;;        )
   :custom
   (org-download-method 'directory)
   (org-download-image-org-width 600)
@@ -2420,10 +2786,6 @@ Speeds up `org-agenda' remote operations."
   (org-download-link-format-function #'org-download-link-format-function-default)
   :config
   (setq org-download-annotate-function (lambda (_link) "")) ;; #+Downloaded
-  ;; (defun my-org-download-set-dir ()
-  ;;   "Set `org-download-image-dir` to the directory of the current 
-  ;;       buffer's file."
-  ;;   (setq-local org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))))
 
   (defun +my-org-download-set-dir ()
     (interactive) ;; TODO temp fix 
@@ -2523,14 +2885,15 @@ Speeds up `org-agenda' remote operations."
 (use-package tempel-collection
   :after tempel)
 
-;; (use-package lsp-snippet-tempel
-;;   :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
-;;   ;; :after lsp-mode tempel 
-;;   :config
-;;   ;; (lsp-snippet-tempel-lsp-mode-init)
-;;   (when (featurep 'lsp-mode)
-;;     (lsp-snippet-tempel-lsp-mode-init))
-;;   )
+(use-package lsp-snippet-tempel
+  :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
+  :config
+  (when (featurep 'lsp-mode)
+    ;; Initialize lsp-snippet -> tempel in lsp-mode
+    (lsp-snippet-tempel-lsp-mode-init))
+  (when (featurep 'eglot)
+    ;; Initialize lsp-snippet -> tempel in eglot
+    (lsp-snippet-tempel-eglot-init)))
 
 (use-package doom-snippets
 :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
@@ -2934,6 +3297,8 @@ append it to ENTRY."
   (holiday-oriental-holidays nil))
 
 (use-package hl-todo
+  :hook ((org-mode . hl-todo-mode)
+         (prog-mode . hl-todo-mode))
   :config
   (setq hl-todo-highlight-punctuation ":")
   (global-hl-todo-mode +1))

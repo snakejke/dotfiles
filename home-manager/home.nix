@@ -33,7 +33,6 @@ in
     ripgrep
     bat
     gdu
-    #firefox
     lf
     ranger
     xdotool
@@ -47,7 +46,7 @@ in
     restic
     rclone
     qtpass
-    #nyxt
+    drill
     qbittorrent
     podman-tui
     pngquant
@@ -56,7 +55,8 @@ in
     pandoc
     papirus-icon-theme
     nsxiv
-    maim 
+    maim
+    slop
     lnav
     neovim
     # i3lock https://github.com/nix-community/home-manager/issues/7027
@@ -73,12 +73,29 @@ in
     dig
     tree
     curl
+    mermaid-cli
+    bridge-utils # brctl
+    zstd 
 
+    #pdf tools
+    poppler-utils
+    mupdf-headless
+    ocrmypdf
+    librsvg # rsvg-convert
+    wkhtmltopdf # rendering web pages to PDF or images
+    ghostscript
+
+    
     #lsp
     nil # nix 
 
     ansible
     ansible-lint
+    #
+    (pkgs.k3d.override {
+      k3sVersion = "1.30.14-k3s2";
+    })
+    kubectl
 
     foliate
 
@@ -87,7 +104,7 @@ in
     exercism
     koodo-reader
     
-    #google-chrome
+    #google-chrome ugly fonts 
     #discord need gpu accel 
 
     nettools
@@ -102,13 +119,12 @@ in
     adapta-gtk-theme
     
     
-    #mail
-    #fdm
-    
     #p7zip # bin 7z
     _7zz-rar # 7zz 
 
     hexapdf # pdf cover 
+
+    pv # Pipe Viewer
     
     #monitoring
     btop
@@ -118,8 +134,6 @@ in
     zsh-autosuggestions
 
     nvfetcher
-    #palantir-cli
-    # aider-chat-full
 
     mitschemeX11
     guile
@@ -186,38 +200,34 @@ in
     enable = true;
     extraPackages = tpkgs: {
       inherit (tpkgs)
-        # Основа
         collection-basic
         collection-latex
         collection-fontsextra
         
-        # Русский язык (обязательно)
         babel-russian
         hyphen-russian
         cyrillic
         lh
         cm-super
         luahyphenrules
-        
-        # Для резюме
+
+        svg
         moderncv
         fontawesome
         
-        # Базовое форматирование
         geometry
         enumitem
         hyperref
         xcolor
         graphics
+        fancyvrb
         
-        # for preview and export as html
         dvisvgm
         dvipng
         
-        # Утилиты
         tools
         oberdiek
-        scheme-medium
+        scheme-medium 
         titlesec
 
         wrapfig

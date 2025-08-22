@@ -33,7 +33,7 @@ x-scheme-handler/chrome=userapp-Firefox-UXEVZ2.desktop;
 application/x-extension-htm=userapp-Firefox-UXEVZ2.desktop;
 application/x-extension-html=userapp-Firefox-UXEVZ2.desktop;
 application/x-extension-shtml=userapp-Firefox-UXEVZ2.desktop;
-application/xhtml+xml=userapp-Firefox-UXEVZ2.desktop;
+application/xhtml+xml=emacsclient.desktop;userapp-Firefox-UXEVZ2.desktop;
 application/x-extension-xhtml=userapp-Firefox-UXEVZ2.desktop;
 application/x-extension-xht=userapp-Firefox-UXEVZ2.desktop;
 x-scheme-handler/tg=telegram-web.desktop
@@ -43,6 +43,7 @@ video/x-matroska=mpv.desktop;vlc.desktop;org.xfce.Parole.desktop;
 image/vnd.djvu+multipage=com.github.johnfactotum.Foliate.desktop;org.pwmt.zathura-pdf-mupdf.desktop;
 text/markdown=emacsclient.desktop;nvim.desktop;
 audio/x-mpegurl=emacsclient.desktop;
+audio/x-opus+ogg=mpv.desktop;
 
 [Default Applications]
 image/gif=nsxiv.desktop
@@ -74,6 +75,7 @@ application/x-extension-xht=userapp-Firefox-UXEVZ2.desktop
 x-scheme-handler/about=google-chrome.desktop
 x-scheme-handler/unknown=google-chrome.desktop
 image/vnd.djvu+multipage=org.pwmt.zathura-pdf-mupdf.desktop
+text/x-shellscript=emacsclient.desktop
 
 [Removed Associations]
 image/jpeg=engineer.atlas.Nyxt.desktop;

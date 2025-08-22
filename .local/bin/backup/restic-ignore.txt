@@ -1,2 +1,5 @@
 /home/snake/Documents/Videos/interviews/**/*
 /home/snake/.local/services/**/*
+/home/snake/.gnupg/crls.d/**/*
+/home/snake/.gnupg/openpgp-revocs.d/**/*
+/home/snake/.gnupg/private-keys-v1.d/**/*

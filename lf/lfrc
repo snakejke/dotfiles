@@ -49,16 +49,38 @@ cmd moveto ${{
 	notify-send "🚚 File(s) moved." "File(s) moved to $destpath."
 }}
 
-map D delete
-cmd delete ${{
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	set -f
-	printf "%s\n\t" "$fx"
-	printf "delete?[y/N]"
-	read ans
-	[ $ans = "y" ] && rm -rf -- $fx
-            }}
+# map D delete
+# cmd delete ${{
+# 	clear; tput cup $(($(tput lines)/3)); tput bold
+# 	set -f
+# 	printf "%s\n\t" "$fx"
+# 	printf "delete?[y/N]"
+# 	read ans
+# 	[ $ans = "y" ] && rm -rf -- $fx
+#             }}
 
+# Показываем меню команд при нажатии D
+map D %{{
+  echo "D - delete permanently"
+  echo "T - move to trash"
+  echo "C - cancel"
+}}
+
+# Обработка выбора
+cmd delete-handler ${{
+  choice=$(echo "$1" | cut -d' ' -f1)
+  case $choice in
+    D) lf -remote "send $id delete";;
+    T) lf -remote "send $id trash";;
+    *) ;;
+  esac
+}}
+
+# Перехватываем ввод после показа меню
+cmap D %{{
+  lf -remote "send $id delete-handler \'%\'"
+}}
+#################################################
 map aa ${{
     # create a new git repo
     git init

@@ -60,6 +60,7 @@ export PASSWORD_STORE_DIR="$HOME/.password-store"
 export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch/.notmuch-config"
 #
 export W3M_DIR="$XDG_DATA_HOME/w3m"
+export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
 #Go
 export GOPATH="$XDG_DATA_HOME/go"
 path=($XDG_DATA_HOME/go/bin $path)
@@ -87,6 +88,8 @@ export STACK_XDG=1
 #
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker/config"
 export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
+export KUBECONFIG="$XDG_CONFIG_HOME/kube/config" 
+export KUBECACHEDIR="$XDG_CACHE_HOME/kube"
 #
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 #
@@ -103,7 +106,7 @@ export PNPM_HOME="$XDG_DATA_HOME/pnpm"
 path=($PNPM_HOME $path)
 path=($XDG_CONFIG_HOME/npm/node_modules/bin $path)
 #
-export EDITOR="emacsclient -c -n"
+export EDITOR="emacsclient -c"
 export VISUAL=$EDITOR
 #Ansible
 export ANSIBLE_HOME="$XDG_CONFIG_HOME/ansible"

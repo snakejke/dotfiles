@@ -8,26 +8,8 @@
     delete: yes
   loop:
     - 'dracut.conf.d'
-    - 'iptables'
     - 'sudoers.d'
     - 'X11'
-
-- name: Ensure parent directories exist for individual files
-  become: true
-  become_method: sudo
-  file:
-    path: "{{ dotfiles_dir }}/etc/{{ item | dirname }}"
-    state: directory
-  loop:
-    - 'pam.d/login'
-    - 'profile.d/fixdbus.sh'
-    - 'smtpd/smtpd.conf'
-    - 'zsh/zshenv'
-    - 'sv/agetty-autologin-tty1/run'
-    - 'sv/amneziavpn/run'
-    - 'sv/runsvdir-snake/run'
-    - 'sv/determinate-nixd/run'
-    - 'sv/nix-daemon/run'
 
 - name: Copy system configuration files
   become: true
@@ -39,6 +21,7 @@
   loop:
     - 'dnscrypt-proxy/dnscrypt-proxy.toml'
     - 'unbound/unbound.conf'
+    - 'iptables/iptables.rules'
     - 'pam.d/login'
     - 'profile.d/fixdbus.sh'
     - 'profile.d/nix.sh'
@@ -49,8 +32,8 @@
     - 'sv/nix-daemon/run'
     - 'sv/determinate-nixd/run'
     - 'dhcpcd.conf'
-    - 'zshenv'
-    - 'environment'
+    - 'zsh/zshenv'
+    - 'nftables.conf'
     - 'resolv.conf'
     - 'rsyslog.conf'
     - 'sysctl.conf'

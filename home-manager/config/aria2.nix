@@ -4,12 +4,13 @@
   programs.aria2 = {
     enable = true;
     settings = {
-      # Основные настройки загрузки
+
       dir = "\${HOME}/Downloads";
       save-session = "\${HOME}/.config/aria2/aria2.session";
       save-session-interval = 60;
-      max-concurrent-downloads = 5;
+      max-concurrent-downloads = 3;
       continue = true;
+      
       max-overall-download-limit = 0;
       max-download-limit = 0;
       allow-overwrite = true;
@@ -18,13 +19,11 @@
       auto-file-renaming = true;
       content-disposition-default-utf8 = true;
       
-      # Настройки памяти и дискового кэша
-      disk-cache = "64M";
+      disk-cache = "32M";
       file-allocation = "falloc";
-      no-file-allocation-limit = "8M";
+      no-file-allocation-limit = "16M";
       
-      # RPC настройки
-      enable-rpc = true;
+      enable-rpc = false;
       rpc-allow-origin-all = true;
       rpc-listen-all = false;
       
