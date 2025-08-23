@@ -24,6 +24,7 @@ in
   nixpkgs.config.allowUnfree = true;
 
   home.stateVersion = "24.11"; # Please read the comment before changing!!!
+  home.preferXdgDirectories = true;
 
   home.packages = with pkgs; [
     ueberzugpp
@@ -76,6 +77,7 @@ in
     mermaid-cli
     bridge-utils # brctl
     zstd 
+    tcpdump
 
     #pdf tools
     poppler-utils
@@ -96,6 +98,7 @@ in
       k3sVersion = "1.30.14-k3s2";
     })
     kubectl
+    k9s
 
     foliate
 
@@ -239,6 +242,48 @@ in
         amsfonts;
     };
   };
+
+  home.file.".config/python/pythonrc".text = ''
+    import readline
+    readline.write_history_file = lambda *args: None
+  '';
+
+
+  programs.readline = {
+    enable = true;
+    
+    includeSystemConfig = true;
+    
+    variables = {
+      editing-mode = "vi";
+      show-mode-in-prompt = true;
+      vi-ins-mode-string = "\\1\\e[6 q\\2";
+      vi-cmd-mode-string = "\\1\\e[2 q\\2";
+    };
+    
+    bindings = {
+      "Control-l" = "clear-screen";
+      "Control-a" = "beginning-of-line";
+    };
+    
+    extraConfig = ''
+      $if mode=vi
+      set keymap vi-command
+      # these are for vi-command mode  
+      Control-l: clear-screen
+      Control-a: beginning-of-line
+      set keymap vi-insert
+      # these are for vi-insert mode
+      Control-l: clear-screen  
+      Control-a: beginning-of-line
+      $endif
+    '';
+  };
+
+  xdg.configFile."readline/inputrc".text = config.xdg.configFile.inputrc.text;
+  xdg.configFile.inputrc.enable = false;
+
+
   
   home.sessionVariables = {
     # EDITOR = "emacs";

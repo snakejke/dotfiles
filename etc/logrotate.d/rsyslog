@@ -1,0 +1,26 @@
+/var/log/messages /var/log/secure /var/log/maillog /var/log/cron {
+    weekly
+    rotate 2
+    size 5M
+    missingok
+    notifempty
+    compress
+    create 0640 root logread
+    sharedscripts
+    postrotate
+        sv hup rsyslogd
+    endscript
+}
+
+/var/log/dmesg.log {
+    weekly
+    rotate 1
+    size 10M
+    missingok
+    notifempty
+    compress
+    create 0640 root logread
+    postrotate
+        sv hup rsyslogd
+    endscript
+}

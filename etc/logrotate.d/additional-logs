@@ -1,0 +1,41 @@
+/var/log/xorg-session.log {
+    daily
+    rotate 1
+    size 10M
+    missingok
+    notifempty
+    compress
+    create 0640 root logread
+    copytruncate
+}
+
+/var/log/unbound.log {
+    weekly
+    rotate 2
+    size 5M
+    missingok
+    notifempty
+    compress
+    create 0640 _unbound _unbound
+    sharedscripts
+    postrotate
+        sv hup rsyslogd
+    endscript
+}
+
+/var/log/firewall.log {
+    weekly
+    rotate 2
+    size 5M
+    missingok
+    notifempty
+    compress
+    create 0640 root logread
+}
+
+/var/log/btmp {
+    monthly
+    rotate 1
+    create 0600 root utmp
+    compress
+}

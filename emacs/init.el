@@ -3363,6 +3363,17 @@ append it to ENTRY."
   :init
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   :config
+  (defun my/magit-insert-user-info ()
+  "Insert current git user info in magit status buffer."
+  (when-let ((email (magit-get "user.email"))
+             (name (magit-get "user.name")))
+    (magit-insert-section (user-info)
+      (magit-insert-heading "User Info:")
+      (insert (format "  Name:  %s\n" name))
+      (insert (format "  Email: %s\n" email))
+      (insert ?\n))))
+
+  (add-hook 'magit-status-sections-hook #'my/magit-insert-user-info t)
   (transient-bind-q-to-quit))
 
 (use-package llama

@@ -1,2 +1,5 @@
 #!/bin/bash
-podman exec -i postgres psql "$@"
+USER=${PGUSER:-postgres}
+DB=${PGDATABASE:-postgres}
+
+podman exec -it postgres psql -U "$USER" -d "$DB" "$@"

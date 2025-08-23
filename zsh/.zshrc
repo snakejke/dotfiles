@@ -15,15 +15,7 @@ zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 export MANPAGER="BATPAGER"
 
 . "$ZDOTDIR/aliases"
-
-nix_source() {
-  local plugin_path
-  for profile in ${=NIX_PROFILES}; do
-    plugin_path="$profile/share/$1"
-    [[ -f "$plugin_path" ]] && { source "$plugin_path"; return 0 }
-  done
-  return 1
-}
+. "$ZDOTDIR/fun.zsh"
 
 nix_source "zsh-autosuggestions/zsh-autosuggestions.zsh"
 nix_source "zsh-z/zsh-z.plugin.zsh"
@@ -63,23 +55,6 @@ sbt_opts_arr=(
 )
 export SBT_OPTS="${sbt_opts_arr}"
 
-untar() {
-  local file="$1"
-  if [[ -z "$file" ]]; then
-    echo "Usage: untar <archive.tar.*>"
-    return 1
-  fi
-
-  local size=$(stat -c %s "$file")
-
-  case "$file" in
-    *.tar.gz|*.tgz) pv -s "$size" "$file" | tar xzf - ;;
-    *.tar.bz2|*.tbz2) pv -s "$size" "$file" | tar xjf - ;;
-    *.tar.xz|*.txz) pv -s "$size" "$file" | tar xJf - ;;
-    *.tar) pv -s "$size" "$file" | tar xf - ;;
-    *) echo "Unsupported archive format: $file" ;;
-  esac
-}
 
 [[ -s "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh" ]] && source "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh"
 

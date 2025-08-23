@@ -6,16 +6,11 @@
       - emacs/lisp
       - fvwm
       - home-manager 
-      - gtk-2.0
-      - gtk-3.0
       - lf
       - mpv
       - notmuch
       - picom
       - pipewire
-      - python
-      - readline
-      - rebar3
       - sx
       - xdg-desktop-portal
       - xsettingsd
@@ -34,6 +29,7 @@
       - zsh/.zshenv
       - zsh/.zshrc
       - zsh/aliases
+      - zsh/fun.zsh 
       - mimeapps.list
     ansible_main_files:
       - ansible_main

@@ -42,6 +42,7 @@
     - 'sv/determinate-nixd'
     - 'sv/nix-daemon'
     - 'dracut.conf.d'
+    - 'logrotate.d'
     - 'iptables'
     - 'sudoers.d'
     - 'X11'
