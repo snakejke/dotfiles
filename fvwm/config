@@ -19,10 +19,11 @@ DestroyFunc StartFunction
 AddToFunc   StartFunction
 + I Test (Init) Exec exec feh --no-fehbg --bg-scale /home/snake/.config/fvwm/polyblack.jpg &
 + I Test (Init) Exec exec xmodmap ~/.config/sx/.Xmodmap
-#+ I Test (Init) Exec exec eval $(gnome-keyring-daemon --start --foreground --components=secrets) &
 + I Test (Init) Exec exec xfce4-panel &
 + I Module FvwmEvent EventNewDesk
 + I Module FvwmMFL
++ I Module FvwmButtons RightPanel
+# + I Module FvwmButtons TaskBar
 
 
 #Функция для размещения окон 50/50
@@ -42,19 +43,23 @@ AddToFunc SwapEmacsWindows
 + I Focus
 + I Next (emacs|emacs-31_0_50, CurrentDesk) Focus
 
-# Бинды для смены мест
-Silent Key Left    A 4  SwapEmacsWindows
+# Бинды для смены мест <2025-09-10 Wed> TODO
+# Silent Key Left    A 4  SwapEmacsWindows
+Key Left A 4 Scroll -100 0
+Key Right A 4 Scroll +100 0
 
 #############
 # 2: Styles #
 #############
 EwmhBaseStruts screen $[monitor.primary] 0 0 0 37 
 
-DesktopSize 1x1
+DesktopSize 2x1
 DesktopName 0 Main
 EdgeScroll 100 100
 EdgeResistance -1
 EdgeThickness 1
+# EdgeThickness 2   # Толщина активной зоны в пикселях
+# EdgeResistance 150 10  # Задержка перед скроллом (мс)
 
 IgnoreModifiers L25 
 ClickTime 250
@@ -67,9 +72,8 @@ Style * !Icon
 Style * Lenience
 Style * MWMFunctions, MWMDecor, HintOverride
 
-
 # Window Specific Styles
-#Style * CursorStyle Bibata-Modern-Classic
+#Style * CursorStyle Bibata-Original-Ice-Right
 Style ConfirmQuit !Title, PositionPlacement Center, WindowListSkip, Layer 6
 Style FvwmIdent WindowListSkip
 Style xfce4-panel !Title, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
@@ -281,6 +285,27 @@ Test (x FvwmPrompt) + "FvwmPrompt" ViewManPage FvwmPrompt
 # Format: Key <X>  <Context> <Modifier> <Action>
 #         Mouse <X> <Context> <Modifier> <Action>
 ####################
+# Windows like ALT-TAB 
+InfoStoreAdd TabDir Next
+
+DestroyFunc FocusRaiseAndStuff
+AddToFunc   FocusRaiseAndStuff
++ I Iconify off
++ I Focus
++ I Raise
+
+DestroyFunc SwitchDirection
+AddToFunc   SwitchDirection
++ I Test (EnvMatch infostore.TabDir Next) InfoStoreAdd TabDir Prev
++ I TestRc (NoMatch) InfoStoreAdd TabDir Next
+
+DestroyFunc SwitchWindow
+AddToFunc   SwitchWindow
++ I $[infostore.TabDir] (CurrentPage, !Iconic, !Sticky) FocusRaiseAndStuff
++ I Deschedule 134000
++ I Schedule 700 134000 SwitchDirection
+
+Key Tab A M  SwitchWindow
 
 # Alt-F1 or Menu to load the root menu and Alt-Tab for a WindowList.
 # Ctrl-F1/F2/F3/F4 will switch between the Virtual Desktops.
@@ -399,26 +424,164 @@ DestroyModuleConfig FvwmPager:*
 #
 # FvwmIconMan is a powerful tool to list and manage windows. This
 # is used as the window list in the panel or taskbar.
-DestroyModuleConfig FvwmIconMan:*
-*FvwmIconMan: UseWinList true
-*FvwmIconMan: ButtonGeometry 120x20
-*FvwmIconMan: ManagerGeometry 1x1
-*FvwmIconMan: Colorset 10
-*FvwmIconMan: FocusColorset 11
-*FvwmIconMan: IconColorset 14
-*FvwmIconMan: FocusAndSelectColorset 12
-*FvwmIconMan: SelectColorset 12
-*FvwmIconMan: IconAndSelectColorset 12
-*FvwmIconMan: DrawIcons always
-*FvwmIconMan: ReliefThickness 0
-*FvwmIconMan: Format "%t"
-*FvwmIconMan: Font "xft:Sans:Bold:size=8:antialias=True"
-*FvwmIconMan: Action Mouse 0 A ret
-*FvwmIconMan: Action Mouse 1 A sendcommand IconManClick
-*FvwmIconMan: Action Mouse 3 A sendcommand "Menu MenuIconOps"
-*FvwmIconMan: Resolution global
-*FvwmIconMan: Tips needed
-*FvwmIconMan: Sort id
+# DestroyModuleConfig FvwmIconMan:*
+# *FvwmIconMan: UseWinList true
+# *FvwmIconMan: ButtonGeometry 120x20
+# *FvwmIconMan: ManagerGeometry 1x1
+# *FvwmIconMan: Colorset 10
+# *FvwmIconMan: FocusColorset 11
+# *FvwmIconMan: IconColorset 14
+# *FvwmIconMan: FocusAndSelectColorset 12
+# *FvwmIconMan: SelectColorset 12
+# *FvwmIconMan: IconAndSelectColorset 12
+# *FvwmIconMan: DrawIcons always
+# *FvwmIconMan: ReliefThickness 0
+# *FvwmIconMan: Format "%t"
+# *FvwmIconMan: Font "xft:Sans:Bold:size=8:antialias=True"
+# *FvwmIconMan: Action Mouse 0 A ret
+# *FvwmIconMan: Action Mouse 1 A sendcommand IconManClick
+# *FvwmIconMan: Action Mouse 3 A sendcommand "Menu MenuIconOps"
+# *FvwmIconMan: Resolution global
+# *FvwmIconMan: Tips needed
+# *FvwmIconMan: Sort id
+
+###############################################
+# Style RightPanel !Title, !Borders, !Handles, Sticky, \
+#                  WindowListSkip, NeverFocus
+
+# DestroyModuleConfig RightPanel:*
+# *RightPanel: Geometry 120x$[monitor.$[monitor.primary].height]-0+0@p
+# *RightPanel: Colorset 10
+# *RightPanel: Rows $[monitor.$[monitor.primary].height]
+# *RightPanel: Columns 120
+# *RightPanel: Frame 0
+# *RightPanel: Font "xft:Sans:Bold:size=10:antialias=True"
+# *RightPanel: (120x45, Icon "fvwm-logo-small.png", Frame 0)
+# *RightPanel: (120x5, Frame 0)
+# *RightPanel: (10x25, Frame 0)
+# *RightPanel: (25x25, Id desk0, Title "0", Action (Mouse 1) GotoDesk 0 0, Colorset 11, ActiveColorset 12, Frame 0)
+# *RightPanel: (25x25, Id desk1, Title "1", Action (Mouse 1) GotoDesk 0 1, ActiveColorset 12, Frame 0)
+# *RightPanel: (25x25, Id desk2, Title "2", Action (Mouse 1) GotoDesk 0 2, ActiveColorset 12, Frame 0)
+# *RightPanel: (25x25, Id desk3, Title "3", Action (Mouse 1) GotoDesk 0 3, ActiveColorset 12, Frame 0)
+# *RightPanel: (10x25, Frame 0)
+# *RightPanel: (5x80, Frame 0)
+# *RightPanel: (110x80, Swallow FvwmPager 'Module FvwmPager *', Frame 0)
+# *RightPanel: (5x80, Frame 0)
+# *RightPanel: (120x5, Frame 0)
+# Test (x stalonetray) *RightPanel: (120x20, Swallow(NoClose,UseOld) \
+#     stalonetray 'Exec exec stalonetray --config \
+#     "$[FVWM_DATADIR]/default-config/stalonetrayrc"', Frame 0)
+# Test (x stalonetray) *RightPanel: (120x$[math.-.$[monitor.$[monitor.primary].height],230], \
+#     Top, Swallow FvwmIconMan 'Module FvwmIconMan', Frame 0)
+# Test (!x stalonetray) *RightPanel: (120x$[math.-.$[monitor.$[monitor.primary].height],210], \
+#     Top, Swallow FvwmIconMan 'Module FvwmIconMan', Frame 0)
+# *RightPanel: (120x45, Swallow DateTime 'Module FvwmScript FvwmScript-DateTime',\
+#     Frame 0)
+# *RightPanel: (120x5, Frame 0)                 
+
+#################################################
+####################################################
+#################################################
+############################################
+# Windows 10 Style Horizontal Taskbar for FVWM3
+# DestroyModuleConfig TaskBar:*
+
+# # Calculate taskbar width (full screen width), Windows 10 height ~40px
+# *TaskBar: Geometry $[monitor.$[monitor.primary].width]x40+0-0@p
+# *TaskBar: Colorset 10
+# *TaskBar: Columns $[monitor.$[monitor.primary].width]
+# *TaskBar: Rows 40
+# *TaskBar: Frame 1
+# *TaskBar: Font "xft:Sans:size=8:antialias=True"
+
+# # Start/Menu Button (левый край)
+# *TaskBar: (40x40, Id startmenu, Icon "fvwm-logo-small.png", \
+#     Action (Mouse 1) Menu MenuFvwmRoot, \
+#     Frame 1, ActiveColorset 12)
+
+# # Separator
+# *TaskBar: (5x40, Frame 0)
+
+# # Desktop switcher (горизонтальные кнопки)
+# *TaskBar: (25x40, Id desk0, Title "1", \
+#     Action (Mouse 1) GotoDesk 0 0, \
+#     Colorset 11, ActiveColorset 12, Frame 1)
+# *TaskBar: (25x40, Id desk1, Title "2", \
+#     Action (Mouse 1) GotoDesk 0 1, \
+#     Colorset 11, ActiveColorset 12, Frame 1)
+# *TaskBar: (25x40, Id desk2, Title "3", \
+#     Action (Mouse 1) GotoDesk 0 2, \
+#     Colorset 11, ActiveColorset 12, Frame 1)
+# *TaskBar: (25x40, Id desk3, Title "4", \
+#     Action (Mouse 1) GotoDesk 0 3, \
+#     Colorset 11, ActiveColorset 12, Frame 1)
+
+# # Separator
+# *TaskBar: (10x40, Frame 0)
+
+# # Основная область для IconMan (кнопки приложений)
+# # Вычисляем ширину: полная ширина минус фиксированные элементы
+# *TaskBar: ($[math.-.$[monitor.$[monitor.primary].width],350]x40, \
+#     Top, Swallow FvwmIconMan 'Module FvwmIconMan TaskBarIconMan', Frame 0)
+
+# # System Tray (если установлен stalonetray)
+# Test (x stalonetray) *TaskBar: (120x40, \
+#     Swallow(NoClose,UseOld) stalonetray 'Exec exec stalonetray \
+#     --geometry 120x40 --max-geometry 120x40 --background "#2d3142" \
+#     --icon-size 20 --slot-size 24', Frame 0)
+
+# # Clock and Date
+# *TaskBar: (120x40, Swallow DateTime 'Module FvwmScript FvwmScript-DateTime', Frame 0)
+
+# # Show/Hide Desktop button (правый край)
+# *TaskBar: (15x40, Id showdesktop, Title "", \
+#     Action (Mouse 1) All (CurrentPage, !Iconic, !Shaded) Iconify, \
+#     Frame 1)
+
+# # Конфигурация IconMan для taskbar (одна строка, как в Windows 10)
+# DestroyModuleConfig TaskBarIconMan:*
+# *TaskBarIconMan: IconName TaskBarIconMan
+# *TaskBarIconMan: UseWinList true
+# # КРИТИЧНО: принудительно одна строка
+# *TaskBarIconMan: ButtonGeometry 100x38
+# *TaskBarIconMan: ManagerGeometry 0x1
+# *TaskBarIconMan: MaxButtonWidth 150
+# *TaskBarIconMan: Background #2d3142
+# *TaskBarIconMan: Foreground white
+# *TaskBarIconMan: Font "xft:Sans:size=8"
+# *TaskBarIconMan: Format "%t"
+# *TaskBarIconMan: Action Mouse 1 N sendcommand Iconify -1, Raise, Focus
+# *TaskBarIconMan: Action Mouse 2 N sendcommand Iconify 1
+# *TaskBarIconMan: Action Mouse 3 N sendcommand WindowShade
+# *TaskBarIconMan: DrawIcons always
+# *TaskBarIconMan: ReliefThickness 1
+# *TaskBarIconMan: IconButton down
+# *TaskBarIconMan: IconAndSelectButton down
+# *TaskBarIconMan: SelectButton up
+# *TaskBarIconMan: PlainButton up
+# # Принудительное горизонтальное расположение
+# *TaskBarIconMan: Sort none
+
+# # Функция для запуска панели
+# DestroyFunc StartTaskBar
+# AddToFunc StartTaskBar
+# + I KillModule FvwmButtons TaskBar
+# + I Module FvwmButtons TaskBar
+
+# # Функция для переключения панелей
+# # DestroyFunc ToggleTaskBar
+# # AddToFunc ToggleTaskBar
+# # + I KillModule FvwmButtons RightPanel
+# # + I StartTaskBar
+
+# # Автозапуск панели
+# DestroyFunc StartFunction
+# AddToFunc StartFunction
+# + I StartTaskBar
+
+# # Привязка к клавишам (опционально)
+# Key Super_L A A Menu MenuFvwmRoot
+# Key Super_R A A ToggleTaskBar
 
 # FvwmEvent
 #

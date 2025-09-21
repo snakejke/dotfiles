@@ -1,4 +1,6 @@
 #!/bin/bash
+fdm -f ~/.config/fdm/.fdm.conf -v fetch
+
 #notmuch tag -new tag:new
 #notmuch tag +cron +unread -inbox -- 'from:"Cron Daemon"'
 

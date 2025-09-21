@@ -1,62 +1,64 @@
-# zmodload zsh/zprof 
-autoload -U colors && colors
-PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
+bindkey -e
+bindkey '^ ' autosuggest-accept
+
+setopt PROMPT_SUBST
+setopt extendedglob
+setopt autocd
 
 if [[ -z "$GPG_TTY" ]]; then
     export GPG_TTY=$(tty)
     gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1
 fi
 
-bindkey '^ ' autosuggest-accept
-bindkey -e
-
-zstyle :compinstall filename "$ZDOTDIR/.zshrc"
-# TODO: less 
-export MANPAGER="BATPAGER"
-
 . "$ZDOTDIR/aliases"
 . "$ZDOTDIR/fun.zsh"
+
+autoload -U colors && colors
+venv_prompt() { [[ $VIRTUAL_ENV ]] && echo "🐍 " }
+PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
+PS1='$(venv_prompt)'"$PS1"
+
+## ⚠️ ## 
+export ZSH_DISABLE_COMPFIX=true
+export MANPAGER="BATPAGER"
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+export PROMPT_EOL_MARK='' # hide %
 
 nix_source "zsh-autosuggestions/zsh-autosuggestions.zsh"
 nix_source "zsh-z/zsh-z.plugin.zsh"
 nix_source "fzf/key-bindings.zsh"
 
-# TODO:
-autoload -Uz +X compinit && compinit
+autoload -Uz compinit
 
+local zdump=${ZDOTDIR}/.zcompdump
+if [[ ! -f $zdump || $zdump(#qN.mh+24) ]]; then
+    compinit -d $zdump
+else
+    compinit -C -d $zdump
+fi
+
+if [[ -f $zdump && ! -f ${zdump}.zwc || $zdump -nt ${zdump}.zwc ]]; then
+    zcompile $zdump
+fi
+
+zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' menu select
+zstyle ':completion:*' use-cache yes
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
 
-setopt autocd
+zle_highlight=(region:bg=blue,fg=white,bold)
 
-download() { aria2c -d ~/Downloads "$1"; }
-
-nvm() {
-  unset -f nvm  
-  source "$NVM_DIR/nvm.sh"
-  nvm "$@"
-}
-
-sbt_opts_arr=(
-  -Dsbt.ivy.home="${XDG_CACHE_HOME}/ivy"
-  -Dsbt.boot.directory="${XDG_CACHE_HOME}/sbt/boot"
-  -Dsbt.preloaded="${XDG_CACHE_HOME}/sbt/preloaded"
-  -Dsbt.global.base="${XDG_CACHE_HOME}/sbt"
-  -Dsbt.global.zinc="${XDG_CACHE_HOME}/sbt/zinc"
-  -Dsbt.global.staging="${XDG_CACHE_HOME}/sbt/staging"
-  -Dsbt.global.plugins="${XDG_CONFIG_HOME}/sbt/plugins"
-  -Dsbt.global.settings="${XDG_CONFIG_HOME}/sbt/global"
-  -Dsbt.dependency.base="${XDG_CACHE_HOME}/sbt/dependency"
-  -Dsbt.repository.config="${XDG_CONFIG_HOME}/sbt/repositories"
-  -Divy.home="${XDG_CACHE_HOME}/ivy"
-  -Divy.cache.home="${XDG_CACHE_HOME}/ivy"
-  -Divy.settings.dir="${XDG_CONFIG_HOME}/ivy"
-  -DG8_HOME="${XDG_CACHE_HOME}/g8"
-)
-export SBT_OPTS="${sbt_opts_arr}"
-
-
-[[ -s "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh" ]] && source "/home/snake/.local/devjava/sdkman/bin/sdkman-init.sh"
+if [[ -o interactive ]] && [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+    typeset -g _SDKMAN_LOADED=0
+    sdk() {
+        if (( ! _SDKMAN_LOADED )); then
+            unfunction sdk
+            source "$SDKMAN_DIR/bin/sdkman-init.sh"
+            _SDKMAN_LOADED=1
+        fi
+        sdk "$@"
+    }
+fi
 
 eval "$(atuin init zsh)"
-#zprof

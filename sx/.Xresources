@@ -1,36 +1,97 @@
 !#include "/home/snake/.config/terminalcolors/nord"
-! Xft.antialias: 1
-! Xft.hinting: 1
-! Xft.autohint: 0
-! Xft.rgba: rgb
-! Xft.hintstyle: hintslight
-! Xft.lcdfilter: lcddefault
-!Xft.autohint: 0 ????
-!Xft.dpi: 96 ??
-st.font: JetBrainsMono Nerd Font :style:medium:pixelsize=20, xft:Noto Color Emoji
+
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.autohint: 0
+Xft.hintstyle: hintslight
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+! Xft.dpi: 96
+st.alpha: 0.99
+! st.font: JetBrainsMono Nerd Font:style=Regular:pixelsize=20
+st.font: Monospace-19;
+
+! xterm*faceName:Roboto:style=Regular
+xterm*faceName:JetBrainsMono Nerd Font:style=Regular
+xterm*faceSize:15
 
 !st.borderpx: 0
 
 Xcursor.theme: Bibata-Modern-Classic
-! Ayu Color Palette
+Xcursor.size: 24
+
+
+! Ayu Color Palette №1
 *.foreground: #e6e1cf
 *.background: #0f1419
+*.cursorColor: #e6e1cf
 
+! Black + Bright Black
 *.color0: #000000
-*.color1: #ff3333
-*.color2: #b8cc52
-*.color3: #e7c547
-*.color4: #36a3d9
-*.color5: #f07178
-*.color6: #95e6cb
-*.color7: #e6e1cf
-! color 8 проблема ?
 *.color8: #323232
+
+! Red + Bright Red
+*.color1: #ff3333
 *.color9: #ff6565
+
+! Green + Bright Green
+*.color2: #b8cc52
 *.color10: #eafe84
+
+! Yellow + Bright Yellow
+*.color3: #e7c547
 *.color11: #fff779
+
+! Blue + Bright Blue
+*.color4: #36a3d9
 *.color12: #68d5ff
+
+! Magenta + Bright Magenta
+*.color5: #f07178
 *.color13: #ffa3aa
+
+! Cyan + Bright Cyan
+*.color6: #95e6cb
 *.color14: #c7fffd
+
+! White + Bright White
+*.color7: #e6e1cf
 *.color15: #ffffff
 
+! Ayu Dark palette №2
+
+! *.foreground:   #E6E1CF
+! *.background:   #0F1419
+! *.cursorColor:  #F29718
+
+! ! Black + Bright Black
+! *.color0:       #0F1419
+! *.color8:       #3E4B59
+
+! ! Red + Bright Red
+! *.color1:       #F07178
+! *.color9:       #FF3333
+
+! ! Green + Bright Green
+! *.color2:       #B8CC52
+! *.color10:      #B8CC52
+
+! ! Yellow + Bright Yellow
+! *.color3:       #F29718
+! *.color11:      #F29718
+
+! ! Blue + Bright Blue
+! *.color4:       #36A3D9
+! *.color12:      #36A3D9
+
+! ! Magenta + Bright Magenta
+! *.color5:       #FFEE99
+! *.color13:      #FFEE99
+
+! ! Cyan + Bright Cyan
+! *.color6:       #95E6CB
+! *.color14:      #95E6CB
+
+! ! White + Bright White
+! *.color7:       #FFFFFF
+! *.color15:      #5C6773

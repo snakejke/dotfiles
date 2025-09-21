@@ -32,6 +32,11 @@ glowormdcat() {
 	fi
 }
 
+is_email_file() {
+	mime_type=$(file -b --mime-type "$1" 2>/dev/null)
+	[ "$mime_type" = "message/rfc822" ]
+}
+
 case "$(printf "%s\n" "$(readlink -f "$1")" | awk '{print tolower($0)}')" in
 	*.tgz|*.tar.gz) tar tzf "$1" ;;
 	*.tar.bz2|*.tbz2) tar tjf "$1" ;;
@@ -81,6 +86,18 @@ case "$(printf "%s\n" "$(readlink -f "$1")" | awk '{print tolower($0)}')" in
 		image "${CACHE}.jpg" "$2" "$3" "$4" "$5"
 		;;
 	*.ino) batorcat --language=cpp "$1" ;;
-	*) file -ibL "$1" | grep -q text && batorcat "$1" || file -Lb "$1" ;;
+	  *)
+		if is_email_file "$1"; then
+			batorcat --language=email "$1"
+		else
+			mime_type=$(file -b --mime-type "$1" 2>/dev/null)
+			case "$mime_type" in
+				text/*|application/json|application/xml|application/javascript|application/x-sh) 
+					batorcat "$1" ;;
+				*) 
+					file -Lb "$1" ;;
+			esac
+		fi
+		;;
 esac
 exit 0

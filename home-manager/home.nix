@@ -14,14 +14,27 @@ in
     ./config/wget.nix
     ./config/aria2.nix
     ./config/dunst.nix
-    ./config/tmux.nix 
+    #./config/tmux.nix 
     ./config/rofi.nix
+    ./config/ssh.nix
+    ./config/texlive.nix
+    #./config/emacs.nix
+    ./config/mise.nix
+    ./config/readline.nix
+    ./config/themes.nix
+    ./config/atuin.nix
+    ./config/aria2.nix
     # ./config/zsh.nix
+    # ./config/gpu-apps.nix
     ];
     
   home.username = "snake";
   home.homeDirectory = "/home/snake";
-  nixpkgs.config.allowUnfree = true;
+  # nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = import ./nixpkgs-config.nix;
+  xdg.configFile."nixpkgs/config.nix".source = ./nixpkgs-config.nix;
+
+
 
   home.stateVersion = "24.11"; # Please read the comment before changing!!!
   home.preferXdgDirectories = true;
@@ -39,254 +52,201 @@ in
     xdotool
     wmname
     vlc
-    strace
-    speedtest-cli
-    scrot
-    rsync
     fastfetch
-    restic
-    rclone
     qtpass
-    drill
     qbittorrent
-    podman-tui
-    pngquant
     parallel
     parted
     pandoc
-    papirus-icon-theme
-    nsxiv
-    maim
-    slop
     lnav
     neovim
     # i3lock https://github.com/nix-community/home-manager/issues/7027
     hdparm
     keepassxc
-    flameshot
     fdupes
-    feh 
     evtest
     ditaa
     devilspie2
     maildrop
     lynx
-    dig
     tree
-    curl
     mermaid-cli
-    bridge-utils # brctl
-    zstd 
-    tcpdump
+    zstd
+    _7zz-rar # 7zz 
+    pv # Pipe Viewer
+    unixtools.xxd
+    wmctrl
+    yt-dlp
+    cachix
+    sysfsutils # systool 
 
-    #pdf tools
+    #
+
+    # gst_all_1.gstreamer
+    # gst_all_1.gst-plugins-ugly
+    # gst_all_1.gst-plugins-good
+    # gst_all_1.gst-plugins-base
+    # gst_all_1.gst-plugins-bad
+
+    #
+    bridge-utils # brctl
+    tcpdump
+    dig
+    #curl
+    drill
+    speedtest-cli
+    nettools
+    nmap # ncat, gnu netcat nc, openbsd nc
+    mtr # ping + traceroute
+
+    #
+    socat
+    zsync
+    swtpm
+
+    #
+    restic
+    rclone
+    rsync
+
+    #
+    nsxiv
+    maim
+    slop
+    scrot
+    flameshot
+    feh
+    pngquant
+    (tesseract5.override {
+      enableLanguages = [ "eng" "rus" ];
+    })
+    libsixel
+    lsix
+
+    #
     poppler-utils
     mupdf-headless
+    hexapdf # pdf cover 
     ocrmypdf
     librsvg # rsvg-convert
     wkhtmltopdf # rendering web pages to PDF or images
     ghostscript
+    koodo-reader
+    foliate
+    djvulibre # ddjvu
+    visidata
 
-    
     #lsp
     nil # nix 
 
+    #
     ansible
     ansible-lint
-    #
     (pkgs.k3d.override {
       k3sVersion = "1.30.14-k3s2";
     })
     kubectl
     k9s
+    podman-tui
+    podman-compose
+    lazydocker
+    kubernetes-helm
+    skopeo
 
-    foliate
-
-    mate.mate-themes
-
+    #
     exercism
-    koodo-reader
-    
+
     #google-chrome ugly fonts 
     #discord need gpu accel 
 
-    nettools
-
-    (tesseract5.override {
-      enableLanguages = [ "eng" "rus" ];
-    })
-
+    #
     lxappearance
-    
-    #themes
     adapta-gtk-theme
-    
-    
-    #p7zip # bin 7z
-    _7zz-rar # 7zz 
+    mate.mate-themes
+    papirus-icon-theme
+    bibata-cursors
+    capitaine-cursors
+    greybird
+    yaru-theme
+    fluent-gtk-theme
 
-    hexapdf # pdf cover 
-
-    pv # Pipe Viewer
-    
-    #monitoring
+    #
     btop
     htop
+    lsof
+    strace
 
     zsh-z
     zsh-autosuggestions
+    zsh-syntax-highlighting
 
     nvfetcher
 
     mitschemeX11
     guile
     racket
-    fpc #pascal 
+    fpc #pascal
+    nim
+    nimble
 
   ] ++ externalPackages;
 
-   programs.mise = {
-    enable = true;
-    
-    globalConfig = {
-      tools = {
-        babashka = "latest";
-        elixir = "latest";
-        erlang = "latest";
-        rebar = "latest";
-      };
-      tasks."update:hex" = {
-      description = "Обновляет Hex и Rebar для Elixir";
-      run = [
-        "mix local.hex --force"
-        "mix local.rebar --force"
-      ];
-      };
-    };
-   };
-
-    programs.atuin = {
-    enable = true;
-    enableZshIntegration = true;
-    daemon.enable = false;
-    
-    settings = {
-      style = "compact";
-      inline_height = 23;
-      show_help = false;
-    };
-  };
-
-  programs.ssh = {
-    enable = true;
-    package = null;
-    
-    addKeysToAgent = "yes";
-    
-    matchBlocks = {
-      "github-gmail" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = "~/.ssh/id_ed25519_gmail";
-        identitiesOnly = true;
-      };
-      
-      "github.com" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = "~/.ssh/id_ed25519";
-      };
-    };
-  };
-
-  programs.texlive = {
-    enable = true;
-    extraPackages = tpkgs: {
-      inherit (tpkgs)
-        collection-basic
-        collection-latex
-        collection-fontsextra
-        
-        babel-russian
-        hyphen-russian
-        cyrillic
-        lh
-        cm-super
-        luahyphenrules
-
-        svg
-        moderncv
-        fontawesome
-        
-        geometry
-        enumitem
-        hyperref
-        xcolor
-        graphics
-        fancyvrb
-        
-        dvisvgm
-        dvipng
-        
-        tools
-        oberdiek
-        scheme-medium 
-        titlesec
-
-        wrapfig
-        multirow
-        ulem
-        booktabs
-        amsmath
-        capt-of
-        amsfonts;
-    };
-  };
 
   home.file.".config/python/pythonrc".text = ''
     import readline
     readline.write_history_file = lambda *args: None
   '';
-
-
-  programs.readline = {
-    enable = true;
-    
-    includeSystemConfig = true;
-    
-    variables = {
-      editing-mode = "vi";
-      show-mode-in-prompt = true;
-      vi-ins-mode-string = "\\1\\e[6 q\\2";
-      vi-cmd-mode-string = "\\1\\e[2 q\\2";
-    };
-    
-    bindings = {
-      "Control-l" = "clear-screen";
-      "Control-a" = "beginning-of-line";
-    };
-    
-    extraConfig = ''
-      $if mode=vi
-      set keymap vi-command
-      # these are for vi-command mode  
-      Control-l: clear-screen
-      Control-a: beginning-of-line
-      set keymap vi-insert
-      # these are for vi-insert mode
-      Control-l: clear-screen  
-      Control-a: beginning-of-line
-      $endif
-    '';
-  };
-
-  xdg.configFile."readline/inputrc".text = config.xdg.configFile.inputrc.text;
-  xdg.configFile.inputrc.enable = false;
-
-
   
+  xdg.configFile."npm/npmrc".text = ''
+    prefix=''${XDG_DATA_HOME}/npm
+    cache=''${XDG_CACHE_HOME}/npm
+    init-module=''${XDG_CONFIG_HOME}/npm/config/npm-init.js
+    logs-dir=''${XDG_STATE_HOME}/npm/logs
+  '';
+
+  xdg.configFile."pnpm/rc".text = ''
+    auto-install-peers=true
+    ignore-scripts=false
+    dangerouslyAllowAllBuilds=true
+  '';
+
+  xdg.configFile."nimble/nimble.ini".text = ''
+    nimbleDir = ~/.local/share/nimble
+  '';
+
+  xdg.configFile."xdg-desktop-portal/portals.conf".text = ''
+    [preferred]
+    default=gtk
+    org.freedesktop.impl.portal.FileChooser=gtk
+  '';
+
+
+
+  nix = {
+    package = pkgs.nix;
+    settings = {
+      substituters = [
+        "https://cache.nixos.org"
+        "https://nix-community.cachix.org"
+        "https://cachix.cachix.org"
+        "https://devenv.cachix.org"
+      ];
+      
+      trusted-public-keys = [
+          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
+          "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      ];
+
+      # Дополнительные настройки
+      # auto-optimise-store = true;
+      # experimental-features = ["nix-command" "flakes"];
+    };
+  };
+  
+
   home.sessionVariables = {
-    # EDITOR = "emacs";
   };
 
   # Let Home Manager install and manage itself.

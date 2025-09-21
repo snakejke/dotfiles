@@ -7,9 +7,10 @@
     dest: "{{ dotfiles_dir }}/etc/{{ item }}/"
     delete: yes
   loop:
+    - 'docker'
     - 'dracut.conf.d'
     - 'sudoers.d'
-    - 'X11'
+    - 'xbps.d'
 
 - name: Copy system configuration files
   become: true
@@ -23,19 +24,23 @@
     - 'unbound/unbound.conf'
     - 'iptables/iptables.rules'
     - 'pam.d/login'
-    - 'profile.d/fixdbus.sh'
-    - 'profile.d/nix.sh'
     - 'smtpd/smtpd.conf'
-    - 'sv/agetty-autologin-tty1/run'
+    - 'sv/agetty-tty1/conf'
     - 'sv/amneziavpn/run'
     - 'sv/runsvdir-snake/run'
     - 'sv/nix-daemon/run'
     - 'sv/determinate-nixd/run'
+    - 'sv/smtpd_bypass/run'
+    - 'sv/smtpd_bypass/finish'
     - 'dhcpcd.conf'
     - 'zsh/zshenv'
     - 'nftables.conf'
     - 'logrotate.d/rsyslog'
     - 'logrotate.d/additional-logs'
+    - 'X11/xorg.conf.d/30-keyboard.conf'
+    - 'X11/xorg.conf.d/50-mouse-acceleration.conf'
+    - 'X11/xorg.conf'
+    - 'X11/Xwrapper.config'
     - 'logrotate.conf'
     - 'resolv.conf'
     - 'rsyslog.conf'

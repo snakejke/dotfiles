@@ -30,7 +30,7 @@
         password = "$(gpg --quiet --decrypt ~/.password-store/Email/apps/fdmgmail.gpg)";
         folders = [
           "INBOX"
-          "[Gmail]/All Mail"
+          #"[Gmail]/All Mail"
           "[Gmail]/Drafts"
           "[Gmail]/Important"
           "[Gmail]/Sent Mail"
@@ -51,8 +51,8 @@
           "&BB4EQgQ,BEAEMAQyBDsENQQ9BD0ESwQ1-"  # sent 
           "&BCcENQRABD0EPgQyBDgEOgQ4-"          # drafts
           "&BBoEPgRABDcEOAQ9BDA-"              # trash
-          "INBOX/News"    
-          "INBOX/Receipts"
+          #"INBOX/News"    
+          #"INBOX/Receipts"
         ];
       }
     ];
@@ -83,8 +83,8 @@
               match string "%[:folder]" to "&BB4EQgQ,BEAEMAQyBDsENQQ9BD0ESwQ1-" action "sent" 
               match string "%[:folder]" to "&BCcENQRABD0EPgQyBDgEOgQ4-" action "drafts"
               match string "%[:folder]" to "&BBoEPgRABDcEOAQ9BDA-" action "trash"
-              match string "%[folder]" to "INBOX/News" action "inbox"
-              match string "%[folder]" to "INBOX/Receipts" action "inbox"
+              #match string "%[folder]" to "INBOX/News" action "inbox"
+              #match string "%[folder]" to "INBOX/Receipts" action "inbox"
               #match string "%[:folder]" to "&BCcENQRABD0EPgQyBDgEOgQ4-" actions { "add-folder-header" "process-mail" }
         }
       ''

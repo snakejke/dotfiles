@@ -17,8 +17,25 @@ in
     }];
 
     extraConfig = {
-      core = { quotepath = false; };
-      github = { user = "snakejke"; };
+      core = {
+        quotepath = false;
+        pager = "delta";
+      };
+      interactive = {
+        diffFilter = "delta --color-only";
+      };
+      delta = {
+        navigate = true;
+        dark = true;
+        line-numbers = true;
+        side-by-side = true;
+      };
+      merge = {
+        conflictStyle = "zdiff3";
+      };
+      github = {
+        user = "snakejke";
+      };
       gpg = {
         format = "openpgp";
         openpgp = {

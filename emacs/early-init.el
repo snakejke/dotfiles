@@ -38,6 +38,8 @@
 (with-eval-after-load 'elpaca
   (add-hook 'elpaca-after-init-hook '+reset-init-values))
 
+;; (setq read-process-output-max (* 64 1024))  ; 64kb
+
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -51,8 +53,12 @@
 (setq desktop-restore-forces-onscreen nil)
 
 ;;(push '(font . "PT Serif") default-frame-alist)
-(push '(font . "JetBrainsMono Nerd Font") default-frame-alist)
-(set-face-font 'default "JetBrainsMono Nerd Font")
+
+
+;; (push '(font . "JetBrainsMono Nerd Font") default-frame-alist)
+;; (set-face-font 'default "JetBrainsMono Nerd Font")
+(push '(font . "JetBrains Mono") default-frame-alist)
+(set-face-font 'default "JetBrains Mono")
 (set-face-font 'variable-pitch "IBM Plex Serif")
 (copy-face 'default 'fixed-pitch)
 

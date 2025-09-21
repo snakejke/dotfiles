@@ -1,0 +1,5 @@
+#!/bin/bash
+TMPLOG=$(mktemp)
+emacsclient -c "$@" >"$TMPLOG" 2>&1
+grep -v "Waiting for Emacs..." "$TMPLOG"
+rm "$TMPLOG"

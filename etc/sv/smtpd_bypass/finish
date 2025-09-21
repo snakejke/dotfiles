@@ -1,0 +1,39 @@
+#!/bin/sh
+exec 2>&1
+
+STATE_FILE="/tmp/smtp_bypass.state"
+
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] CLEANUP: $*"
+}
+
+# Загружаем сохраненное состояние
+if [ -f "$STATE_FILE" ]; then
+    . "$STATE_FILE"
+else
+    # Fallback - пытаемся определить интерфейс
+    REAL_IFACE=$(ip route | grep default | grep -v tun | awk '{print $5}' | head -1)
+    TABLE_NAME="smtp_bypass"
+    TABLE_ID="200"
+    MARK="200"
+fi
+
+# Удаляем правила маршрутизации
+ip route del default table "$TABLE_NAME" 2>/dev/null || true
+while ip rule del fwmark "$MARK" table "$TABLE_NAME" 2>/dev/null; do
+    log "Removed fwmark rule"
+done
+
+# Удаляем iptables правила
+if [ -n "$REAL_IFACE" ]; then
+    iptables -t nat -D POSTROUTING -m mark --mark 0xc8 -o "$REAL_IFACE" -j MASQUERADE 2>/dev/null || true
+fi
+iptables -t mangle -D OUTPUT -p tcp --dport 25 -j MARK --set-mark "$MARK" 2>/dev/null || true
+iptables -t mangle -D OUTPUT -p tcp --dport 465 -j MARK --set-mark "$MARK" 2>/dev/null || true
+iptables -t mangle -D OUTPUT -p tcp --dport 587 -j MARK --set-mark "$MARK" 2>/dev/null || true
+
+# Убираем из rt_tables (опционально)
+sed -i '/smtp_bypass/d' /etc/iproute2/rt_tables 2>/dev/null || true
+
+# Удаляем state file
+rm -f "$STATE_FILE" 2>/dev/null || true

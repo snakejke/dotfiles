@@ -2,7 +2,7 @@ typeset -U PATH
 path=(~/.local/bin/**/*(N-/) ~/.local/bin $path)
 #
 export RANGER_LOAD_DEFAULT_RC=FALSE
-# ?
+# fix noise chrome&gtk 
 export NO_AT_BRIDGE=1
 #
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -14,6 +14,7 @@ export XDG_CONFIG_DIRS=/etc/xdg
 #export XDG_DATA_DIRS="/usr/share:/usr/local/share:/var/lib/flatpak/exports/share:/home/snake/.local/share/flatpak/exports/share"
 export DEV_HOME="$HOME/.local/devjava"
 export SDKMAN_DIR="$DEV_HOME/sdkman"
+export SDKMAN_CANDIDATES_DIR="$SDKMAN_DIR/candidates"
 #
 export FVWM_USERDIR="$XDG_CONFIG_HOME/fvwm"
 #
@@ -36,6 +37,17 @@ export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
 path=($SDKMAN_DIR/candidates/java/current/bin $path)
 # /etc/man.conf 
 # manpath+=($SDKMAN_DIR/candidates/java/21.0.5.tem/man/man1)
+#maven
+export MAVEN_HOME="$SDKMAN_DIR/candidates/maven/current"
+export MVND_HOME="$SDKMAN_DIR/candidates/mvnd/current"
+path=($SDKMAN_DIR/candidates/maven/current/bin $path)
+#GRADLE
+export GRADLE_USER_HOME="$DEV_HOME/.gradle"
+export GRADLE_HOME="$SDKMAN_DIR/candidates/gradle/current"
+#
+export LIQUIBASE_HOME="$SDKMAN_DIR/candidates/liquibase/current"
+export VISUALVM_HOME="$SDKMAN_DIR/candidates/visualvm/current"
+#
 export ANDROID_USER_HOME="$DEV_HOME/android-sdk"
 export ANDROID_HOME="$DEV_HOME/android-sdk"
 export ANDROID_SDK_ROOT="$DEV_HOME/android-sdk"
@@ -44,14 +56,11 @@ path=($ANDROID_HOME/cmdline-tools/latest/bin $path)
 path=($ANDROID_HOME/platform-tools $path)
 path=($ANDROID_HOME/emulator $path)
 #Clojure
-path=($DEV_HOME/clojure/bin $path)
+#path=($DEV_HOME/clojure/bin $path)
+export LEIN_HOME="$XDG_CACHE_HOME/leiningen"
 #
 export AWT_TOOLKIT=MToolkit
 export _JAVA_AWT_WM_NONREPARENTING=1
-#maven
-path=($SDKMAN_DIR/candidates/maven/current/bin $path)
-#GRADLE
-export GRADLE_USER_HOME="$DEV_HOME/.gradle"
 #Pass
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
 export PASSWORD_STORE_EXTENSIONS_DIR="$HOME/.local/lib/python3.10/site-packages/usr/lib/password-store/extensions/"
@@ -83,8 +92,6 @@ export MIX_XDG=1
 #Haskell
 export GHCUP_USE_XDG_DIRS=1
 export STACK_XDG=1
-#export CABAL_CONFIG="$XDG_CONFIG_HOME/cabal/config"
-#export CABAL_DIR="$XDG_DATA_HOME/cabal"
 #
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker/config"
 export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
@@ -106,7 +113,7 @@ export PNPM_HOME="$XDG_DATA_HOME/pnpm"
 path=($PNPM_HOME $path)
 path=($XDG_CONFIG_HOME/npm/node_modules/bin $path)
 #
-export EDITOR="emacsclient -c"
+export EDITOR="emacsclient-wrapper"
 export VISUAL=$EDITOR
 #Ansible
 export ANSIBLE_HOME="$XDG_CONFIG_HOME/ansible"
@@ -120,6 +127,8 @@ export EMACS_SOCKET_NAME="/run/user/1000/emacs/vanilla"
 export LSP_USE_PLISTS=true
 #
 export ZSHZ_DATA="$ZDOTDIR/.z"
+#
+export XCURSOR_PATH="$HOME/.local/state/nix/profile/share/icons:/usr/share/icons:$HOME/.local/share/icons"
 #
 export TEXMFHOME="$XDG_DATA_HOME/texmf"
 export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"

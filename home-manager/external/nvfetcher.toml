@@ -9,4 +9,25 @@ fetch.url = "https://github.com/elixir-lsp/elixir-ls/releases/download/$ver/elix
 
 [erlang-lsp]
 src.github = "WhatsApp/erlang-language-platform"
-fetch.url = "https://github.com/WhatsApp/erlang-language-platform/releases/download/$ver/elp-linux-x86_64-unknown-linux-gnu-otp-27.1.tar.gz"
+# Автоматически получаем последнюю версию и ищем подходящий файл
+# Используем regex для поиска файлов с любой версией OTP
+src.include_regex = ".*"
+fetch.url = "https://github.com/WhatsApp/erlang-language-platform/releases/download/$ver/elp-linux-x86_64-unknown-linux-gnu-otp-28.tar.gz"
+# Для фиксации версии OTP можно использовать:
+# fetch.url = "https://github.com/WhatsApp/erlang-language-platform/releases/download/$ver/elp-linux-x86_64-unknown-linux-gnu-otp-27.3.tar.gz"
+
+[BreezeX_Black]
+# Автоматически получаем последний релиз вместо фиксированной версии
+src.github = "ful1e5/BreezeX_Cursor"
+fetch.url = "https://github.com/ful1e5/BreezeX_Cursor/releases/download/$ver/BreezeX-Black.tar.xz"
+# Для фиксации версии можно использовать:
+# src.manual = "2.0.1"
+# fetch.url = "https://github.com/ful1e5/BreezeX_Cursor/releases/download/v2.0.1/BreezeX-Black.tar.xz"
+
+[BreezeX_Dark]
+# Автоматически получаем последний релиз вместо фиксированной версии
+src.github = "ful1e5/BreezeX_Cursor"
+fetch.url = "https://github.com/ful1e5/BreezeX_Cursor/releases/download/$ver/BreezeX-Dark.tar.xz"
+# Для фиксации версии можно использовать:
+# src.manual = "2.0.1"
+# fetch.url = "https://github.com/ful1e5/BreezeX_Cursor/releases/download/v2.0.1/BreezeX-Dark.tar.xz"

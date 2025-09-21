@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# Directory containing the MKV files
-INPUT_DIR="/home/snake/Documents/Projects/Python/YouTubeAPI/videos_to_upload"
-#INPUT_DIR="/home/snake/Documents/interviews"
+DEFAULT_INPUT_DIR="/home/snake/Documents/Projects/Python/YouTubeAPI/videos_to_upload"
 
 # Check if ffmpeg is installed
 if ! command -v ffmpeg &> /dev/null; then
@@ -10,48 +8,75 @@ if ! command -v ffmpeg &> /dev/null; then
     exit 1
 fi
 
-# Create a log file
-LOG_FILE="$INPUT_DIR/conversion.log"
-touch "$LOG_FILE"
-
-# Function to log messages
-log_message() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
-}
-
-# Counter for processed files
-processed_count=0
-failed_count=0
-
-# Process each MKV file in the directory
-for input_file in "$INPUT_DIR"/*.mkv; do
-    # Check if any MKV files exist
-    if [ ! -f "$input_file" ]; then
-        log_message "No MKV files found in $INPUT_DIR"
-        exit 0
-    fi
-
-    # Generate output filename
-    output_file="${input_file%.mkv}.mp4"
+# Function to process a single MKV file
+process_file() {
+    local input_file="$1"
+    local output_file="${input_file%.mkv}.mp4"
     
-    log_message "Starting remux of: $(basename "$input_file")"
+    echo "Processing: $(basename "$input_file")"
     
-    # Simple remux without re-encoding
-    if ffmpeg -i "$input_file" -c copy "$output_file" 2>> "$LOG_FILE"; then
-        # If remux successful, remove original file
+    if ffmpeg -i "$input_file" -c copy "$output_file" 2>/dev/null; then
         if [ -f "$output_file" ]; then
             rm "$input_file"
-            log_message "Successfully remuxed and removed: $(basename "$input_file")"
-            ((processed_count++))
+            echo "Successfully converted: $(basename "$input_file")"
+            return 0
         else
-            log_message "Error: Output file not created for: $(basename "$input_file")"
-            ((failed_count++))
+            echo "Error: Output file not created for: $(basename "$input_file")"
+            return 1
         fi
     else
-        log_message "Error processing: $(basename "$input_file")"
-        ((failed_count++))
+        echo "Error processing: $(basename "$input_file")"
+        return 1
     fi
-done
+}
 
-# Print summary
-log_message "Processing complete. Successfully processed: $processed_count files. Failed: $failed_count files."
+# Function to process directory
+process_directory() {
+    local dir="$1"
+    local processed_count=0
+    local failed_count=0
+    local found_files=false
+    
+    for input_file in "$dir"/*.mkv; do
+        if [ ! -f "$input_file" ]; then
+            continue
+        fi
+        found_files=true
+        
+        if process_file "$input_file"; then
+            ((processed_count++))
+        else
+            ((failed_count++))
+        fi
+    done
+    
+    if [ "$found_files" = false ]; then
+        echo "No MKV files found in $dir"
+        exit 0
+    fi
+    
+    echo "Processing complete. Successfully processed: $processed_count files. Failed: $failed_count files."
+}
+
+# Main logic
+if [ $# -eq 0 ]; then
+    # No arguments - use default directory
+    process_directory "$DEFAULT_INPUT_DIR"
+elif [ $# -eq 1 ]; then
+    if [ -f "$1" ] && [[ "$1" == *.mkv ]]; then
+        # Single file processing
+        process_file "$1"
+    elif [ -d "$1" ]; then
+        # Directory processing
+        process_directory "$1"
+    else
+        echo "Error: '$1' is not a valid MKV file or directory"
+        exit 1
+    fi
+else
+    echo "Usage: $0 [file.mkv|directory]"
+    echo "  No arguments: process default directory ($DEFAULT_INPUT_DIR)"
+    echo "  file.mkv: process single MKV file"
+    echo "  directory: process all MKV files in directory"
+    exit 1
+fi

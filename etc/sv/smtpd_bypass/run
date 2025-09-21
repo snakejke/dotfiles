@@ -1,0 +1,57 @@
+#!/bin/sh
+exec 2>&1
+
+# Сохраняем состояние для finish скрипта
+STATE_FILE="/tmp/smtp_bypass.state"
+TABLE_NAME="smtp_bypass"
+TABLE_ID="200"
+MARK="200"
+
+# Ждем VPN интерфейс
+while ! ip link show tun2 >/dev/null 2>&1; do
+    sleep 1
+done
+
+# Получаем реальный gateway и interface
+REAL_GW=$(ip route | grep default | grep -v tun | awk '{print $3}' | head -1)
+REAL_IFACE=$(ip route | grep default | grep -v tun | awk '{print $5}' | head -1)
+
+if [ -z "$REAL_GW" ] || [ -z "$REAL_IFACE" ]; then
+    exit 1
+fi
+
+# Сохраняем состояние для finish скрипта
+cat > "$STATE_FILE" << EOF
+REAL_GW=$REAL_GW
+REAL_IFACE=$REAL_IFACE
+TABLE_NAME=$TABLE_NAME
+TABLE_ID=$TABLE_ID
+MARK=$MARK
+EOF
+
+# Очищаем возможные дублирующие правила (idempotent)
+ip route del default table "$TABLE_NAME" 2>/dev/null || true
+while ip rule del fwmark "$MARK" table "$TABLE_NAME" 2>/dev/null; do :; done
+
+# Удаляем старые iptables правила
+iptables -t nat -D POSTROUTING -m mark --mark 0xc8 -o "$REAL_IFACE" -j MASQUERADE 2>/dev/null || true
+iptables -t mangle -D OUTPUT -p tcp --dport 25 -j MARK --set-mark "$MARK" 2>/dev/null || true
+iptables -t mangle -D OUTPUT -p tcp --dport 465 -j MARK --set-mark "$MARK" 2>/dev/null || true
+iptables -t mangle -D OUTPUT -p tcp --dport 587 -j MARK --set-mark "$MARK" 2>/dev/null || true
+
+# Настраиваем routing table
+if ! grep -q "smtp_bypass" /etc/iproute2/rt_tables; then
+    echo "$TABLE_ID $TABLE_NAME" >> /etc/iproute2/rt_tables
+fi
+
+# Применяем новые правила
+iptables -t mangle -A OUTPUT -p tcp --dport 587 -j MARK --set-mark "$MARK" || exit 1
+iptables -t mangle -A OUTPUT -p tcp --dport 465 -j MARK --set-mark "$MARK" || exit 1
+iptables -t mangle -A OUTPUT -p tcp --dport 25 -j MARK --set-mark "$MARK" || exit 1
+iptables -t nat -A POSTROUTING -m mark --mark 0xc8 -o "$REAL_IFACE" -j MASQUERADE || exit 1
+
+ip rule add fwmark "$MARK" table "$TABLE_NAME" priority 100 || exit 1
+ip route add default via "$REAL_GW" dev "$REAL_IFACE" table "$TABLE_NAME" || exit 1
+
+# Держим процесс живым
+exec sleep infinity

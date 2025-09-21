@@ -5,17 +5,14 @@ stdenv.mkDerivation {
   version = sources.erlang-lsp.version;
   src = sources.erlang-lsp.src;
   
-  # Отключаем стандартную unpack фазу
   dontUnpack = true;
   dontBuild = true;
   
   installPhase = ''
     mkdir -p $out/bin
     
-    # Извлекаем исполняемый файл из архива напрямую
     tar -xzf $src -C $out/bin
     
-    # Делаем исполняемым
     chmod +x $out/bin/elp
   '';
   

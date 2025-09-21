@@ -1,0 +1,21 @@
+{
+  "runtimes": {
+    "nvidia": {
+      "path": "nvidia-container-runtime",
+      "runtimeArgs": []
+    }
+  },
+  "log-level": "warn",
+  "ipv6": false,
+  "dns": ["192.168.0.11"],
+  "default-address-pools": [
+    {
+      "base": "172.16.0.0/12",
+      "size": 24
+    },
+    {
+      "base": "10.0.0.0/8", 
+      "size": 24
+    }
+  ]
+}

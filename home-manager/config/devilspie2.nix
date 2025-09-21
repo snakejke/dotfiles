@@ -2,12 +2,12 @@
     services.devilspie2 = {
     enable = true;
     config = ''
-local window_name = get_window_name()
-local app_name = get_application_name()
-local class_name = get_class_instance_name()
-debug_print("Application: " .. app_name)
-debug_print("Window: " .. window_name)
-debug_print("Class: " .. class_name)
+    local window_name = get_window_name()
+    local app_name = get_application_name()
+    local class_name = get_class_instance_name()
+    debug_print("Application: " .. app_name)
+    debug_print("Window: " .. window_name)
+    debug_print("Class: " .. class_name)
 
 -- if window_name == "Mozilla Firefox" then
 --   set_window_geometry(50, 100, 800, 600)

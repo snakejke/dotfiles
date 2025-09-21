@@ -4,27 +4,35 @@
   vars:
     config_directories:
       - emacs/lisp
+      - fontconfig 
       - fvwm
       - home-manager 
       - lf
-      - mpv
       - notmuch
       - picom
       - pipewire
       - sx
-      - xdg-desktop-portal
       - xsettingsd
 
     config_files:
       - ansible/ansible.cfg
       - containers/registries.conf
       - containers/storage.conf
+      - containers/policy.json
       - emacs/early-init.el
       - emacs/init-dev.el
       - emacs/init.el
       - emacs/init.org
       - emacs/dict/english-words.txt
       - wireplumber/wireplumber.conf.d/80-disable-logind.conf
+      - libvirt/libvirt.conf
+      - mpv/input.conf
+      - mpv/mpv.conf
+      - mpv/patcher.py
+      - nvim/init.lua
+      - ranger/rc.conf
+      - ranger/rifle.conf
+      - ranger/scope.sh
       - zsh/.zprofile
       - zsh/.zshenv
       - zsh/.zshrc

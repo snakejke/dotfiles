@@ -3,7 +3,7 @@
 {
   programs.rofi = {
     enable = true;
-    font = "JetBrainsMono Nerd Font Mono";
+    font = "JetBrains Mono";
     terminal = "rofi-sensible-terminal";
     
     extraConfig = {
@@ -28,7 +28,7 @@
      * Theme Repo           : https://github.com/lr-tech/rofi-themes-collection
      *******************************************************************************/
     * {
-        font:   "JetBrainsMono Nerd Font 12";
+        font:   "JetBrains Mono 12";
         bg0:    #242424E6;
         bg1:    #7E7E7E80;
         bg2:    #0860f2E6;
@@ -50,7 +50,7 @@
     }
 
     inputbar {
-        font:       "JetBrainsMono Nerd Font 12";
+        font:       "JetBrains Mono 12";
         padding:    12px;
         spacing:    12px;
         children:   [ icon-search, entry ];

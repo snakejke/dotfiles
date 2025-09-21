@@ -319,6 +319,7 @@
   :demand t
   :preface (setq evil-want-keybinding nil) ;; бинды с evil-collection
   :custom
+  (evil-mode-line-format nil)
   (evil-symbol-word-search t "search by symbol with * and #.")
   (evil-shift-width 2 "Same behavior for vim's '<' and '>' commands")
   (evil-want-C-i-jump nil) ;; fix табов с org src ??
@@ -339,6 +340,24 @@
     ":" 'evil-command-window-ex
     "/" 'evil-command-window-search-forward
     "?" 'evil-command-window-search-backward)
+  ;; https://superuser.com/questions/684540/evil-mode-evil-shift-left-loses-selection
+  ;; Overload shifts so that they don't lose the selection
+  (define-key evil-visual-state-map (kbd ">") 'djoyner/evil-shift-right-visual)
+  (define-key evil-visual-state-map (kbd "<") 'djoyner/evil-shift-left-visual)
+  (define-key evil-visual-state-map [tab] 'djoyner/evil-shift-right-visual)
+  (define-key evil-visual-state-map [S-tab] 'djoyner/evil-shift-left-visual)
+
+  (defun djoyner/evil-shift-left-visual ()
+    (interactive)
+    (evil-shift-left (region-beginning) (region-end))
+    (evil-normal-state)
+    (evil-visual-restore))
+
+  (defun djoyner/evil-shift-right-visual ()
+    (interactive)
+    (evil-shift-right (region-beginning) (region-end))
+    (evil-normal-state)
+    (evil-visual-restore))
 
   (evil-mode)
 )
@@ -353,6 +372,11 @@
   :custom
   (evil-collection-elpaca-want-g-filters nil)
   (evil-collection-ement-want-auto-retro t))
+
+(use-package evil-surround
+  :after evil
+  :config
+  (global-evil-surround-mode t))
 
 (use-package evil-anzu
   :after (evil anzu))
@@ -392,11 +416,14 @@
   (truncate-lines t) ;; убрать перенос " ↪ " 
   (line-numbers-mode t) ;; строки и колоки(882,44)
   (column-number-mode t)
+  (create-lockfiles nil) ;; TODO 
   (use-short-answers t) ;; yes-no to y-n
   (completion-styles '(flex basic partial-completion emacs22))
   ;; c corfu. если не будет работать. положить в init
   (completion-cycle-threshold 3)
   (tab-always-indent 'complete)
+  ;;
+  (inhibit-compacting-font-caches t)
   :init
   (setq locale-coding-system 'utf-8
         coding-system-for-read 'utf-8
@@ -421,6 +448,17 @@
 
 ;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
+;; (use-package eat
+;;   :defer t
+;;  ;; :ensure(eat :host codeberg :repo "akib/emacs-eat"
+;;  ;;         :files ("*.el" ("term" "term/*.el") "*.texi"
+;;  ;;                 "*.ti" ("terminfo/e" "terminfo/e/*")
+;;  ;;                 ("terminfo/65" "terminfo/65/*")
+;;  ;;                 ("integration" "integration/*")
+;;  ;;                 (:exclude ".dir-locals.el" "*-tests.el")))
+;;  :config
+;;  (add-hook 'eshell-load-hook #'eat-eshell-mode))
 
 (use-package which-key
   :demand t
@@ -502,6 +540,11 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature eshell
   :custom
   (eshell-banner-message "")
+  :config
+  ;; Extensions
+  (setq eshell-modules-list
+        (append eshell-modules-list
+                '(eshell-smart eshell-elecslash eshell-tramp)))
   :init
   (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
         eshell-prompt-function
@@ -515,13 +558,13 @@ unreadable. Returns the names of envvars that were changed."
 
   ;;TODO 
   (defun project-eshell-popup (&optional arg)
-    "Start Eshell in a pop-up window in the current project's root directory.
-If a buffer already exists for running Eshell in the project's root,
-switch to it. Otherwise, create a new Eshell buffer.
-With \\[universal-argument] prefix arg, create a new Eshell buffer even
-if one already exists."
-    (interactive "P")
-    (let* ((default-directory (project-root (project-current t)))
+          "Start Eshell in a pop-up window in the current project's root directory.
+      If a buffer already exists for running Eshell in the project's root,
+      switch to it. Otherwise, create a new Eshell buffer.
+      With \\[universal-argument] prefix arg, create a new Eshell buffer even
+      if one already exists."
+      (interactive "P")
+      (let* ((default-directory (project-root (project-current t)))
            (eshell-buffer-name (project-prefixed-buffer-name "eshell"))
            (eshell-buffer (get-buffer eshell-buffer-name))
            (display-buffer-alist
@@ -537,23 +580,7 @@ if one already exists."
           (unless (derived-mode-p 'eshell-mode)
             (eshell-mode))
           buf))))
-  
   (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color"))))
-
-;; Adapted from: rougier/nano-emacs
-(defun +what-faces (pos)
-  "Get the font faces at POS."
-  (interactive "d")
-  (let ((faces (remq nil
-                     (list
-                      (get-char-property pos 'read-face-name)
-                      (get-char-property pos 'face)
-                      (plist-get (text-properties-at pos) 'face)))))
-    (message "Faces: %s" faces)))
-
-(use-feature treesit 
-  :custom
-  (treesit-font-lock-level 4))
 
 (use-package modus-themes
   :config 
@@ -654,6 +681,53 @@ if one already exists."
     ;; `(font-lock-type-face ((,c :inherit modus-themes-bold :foreground ,type)))
     ;; `(font-lock-variable-name-face ((,c :foreground ,variable)))
     ;; `(font-lock-warning-face ((,c :inherit modus-themes-bold :foreground ,warning)))
+
+;; Adapted from: rougier/nano-emacs
+(defun +what-faces (pos)
+  "Get the font faces at POS."
+  (interactive "d")
+  (let ((faces (remq nil
+                     (list
+                      (get-char-property pos 'read-face-name)
+                      (get-char-property pos 'face)
+                      (plist-get (text-properties-at pos) 'face)))))
+    (message "Faces: %s" faces)))
+
+(use-feature treesit
+  :custom
+  (treesit-font-lock-level 4)
+  :config
+  ;; https://www.reddit.com/r/emacs/comments/1j53j8v/comment/mge63rp/
+  (add-to-list 'treesit-language-source-alist
+             '(typst "https://github.com/uben0/tree-sitter-typst"))
+
+  (defconst treesit-langs '(("c" . c)
+                            ("c++" . cpp)
+                            ("typst" . typst)
+                            ("python" . python)
+                            ("java" . java)
+                            ("yaml" . yaml)))
+
+(defun treesit-populate-mode-mapping ()
+  "Populate `major-mode-remap-alist' according to `treesit-langs'."
+  (interactive)
+  (when (and (fboundp #'treesit-available-p) (treesit-available-p))
+    (dolist (lang treesit-langs)
+      (when-let* (((treesit-ready-p (cdr lang) t))
+                 (mode (intern (concat (car lang) "-mode")))
+                 (ts-mode (intern (concat (car lang) "-ts-mode"))))
+        (add-to-list 'major-mode-remap-alist (cons mode ts-mode))))))
+
+(defun treesit-install-language-grammars ()
+  "Install tree-sitter grammars for languages in `treesit-langs'."
+  (interactive)
+  (dolist (lang treesit-langs)1
+    (unless (treesit-ready-p (cdr lang) t)
+      (treesit-install-language-grammar (cdr lang) 'interactive)))
+  (treesit-populate-mode-mapping))
+
+(treesit-populate-mode-mapping)
+  )
 
 (use-feature dired
   :commands dired-jump ;; или просто dired ?
@@ -899,7 +973,9 @@ if one already exists."
             (set-visited-file-name new-name)
             (set-buffer-modified-p nil))))))
   :custom
-  ;; (auto-save-default nil) ;; disable auto save files 
+  (auto-save-default nil) ;; disable auto save files
+  (make-backup-files) ;; TODO 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (require-final-newline t "Automatically add newline at end of file")
   (backup-by-copying t)
   (backup-directory-alist `((".*" . ,(expand-file-name
@@ -970,96 +1046,202 @@ if one already exists."
   :config
   (savehist-mode 1))
 
+;; (defface evil-state-face
+;;   '((t (:weight bold)))
+;;   "Bold"
+;;   )
+
+;; (defface evil-normal-face
+;;     '((t (:inherit evil-state-face 
+;;         :background "#ff5f5f"
+;;         :foreground "white")))
+;;     "White")
+;; (defface evil-emacs-face
+;;   '((t (:inherit evil-state-face
+;; 			:background "#3366ff"
+;; 			:foreground "white")))
+;;   "The evil emacs state "
+;;   )
+
+;; (defface evil-insert-face
+;;   '((t (:inherit evil-state-face
+;; 			:background "#3399ff"
+;; 			:foreground "white")))
+;;   "The evil insert state"
+;;   )
+
+;; (defface evil-replace-face
+;;   '((t (:inherit evil-state-face
+;; 			:background "#33ff99"
+;; 			:foreground "black")))
+;;   "The evil replace state"
+;;   )
+
+;; (defface evil-operator-face
+;;   '((t (:inherit evil-state-face
+;; 			:background "pink"
+;; 			:foreground "black")))
+;;   "The evil operator state"
+;;   )
+
+;; (defface evil-motion-face
+;;   '((t (:inherit evil-state-face
+;; 			:background "purple"
+;; 			:foreground "white")))
+;;   "The evil motion state"
+;;   )
+
+;; (defface evil-visual-face
+;;   '((t (:inherit (region evil-state-face))))
+;;   "The evil visual state"
+;;   )
+
+;; (defun my-evil nil
+;;   (let ((state (if (bound-and-true-p evil-state)
+;;                    (symbol-name evil-state)
+;;                  "NORMAL")))
+;;     (propertize (format " %s " (upcase state))
+;;                 'face (intern (format "evil-%s-face" state)))))
+
+;; (setq-default mode-line-format '((:eval (my-evil))  ; Убираем пустую строку после eval
+;;                                 ("%e" mode-line-front-space
+;;                                 (:propertize
+;;                                  ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
+;;                                  display (min-width (5.0)))
+;;                                 mode-line-frame-identification
+;;                                 mode-line-buffer-identification "   "
+;;                                 mode-line-position
+;;                                 (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
+;;                                 minions-mode-line-modes
+;;                                 mode-line-misc-info
+;;                                 mode-line-frame-identification
+;;                                 mode-line-end-spaces)))
+
+
 (defface evil-state-face
   '((t (:weight bold)))
-  "Bold"
-  )
+  "Bold face for evil states")
 
 (defface evil-normal-face
-    '((t (:inherit evil-state-face 
+  '((t (:inherit evil-state-face 
         :background "#ff5f5f"
         :foreground "white")))
-    "White")
+  "Face for evil normal state")
+
 (defface evil-emacs-face
   '((t (:inherit evil-state-face
-			:background "#3366ff"
-			:foreground "white")))
-  "The evil emacs state "
-  )
+        :background "#3366ff"
+        :foreground "white")))
+  "Face for evil emacs state")
 
 (defface evil-insert-face
   '((t (:inherit evil-state-face
-			:background "#3399ff"
-			:foreground "white")))
-  "The evil insert state"
-  )
+        :background "#3399ff"
+        :foreground "white")))
+  "Face for evil insert state")
 
 (defface evil-replace-face
   '((t (:inherit evil-state-face
-			:background "#33ff99"
-			:foreground "black")))
-  "The evil replace state"
-  )
+        :background "#33ff99"
+        :foreground "black")))
+  "Face for evil replace state")
 
 (defface evil-operator-face
   '((t (:inherit evil-state-face
-			:background "pink"
-			:foreground "black")))
-  "The evil operator state"
-  )
+        :background "pink"
+        :foreground "black")))
+  "Face for evil operator state")
 
 (defface evil-motion-face
   '((t (:inherit evil-state-face
-			:background "purple"
-			:foreground "white")))
-  "The evil motion state"
-  )
+        :background "purple"
+        :foreground "white")))
+  "Face for evil motion state")
 
 (defface evil-visual-face
   '((t (:inherit (region evil-state-face))))
-  "The evil visual state"
-  )
+  "Face for evil visual state")
 
-;; (defun my-evil nil
-;;      (let ((state (if (bound-and-true-p evil-state)
-;;                      (symbol-name evil-state)
-;;                     " ")))
-;;      (propertize (concat " " (upcase state) " ") 'face (intern (format "evil-%s-face" state)))))
 
-;; (setq-default mode-line-format '((:eval (my-evil))
-;;     ""
-;;      ("%e" mode-line-front-space
-;;      (:propertize
-;;       ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
-;;       display (min-width (5.0)))
-;;      mode-line-frame-identification
-;;      mode-line-buffer-identification "   "
-;;      mode-line-position
-;;      (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
-;;      minions-mode-line-modes
-;;      mode-line-misc-info
-;;      mode-line-frame-identification
-;;      mode-line-end-spaces)))
-(defun my-evil nil
-  (let ((state (if (bound-and-true-p evil-state)
-                   (symbol-name evil-state)
-                 "NORMAL")))
-    (propertize (format " %s " (upcase state))
-                'face (intern (format "evil-%s-face" state)))))
+(defvar my-evil-state-cache nil
+  "Кэш текущего состояния evil для modeline.")
 
-(setq-default mode-line-format '((:eval (my-evil))  ; Убираем пустую строку после eval
-                                ("%e" mode-line-front-space
-                                (:propertize
-                                 ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
-                                 display (min-width (5.0)))
-                                mode-line-frame-identification
-                                mode-line-buffer-identification "   "
-                                mode-line-position
-                                (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
-                                minions-mode-line-modes
-                                mode-line-misc-info
-                                mode-line-frame-identification
-                                mode-line-end-spaces)))
+(defvar my-evil-last-state nil
+  "Последнее известное состояние evil.")
+;; setq evil-mode-line-format nil
+(defun my-evil-cached ()
+  "Быстрая функция для отображения состояния evil с кэшированием."
+  (let ((current-state (if (bound-and-true-p evil-state)
+                           evil-state
+                         'normal)))
+    ;; Обновляем кэш только если состояние изменилось
+    (unless (eq current-state my-evil-last-state)
+      (setq my-evil-last-state current-state)
+      (setq my-evil-state-cache
+            (propertize (format " %s " (upcase (symbol-name current-state)))
+                        'face (intern (format "evil-%s-face" (symbol-name current-state))))))
+    my-evil-state-cache))
+
+(defun my-evil-update-modeline ()
+  "Обновить строку состояния в modeline."
+  (setq my-evil-modeline-string
+        (if (bound-and-true-p evil-state)
+            (let ((state-name (symbol-name evil-state)))
+              (propertize (format " %s " (upcase state-name))
+                          'face (intern (format "evil-%s-face" state-name))))
+          (propertize " NORMAL " 'face 'evil-normal-face))))
+
+(add-hook 'evil-normal-state-entry-hook 'my-evil-update-modeline)
+(add-hook 'evil-insert-state-entry-hook 'my-evil-update-modeline)
+(add-hook 'evil-visual-state-entry-hook 'my-evil-update-modeline)
+(add-hook 'evil-replace-state-entry-hook 'my-evil-update-modeline)
+(add-hook 'evil-operator-state-entry-hook 'my-evil-update-modeline)
+(add-hook 'evil-motion-state-entry-hook 'my-evil-update-modeline)
+(add-hook 'evil-emacs-state-entry-hook 'my-evil-update-modeline)
+
+(setq-default mode-line-format 
+              '((:eval (my-evil-cached))      ; Кэшированная функция
+                "%e"                          ; Индикатор переполнения
+                mode-line-front-space         ; Пробел в начале
+                ;; Базовая информация о буфере
+                (:propertize
+                 (""
+                  mode-line-mule-info 
+                  mode-line-client 
+                  mode-line-modified 
+                  mode-line-remote
+                  " "
+                  )
+                 display (min-width (5.0)))
+                mode-line-buffer-identification
+                "   "                         ; Разделитель
+                ;; Позиция и информация о файле
+                mode-line-position
+                ;; Информация о проекте и VCS
+                (project-mode-line project-mode-line-format)
+                (vc-mode vc-mode)
+                "  "                          ; Разделитель
+                ;; Режимы (minions группирует их)
+                minions-mode-line-modes
+                ;; Дополнительная информация
+                mode-line-misc-info
+                ;; Пробел в конце
+                mode-line-end-spaces))
+
+
+(my-evil-update-modeline)
+
+
+(defun benchmark-modeline ()
+  "Измерить время обновления modeline."
+  (interactive)
+  (let ((start-time (current-time))
+        (iterations 1000))
+    (dotimes (i iterations)
+      (format-mode-line mode-line-format))
+    (let ((elapsed (float-time (time-subtract (current-time) start-time))))
+      (message "Modeline updated %d times in %.3f seconds (%.4f per update)"
+               iterations elapsed (/ elapsed iterations)))))
 
 (use-package minions
   :custom
@@ -1097,9 +1279,15 @@ if one already exists."
 (use-package orderless
   :defer 1
   ;;:custom (completion-styles '(orderless basic)))
-  :config
-  (setq completion-styles '(orderless flex)
-        completion-category-overrides '((eglot (styles . (orderless flex))))))
+  :custom
+  ;; (completion-styles '(orderless basic))
+  (completion-styles '(orderless flex))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles orderless partial-completion)))))
+  ;; (completion-category-overrides '((file (styles orderless partial-completion)))))
+  ;; :config
+  ;; (setq completion-styles '(orderless flex)
+  ;;       completion-category-overrides '((eglot (styles . (orderless flex))))))
 
 (use-package marginalia
   :defer 2
@@ -1196,20 +1384,8 @@ if one already exists."
 
 (use-package cape
   :init 
-  ;;(defun vd/setup-lsp-completion ()
-    ;;(setq-local completion-at-point-functions (list (cape-super-capf #'tempel-complete
-      ;;                                                               #'lsp-completion-at-point)
-        ;;                                            #'cape-file
-          ;;                                          #'cape-dabbrev)))
-  ;; :hook
- ;; (prog-mode . vd/setup-lsp-completion)
-;;  :hook(((prog-mode) .
-  ;;       (lambda ()
-    ;;       (add-to-list 'completion-at-point-functions
-      ;;                  (cape-super-capf #'tempel-complete)))))
   :custom
-  (cape-dabbrev-min-length 3)
-  (cape-dabbrev-check-other-buffers nil)
+  (cape-dabbrev-buffer-function 'current-buffer)
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
@@ -1226,6 +1402,8 @@ if one already exists."
 (use-package nerd-icons-corfu
   :after corfu
   :init (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(use-package nerd-icons :defer t)
 
 (use-package quickrun
   :bind (("C-<f5>" . quickrun)
@@ -1246,9 +1424,10 @@ if one already exists."
   )
 
 (use-package lsp-mode
-  :hook ((c-mode . lsp)
-         (c++-mode . lsp)
-         (c-or-c++-mode . lsp)
+  :hook (
+         ;; (c-mode . lsp)
+         ;; (c++-mode . lsp)
+         ;; (c-or-c++-mode . lsp)
          (js-mode . lsp)
          (js-jsx-mode . lsp)
          (typescript-mode . lsp)
@@ -1264,31 +1443,20 @@ if one already exists."
   (lsp-completion-show-kind nil)
   (lsp-completion-show-detail nil)
   (lsp-semgrep-languages nil)
-  (lsp-enable-snippet t)
+  (lsp-enable-snippet nil)
   ;; :init
   ;;   (setq lsp-enabled-clients '(jedi 
   ;;                             sqls
   ;;                             jdtls
   ;;                             ))
   :config
-  ;; (setq lsp-disabled-clients '(tfls clangd rls rnix-lsp semgrep-ls deno-ls))
-  ;; (setq lsp-disabled-clients '(semgrep-ls ))
   (add-to-list 'exec-path (concat (getenv "HOME") "/.local/state/nix/profile/release"))
   (setq lsp-semgrep-languages nil)
-    ;; Enable LSP automatically for Erlang files
-  ;; (add-hook 'erlang-mode-hook #'lsp)
-
-  ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
-  ;; (lsp-register-client
-  ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
-  ;;                   :major-modes '(erlang-mode)
-  ;;                   :priority 0
-  ;;                   :server-id 'erlang-language-platform)) 
   (setq lsp-auto-guess-root t)
   ;; (add-to-list 'lsp-enabled-clients 'jdtls)
   ;; (setq lsp-enabled-clients '(jdtls jedi elp))
   ;; (setq lsp-disabled-clients '(pyls pylsp))
-  ;; (setq lsp-log-io nil)
+  ;; (setq lsp-log-io t)
   (setq lsp-restart 'auto-restart)
   ;;TODO: 
   ;; (setq lsp-semgrep-languages '())
@@ -1349,34 +1517,7 @@ if one already exists."
       orig-result)))
 (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
-;; TODO: semgrep error 
-;; (defun ak-lsp-ignore-semgrep-rulesRefreshed (workspace notification)
-;;   "Ignore semgrep/rulesRefreshed notification."
-;;   (when (equal (gethash "method" notification) "semgrep/rulesRefreshed")
-;;     (lsp--info "Ignored semgrep/rulesRefreshed notification")
-;;     t)) ;; Return t to indicate the notification is handled
-
-;; (advice-add 'lsp--on-notification :before-until #'ak-lsp-ignore-semgrep-rulesRefreshed)
-
   )
-
-;; (with-eval-after-load 'lsp-mode
-;;   (defun ak-lsp-ignore-semgrep-rulesRefreshed (workspace notification)
-;;     "Ignore semgrep/rulesRefreshed notification."
-;;     (when (equal (gethash "method" notification) "semgrep/rulesRefreshed")
-;;       (lsp--info "Ignored semgrep/rulesRefreshed notification")
-;;       t)) ;; Return t to indicate the notification is handled
-
-;;   (advice-add 'lsp--on-notification :before-until #'ak-lsp-ignore-semgrep-rulesRefreshed))
-
-;; (with-eval-after-load 'lsp-mode
-;;   ;; ELP, added as priority 0 (> -1) so takes priority over the built-in one
-;;   (lsp-register-client
-;;    (make-lsp-client :new-connection (lsp-stdio-connection '("elp" "server"))
-;;                     :major-modes '(erlang-mode)
-;;                     :priority 0
-;;                     :server-id 'erlang-language-platform))
-;;   )
 
 (use-package lsp-ui
   :after lsp
@@ -1399,7 +1540,7 @@ if one already exists."
 
 (use-package lsp-java
   :after lsp
-  :hook ((java-mode java-ts-mode jdee-mode) . (lambda () (require 'lsp-java)))
+  :hook ((java-mode java-ts-mode) . (lambda () (require 'lsp-java)))
   :config
   ;; (setq lsp-java-java-path "/usr/lib/jvm/java-17-openjdk/bin/java")
   (setq lsp-java-java-path "/home/snake/.local/devjava/sdkman/candidates/java/current/bin/java")
@@ -1530,6 +1671,9 @@ if one already exists."
  ;;                    :priority 0
  ;;                    :server-id 'erlang-language-platform))
 
+(use-package nim-mode
+  :defer 4)
+
 (use-package rustic
   :ensure (rustic :host github :repo "emacs-rustic/rustic")
   :defer t)
@@ -1641,23 +1785,16 @@ if one already exists."
     (when (display-graphic-p)
       (eldoc-box-hover-at-point-mode arg))))
 
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
-
 (use-package treesit-fold
   :ensure (treesit-fold :host github :repo "emacs-tree-sitter/treesit-fold")
   :defer t)
 
 ;;(use-package jsonrpc)
 
-(use-feature nxml-mode
-  :mode "\\.xml\\'"
-  :config
-  (+eglot-register '(nxml-mode xml-mode) "lemminx"))
+;; (use-feature nxml-mode
+;;   :mode "\\.xml\\'"
+;;   :config
+;;   (+eglot-register '(nxml-mode xml-mode) "lemminx"))
 
 (use-package sly
   :hook ((lisp-mode-local-vars . sly-editing-mode))
@@ -1906,6 +2043,9 @@ Use `treemacs' command for old functionality."
   :config
   (treemacs-load-theme "nerd-icons"))
 
+;; (use-package modern-icons
+;;   :ensure(modern-icons :host github :repo "emacs-modern-icons/modern-icons-treemacs.el" :files "*.el"))
+
 (use-package treemacs-magit
   :after (treemacs magit)
   )
@@ -2094,7 +2234,6 @@ Use `treemacs' command for old functionality."
       (format "python3 %s" 
            (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
    t t))
-  ;;    "python3 /home/snake/md_to_org_debug.py" 
 
   ;; (defun +md-to-org-region (start end)
   ;; "Convert region from markdown to org, replacing selection"
@@ -2166,37 +2305,85 @@ Use `treemacs' command for old functionality."
                             :box (:line-width 3 :width -2 :style released-button)))
      ("DEPRECATED" . (:foreground "yellow-faint" :weight bold))
      ))
-  (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
+  ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
+  ;; (org-ellipsis " ▾")
+  (org-ellipsis "▿")
   (org-priority-lowest ?D)
-  (org-priority-faces '((?A . nerd-icons-red)
-                        (?B . warning)
-                        (?C . success)))
+  (org-priority-faces
+   ;; '((?A . nerd-icons-red)
+   ;;   (?B . warning)
+   ;;   (?C . success)))
+       '((?A . 'nerd-icons-red)
+        (?B . 'nerd-icons-orange)
+        (?C . 'nerd-icons-yellow)
+        (?D . 'nerd-icons-green)
+        (?E . 'nerd-icons-blue)))
   (org-fontify-done-headline t)
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
+
+(use-package yaml-pro
+  :hook
+  (yaml-mode . yaml-pro-mode)
+  (yaml-ts-mode . yaml-pro-ts-mode)
+  :custom
+  (yaml-pro-ts-yank-subtrees nil))
+
+(use-feature yaml-ts-mode
+  :custom
+  (yaml-indent-offset 2)
+  (yaml-backspace-function 'backward-delete-char-untabify)
+  
+  :config
+  (defun my-yaml-ts-mode-setup ()
+    "Setup proper indentation and keys for yaml-ts-mode."
+    (require 'yaml-mode)
+    (setq-local indent-line-function 'yaml-indent-line)
+    
+    (local-set-key (kbd "RET") 'newline-and-indent)
+    (local-set-key (kbd "DEL") 'yaml-electric-backspace)
+    (local-set-key (kbd "|") 'yaml-electric-bar-and-angle)
+    (local-set-key (kbd ">") 'yaml-electric-bar-and-angle)
+    (local-set-key (kbd "-") 'yaml-electric-dash-and-dot)
+    (local-set-key (kbd ".") 'yaml-electric-dash-and-dot))
+  
+  :hook (yaml-ts-mode . my-yaml-ts-mode-setup))
+
+(use-package indent-bars
+  :hook ((python-mode yaml-ts-mode) . indent-bars-mode)
+  :custom
+  (indent-bars-color '(highlight :face-bg t :blend 0.2))
+  (indent-bars-pattern ".")
+  (indent-bars-width-frac 0.1)
+  (indent-bars-pad-frac 0.1)
+  (indent-bars-zigzag nil)
+  (indent-bars-color-by-depth nil)
+  (indent-bars-highlight-current-depth nil)
+  (indent-bars-display-on-blank-lines nil))
 
 (use-package org-cliplink
   :defer t)
 
 (use-package org-modern
   :after (org)
+  :custom
+  (org-modern-block-fringe nil)
+  (org-modern-progress nil) ;;  ?
+  (org-modern-table nil) ;; поломано
+  (org-modern-horizontal-rule (make-string 36 ?─)) ;; "───────────"
+  (org-modern-priority nil) ;; не нашел годного
+  (org-modern-replace-stars "◉○✸✿✤✜◆▶")
+  (org-modern-checkbox nil)
   :config
-  (global-org-modern-mode)
-  (remove-hook 'org-agenda-finalize-hook 'org-modern-agenda)
-  (setq org-modern-checkbox nil)
-  (setq org-modern-star '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
-        org-modern-block-name
+  (setq org-modern-star 'replace)
+  (setq org-modern-block-name
         '((t . t)
           ("src" "»" "«")
           ("example" "»–" "–«")
           ("quote" "❝" "❞")
-          ("export" "⏩" "⏪"))
-        org-modern-block-fringe nil
-        org-modern-progress nil ;;  ?
-        org-modern-table nil ;; поломано
-        org-modern-horizontal-rule (make-string 36 ?─) ;; что это дает ?
-        org-modern-priority nil ;; не нашел годного
-   ))
+          ("export" "⏩" "⏪")))
+  (global-org-modern-mode)
+  (remove-hook 'org-agenda-finalize-hook 'org-modern-agenda))
 
 (use-package auto-tangle-mode
   :ensure (auto-tangle-mode
@@ -2217,17 +2404,29 @@ Use `treemacs' command for old functionality."
     "bT"  'org-babel-tangle-file
     "be"  '(:ignore t :which-key "execute")
     "beb" 'org-babel-execute-buffer
+    "bb"  'org-babel-tangle-block 
     "bes" 'org-babel-execute-subtree)
   :config
+  (defun org-babel-tangle-block()
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+     (call-interactively 'org-babel-tangle)
+     ))
   (dolist (template '(("f" . "src fountain")
-                    ("se" . "src emacs-lisp :lexical t")
-                    ("ss" . "src shell")
-                    ("sj" . "src javascript")))
+                      ("se" . "src emacs-lisp :lexical t")
+                      ("ss" . "src shell")
+                      ("sj" . "src javascript")))
   (add-to-list 'org-structure-template-alist template))
   (use-feature ob-js
     :commands (org-babel-execute:js))
   (use-feature ob-clojure
     :commands (org-babel-execute:clojure))
+  (use-feature ob-perl
+    :commands (org-babel-execute:perl))
+  (use-feature ob-awk
+    :commands (org-babel-execute:awk))
+
+
 
   (use-feature ob-python
     :commands (org-babel-execute:python))
@@ -2236,8 +2435,9 @@ Use `treemacs' command for old functionality."
                org-babel-execute:shell
                org-babel-execute:sh
                org-babel-expand-body:generic)
-    :config (add-to-list 'org-babel-load-languages '(shell . t))
-    (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+    :config
+    (add-to-list 'org-babel-load-languages '(shell . t))
+    )
   (use-feature ob-java
     :commands (org-babel-execute:java)
     :config
@@ -2644,7 +2844,6 @@ Use `treemacs' command for old functionality."
 (use-package org-fancy-priorities
   :commands (org-fancy-priorities-mode)
   :hook (org-mode . org-fancy-priorities-mode)
-  :diminish ""
   :config
   (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
   )
@@ -2810,6 +3009,9 @@ Speeds up `org-agenda' remote operations."
   ;; needs to be run after other hooks have acted.
   (run-at-time nil nil #'org-appear--set-elements))
 
+(use-feature text-mode
+  :hook (text-mode . visual-line-mode))
+
 (use-feature ox-latex
   :after org-mode
   :custom
@@ -2861,29 +3063,29 @@ Speeds up `org-agenda' remote operations."
     "r" 'winner-redo)
   :config (winner-mode))
 
-(use-package yasnippet
-  :commands (yas-global-mode)
-  :custom
-  (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets")))
+;; (use-package yasnippet
+;;   ;; :commands (yas-global-mode)
+;;   :custom
+;;   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets"))
+;;   (yas-global-mode 1)
+  
+;;   )
 
-;; Configure Tempel
 (use-package tempel
   ;; Require trigger prefix before template name when completing.
-  :bind (("M-=" . tempel-complete) ;; Alternative tempel-expand
+  :bind (("M-=" . tempel-complete)
          ("M--" . tempel-insert)
          ("M-]" . tempel-next))
   :custom
-  (tempel-trigger-prefix "=") ;; Require trigger prefix before template name when completing.
+  (tempel-trigger-prefix "=")
   :hook ((prog-mode text-mode) . +tempel-setup-capf-h)
   :hook (prog-mode . tempel-abbrev-mode)
+  ;; :hook ((text-mode) . +tempel-setup-capf-h)
+
   :config
+  (setq tempel-path "~/.config/emacs/templates/*.eld")
   (defun +tempel-setup-capf-h ()
     (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
-;;)
-;; Optional: Add tempel-collection.
-;; The package is young and doesn't have comprehensive coverage.
-(use-package tempel-collection
-  :after tempel)
 
 (use-package lsp-snippet-tempel
   :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
@@ -3493,9 +3695,14 @@ append it to ENTRY."
 
 (use-feature whitespace
   :custom
-  (whitespace-display-mappings '((tab-mark ?\t [?› ?\t])))
+  ;; (whitespace-display-mappings '((tab-mark ?\t [?› ?\t])))
+      (whitespace-display-mappings '(
+      (space-mark   ?\     [?\u00B7]     [?.])
+      (space-mark   ?\xA0  [?\u00A4]     [?_])
+      (newline-mark ?\n    [182 ?\n])
+      (tab-mark     ?\t    [?\u00BB ?\t] [?\\ ?\t])))
   (whitespace-line-column nil)
-  (whitespace-style '(empty face lines-tail tab-mark tabs trailing))
+  ;; (whitespace-style '(empty face lines-tail tab-mark tabs trailing))
   )
 
 (use-feature xref
@@ -3512,6 +3719,7 @@ append it to ENTRY."
 
 (add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
+(add-to-list 'auto-mode-alist '("\\.bb?\\'" . clojure-mode))
 
 (require 'extras)
 

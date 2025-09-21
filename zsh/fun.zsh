@@ -7,11 +7,23 @@ nix_source() {
   return 1
 }
 
+download() { aria2c -d ~/Downloads "$1"; }
+
+nvm() {
+  unset -f nvm  
+  source "$NVM_DIR/nvm.sh"
+  nvm "$@"
+}
+
+docx2emacs() {
+    local tmpfile=$(mktemp --suffix=.txt)
+    docx2txt "$1" > "$tmpfile"
+    emacsclient -c -n "$tmpfile"
+}
+
 hm() {
-    local switch_flag=false
-    local update_flag=false
-    local garbage_flag=false
-    
+    local switch_flag=false update_flag=false garbage_flag=false
+
     while [[ $# -gt 0 ]]; do
         case $1 in
             -s|--switch)
@@ -26,68 +38,66 @@ hm() {
                 garbage_flag=true
                 shift
                 ;;
-            -h|--help)
-                echo "Использование: hm [опции]"
-                echo "  -s, --switch    Выполнить home-manager switch"
-                echo "  -u, --update    Обновить flake"
-                echo "  -d, --garbage   Очистить garbage collection"
-                echo "  -h, --help      Показать справку"
-                echo ""
-                echo "Примеры:"
-                echo "  hm -s           # только switch"
-                echo "  hm -u -s        # update + switch"
-                echo "  hm -u -s -d     # все команды"
-                return 0
-                ;;
             *)
                 echo "Неизвестная опция: $1"
-                echo "Используйте hm -h для справки"
                 return 1
                 ;;
         esac
     done
-    
-    if [[ $switch_flag == false && $update_flag == false && $garbage_flag == false ]]; then
-        hm --help
-        return 0
-    fi
-    
+
     if [[ $update_flag == true ]]; then
-        nix flake update --flake ~/.config/home-manager
-        if [[ $? -ne 0 ]]; then
-            return 1
-        fi
+        nix flake update --flake ~/.config/home-manager || return
     fi
-    
+
     if [[ $switch_flag == true ]]; then
-        home-manager switch --flake ~/.config/home-manager
-        if [[ $? -ne 0 ]]; then
-            return 1
-        fi
+        home-manager switch --flake ~/.config/home-manager || return
     fi
-    
+
     if [[ $garbage_flag == true ]]; then
         nix-collect-garbage -d
-        if [[ $? -ne 0 ]]; then
-            return 1
-        fi
     fi
 }
 
 untar() {
   local file="$1"
   if [[ -z "$file" ]]; then
-    echo "Usage: untar <archive.tar.*>"
+    echo "Usage: untar <archive>"
     return 1
   fi
 
-  local size=$(stat -c %s "$file")
+  local size
+  size=$(stat -c %s "$file")
+
+  local base="${file##*/}"
+  base="${base%.*}"
 
   case "$file" in
-    *.tar.gz|*.tgz) pv -s "$size" "$file" | tar xzf - ;;
+    *.tar.gz|*.tgz)   pv -s "$size" "$file" | tar xzf - ;;
     *.tar.bz2|*.tbz2) pv -s "$size" "$file" | tar xjf - ;;
-    *.tar.xz|*.txz) pv -s "$size" "$file" | tar xJf - ;;
-    *.tar) pv -s "$size" "$file" | tar xf - ;;
-    *) echo "Unsupported archive format: $file" ;;
+    *.tar.xz|*.txz)   pv -s "$size" "$file" | tar xJf - ;;
+    *.tar)            pv -s "$size" "$file" | tar xf - ;;
+    *.zip|*.rar|*.7z)
+      mkdir -p "$base"
+      7zz x "$file" -o"$base"
+      ;;
+    *)
+      echo "Unsupported archive format: $file"
+      ;;
   esac
+}
+
+# pyt                  
+# pyt my-temp-project  
+# pyt my-app requests pandas 
+pyt() {
+    local project_name="${1:-python_$(date +%s)}"
+    local project_dir="/tmp/${project_name}"
+
+    mkdir -p "${project_dir}" && cd "${project_dir}" || return 1
+
+    uv venv -q && source .venv/bin/activate || return 1
+
+    if [[ $# -gt 1 ]]; then
+        uv pip install "${@:2}"
+    fi
 }

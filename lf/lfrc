@@ -3,6 +3,12 @@ set shell sh
 set hidden true
 set icons
 set ignorecase true
+###################
+set info size
+set dircounts true
+set dircache false
+set period 1
+###################
 set shellopts '-eu'
 set ifs "\n"
 set previewer ~/.local/bin/lf/lfpreviewer
