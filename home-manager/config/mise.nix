@@ -5,6 +5,7 @@
     globalConfig = {
       settings = {
         npm.bun = true;
+        idiomatic_version_file_enable_tools = [];
       };
       tools = {
         babashka = "latest";
@@ -15,12 +16,34 @@
         clojure = "latest";
         go = "latest";
         bun = "latest";
+        # node = "22"; 
         node = "latest"; 
         uv = "latest";
+        spring-boot = "latest";
+        github-cli = "latest";
+        dotnet = "latest";
+        # ollama = "latest";
+        just = "latest";
+        # "cargo:https://github.com/aws/amazon-q-developer-cli" = { 
+        #   version = "latest";
+        #   crate = "crates/chat-cli";
+        # };
+        "npm:prettier" = "latest";
         "npm:@google/gemini-cli" = "latest";
         "npm:@qwen-code/qwen-code" = "latest";
         "pipx:jedi-language-server" = "latest";
         "pipx:my-cookies" = "latest";
+        "pipx:sqlfluff" = "latest";
+        "pipx:huggingface_hub" = {
+          version = "latest";
+          extras = "cli";
+        };
+        # "pipx:huggingface_hub" = {
+        #   version = "latest";
+        #   uvx = false;  # булево значение, не строка
+        #   pipx_args = "--include-deps";
+        # };
+        # "pipx:open-webui" = "0.6.33";
         "pipx:ruff" = "latest";
         "pipx:semgrep" = "latest";
         "pipx:streamlink" = "latest";

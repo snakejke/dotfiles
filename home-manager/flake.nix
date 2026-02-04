@@ -49,5 +49,17 @@
           ./modules
         ];
       };
+
+      homeConfigurations."snake@wsl" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        extraSpecialArgs = {
+          st-flexipatch-pkg = st-flexipatch.packages.${system}.default;
+        };
+        modules = [
+          ./home-wsl.nix
+          ./flakes
+          ./modules
+        ];
+      };
     };
 }

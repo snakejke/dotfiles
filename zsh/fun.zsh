@@ -75,6 +75,7 @@ untar() {
     *.tar.gz|*.tgz)   pv -s "$size" "$file" | tar xzf - ;;
     *.tar.bz2|*.tbz2) pv -s "$size" "$file" | tar xjf - ;;
     *.tar.xz|*.txz)   pv -s "$size" "$file" | tar xJf - ;;
+    *.tar.zst)        pv -s "$size" "$file" | tar -I zstd -xf - ;;                  
     *.tar)            pv -s "$size" "$file" | tar xf - ;;
     *.zip|*.rar|*.7z)
       mkdir -p "$base"

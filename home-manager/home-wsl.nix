@@ -5,41 +5,36 @@ let
 in
 
 {
-    imports = [
+  imports = [
     ./config/fdm.nix
     ./config/git.nix
-    ./config/devilspie2.nix
+    # ./config/devilspie2.nix # Оконный менеджмент в WSL не нужен
     ./config/zathura.nix
     ./config/dbeaver.nix
     ./config/wget.nix
     ./config/aria2.nix
-    ./config/dunst.nix
-    #./config/tmux.nix 
-    ./config/rofi.nix
+    # ./config/dunst.nix # Уведомления можно оставить, но часто используют win-notify
+    # ./config/rofi.nix # Можно включить, если планируешь запускать линуксовый лаунчер
     ./config/ssh.nix
     ./config/texlive.nix
-    #./config/emacs.nix
     ./config/mise.nix
     ./config/readline.nix
     ./config/themes.nix
     ./config/atuin.nix
-    ./config/aria2.nix
-    # ./config/zsh.nix
-    # ./config/gpu-apps.nix
-    ];
+    # ./config/zsh.nix # Раскомментируй, если используешь, или настрой отдельно
+  ];
     
   home.username = "snake";
   home.homeDirectory = "/home/snake";
-  # nixpkgs.config.allowUnfree = true;
+  
   nixpkgs.config = import ./nixpkgs-config.nix;
   xdg.configFile."nixpkgs/config.nix".source = ./nixpkgs-config.nix;
 
-
-
-  home.stateVersion = "24.11"; # Please read the comment before changing!!!
+  home.stateVersion = "24.11"; 
   home.preferXdgDirectories = true;
 
   home.packages = with pkgs; [
+    # --- System / Utils (Оставил только то, что полезно в WSL) ---
     ueberzugpp
     fd
     jq
@@ -49,77 +44,65 @@ in
     gdu
     lf
     ranger
-    xdotool
-    wmname
+    # xdotool # Обычно не работает в WSLg корректно
+    # wmname
     vlc
     fastfetch
     qtpass
-    qbittorrent
+    # qbittorrent # Можно, но обычно торренты качают через Windows
     parallel
-    parted
+    # parted # Работа с дисками в WSL не нужна
     pandoc
     lnav
     neovim
-    # i3lock https://github.com/nix-community/home-manager/issues/7027
-    hdparm
+    # hdparm # Железо виртуальное
     keepassxc
     fdupes
-    evtest
+    # evtest
     ditaa
-    devilspie2
+    # devilspie2
     maildrop
     lynx
     tree
     mermaid-cli
     zstd
-    _7zz-rar # 7zz
+    _7zz-rar
     zip
-    pv # Pipe Viewer
+    pv
     unixtools.xxd
-    wmctrl
+    # wmctrl
     yt-dlp
     cachix
-    sysfsutils # systool
-    scrcpy
+    # sysfsutils
+    # scrcpy # USB проброс в WSL сложен, проще через Win
     pgloader
     amazon-q-cli
-
-    #
-
-    # gst_all_1.gstreamer
-    # gst_all_1.gst-plugins-ugly
-    # gst_all_1.gst-plugins-good
-    # gst_all_1.gst-plugins-base
-    # gst_all_1.gst-plugins-bad
-
-    #
-    bridge-utils # brctl
+    
+    # --- Network ---
+    # bridge-utils 
     tcpdump
     dig
-    #curl
     drill
     speedtest-cli
     nettools
-    nmap # ncat, gnu netcat nc, openbsd nc
-    mtr # ping + traceroute
-    ndisc6 
+    nmap
+    mtr 
+    # ndisc6 
 
-    #
+    # --- Sync ---
     socat
     zsync
-    swtpm
-
-    #
+    # swtpm 
     restic
     rclone
     rsync
 
-    #
+    # --- Images / Screenshot ---
     nsxiv
-    maim
-    slop
-    scrot
-    flameshot
+    # maim # Скриншоты лучше делать средствами Windows (Win+Shift+S)
+    # slop
+    # scrot
+    # flameshot # Можно оставить, если нравится именно он
     feh
     pngquant
     (tesseract5.override {
@@ -128,26 +111,25 @@ in
     libsixel
     lsix
 
-    #
+    # --- Documents ---
     poppler-utils
-    exiftool # alt pdfinfo 
+    exiftool
     mupdf-headless
-    hexapdf # pdf cover 
+    hexapdf
     ocrmypdf
-    librsvg # rsvg-convert
-    wkhtmltopdf # rendering web pages to PDF or images
+    librsvg
+    wkhtmltopdf
     ghostscript
-    #koodo-reader #broken 
+    koodo-reader
     foliate
-    djvulibre # ddjvu
+    djvulibre
     visidata
 
-    #lsp
-    nil # nix 
-
-    #
+    # --- Dev / Languages ---
+    nil
     ansible
     ansible-lint
+    # k3d/kubectl в WSL работают, но требуют запущенного Docker Desktop
     (pkgs.k3d.override {
       k3sVersion = "1.30.14-k3s2";
     })
@@ -158,15 +140,10 @@ in
     lazydocker
     kubernetes-helm
     skopeo
-
-    #
     exercism
 
-    #google-chrome ugly fonts 
-    #discord need gpu accel 
-
-    #
-    lxappearance
+    # --- GUI / Themes ---
+    # lxappearance # Полезно для настройки темы приложений в WSLg
     adapta-gtk-theme
     mate.mate-themes
     papirus-icon-theme
@@ -176,7 +153,7 @@ in
     yaru-theme
     fluent-gtk-theme
 
-    #
+    # --- Monitoring ---
     btop
     htop
     lsof
@@ -187,17 +164,22 @@ in
     zsh-syntax-highlighting
 
     nvfetcher
-
+    
+    # --- Programming ---
     mitschemeX11
     guile
     racket
-    fpc #pascal
+    fpc
     nim
     nimble
     nimlangserver
-
+    
+    # WSL Specific
+    wslu # Утилиты для интеграции с Windows (открыть ссылку в браузере Win и т.д.)
   ] ++ externalPackages;
 
+  # Фикс для буфера обмена в WSL (опционально, если не работает из коробки)
+  # systemd в новых WSL работает, так что home-manager сервис запустится.
 
   home.file.".config/python/pythonrc".text = ''
     import readline
@@ -220,42 +202,11 @@ in
   xdg.configFile."nimble/nimble.ini".text = ''
     nimbleDir = ~/.local/share/nimble
   '';
-
-  xdg.configFile."xdg-desktop-portal/portals.conf".text = ''
-    [preferred]
-    default=gtk
-    org.freedesktop.impl.portal.FileChooser=gtk
-  '';
-
-
-
-  nix = {
-    package = pkgs.nix;
-    settings = {
-      substituters = [
-        "https://cache.nixos.org"
-        "https://nix-community.cachix.org"
-        "https://cachix.cachix.org"
-        "https://devenv.cachix.org"
-      ];
-      
-      trusted-public-keys = [
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
-          "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-      ];
-
-      # Дополнительные настройки
-      # auto-optimise-store = true;
-      # experimental-features = ["nix-command" "flakes"];
-    };
-  };
   
-
+  # Настройка браузера по умолчанию через wslview (из пакета wslu)
   home.sessionVariables = {
+    BROWSER = "wslview";
   };
 
-  # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }

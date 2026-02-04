@@ -424,6 +424,10 @@
   (tab-always-indent 'complete)
   ;;
   (inhibit-compacting-font-caches t)
+  ;; PERF: 6% CPU 
+  (bidi-paragraph-direction 'left-to-right)
+  (bidi-display-reordering 'left-to-right)
+  (bidi-inhibit-bpa t)
   :init
   (setq locale-coding-system 'utf-8
         coding-system-for-read 'utf-8
@@ -743,7 +747,7 @@ unreadable. Returns the names of envvars that were changed."
   (dired-hide-details-hide-symlink-targets nil) 
   (dired-omit-mode t nil) 
   (dired-omit-verbose nil)
-  :hook (dired-mode-hook . dired-hide-details-mode)
+  ;; :hook (dired-mode-hook . dired-hide-details-mode)
   :config
   ;;(setq dired-omit-files (rx (seq bol ".")))
   (let ((args (list "-ahl" "-v" "--group-directories-first")))
@@ -828,9 +832,13 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature autorevert
   :defer 2
   :custom
-  (auto-revert-interval 0.01 "Instantaneously revert")
+  (auto-revert-verbose nil)
+  (global-auto-revert-non-file-buffers t) ;; dired 
+  ;; (auto-revert-interval 0.01 "Instantaneously revert")
+  (auto-revert-interval 2 "Instantaneously revert")
   :config
-  (global-auto-revert-mode t))
+  (global-auto-revert-mode t)
+  (add-to-list 'global-auto-revert-ignore-modes 'Buffer-menu-mode))
 
 (use-package anki-editor
   :ensure (anki-editor :host github :repo "orgtre/anki-editor")
@@ -1001,20 +1009,6 @@ unreadable. Returns the names of envvars that were changed."
           (not (and (boundp 'major-mode)
                    (stringp (symbol-name major-mode))
                    (string-match-p "^notmuch-" (symbol-name major-mode)))))))
-;; ;; (setq auto-save-visited-interval 15) ;default is 5s
-
-;; (defun disable-auto-save-for-notmuch ()
-;;   "Disable auto-save-mode in Notmuch buffers."
-;;   (when (derived-mode-p 'notmuch-show-mode
-;;                         'notmuch-search-mode
-;;                         'notmuch-tree-mode
-;;                         'notmuch-message-mode)
-;;     (auto-save-mode -1)))
-
-;; (add-hook 'notmuch-show-mode-hook #'disable-auto-save-for-notmuch)
-;; (add-hook 'notmuch-search-mode-hook #'disable-auto-save-for-notmuch)
-;; (add-hook 'notmuch-tree-mode-hook #'disable-auto-save-for-notmuch)
-;; (add-hook 'notmuch-message-mode-hook #'disable-auto-save-for-notmuch)
 
 ;; Temp files (save-place, recenf, undo-tree)
 (defconst my-temp (expand-file-name "my-temp" user-emacs-directory))
@@ -1045,78 +1039,6 @@ unreadable. Returns the names of envvars that were changed."
   :defer 1
   :config
   (savehist-mode 1))
-
-;; (defface evil-state-face
-;;   '((t (:weight bold)))
-;;   "Bold"
-;;   )
-
-;; (defface evil-normal-face
-;;     '((t (:inherit evil-state-face 
-;;         :background "#ff5f5f"
-;;         :foreground "white")))
-;;     "White")
-;; (defface evil-emacs-face
-;;   '((t (:inherit evil-state-face
-;; 			:background "#3366ff"
-;; 			:foreground "white")))
-;;   "The evil emacs state "
-;;   )
-
-;; (defface evil-insert-face
-;;   '((t (:inherit evil-state-face
-;; 			:background "#3399ff"
-;; 			:foreground "white")))
-;;   "The evil insert state"
-;;   )
-
-;; (defface evil-replace-face
-;;   '((t (:inherit evil-state-face
-;; 			:background "#33ff99"
-;; 			:foreground "black")))
-;;   "The evil replace state"
-;;   )
-
-;; (defface evil-operator-face
-;;   '((t (:inherit evil-state-face
-;; 			:background "pink"
-;; 			:foreground "black")))
-;;   "The evil operator state"
-;;   )
-
-;; (defface evil-motion-face
-;;   '((t (:inherit evil-state-face
-;; 			:background "purple"
-;; 			:foreground "white")))
-;;   "The evil motion state"
-;;   )
-
-;; (defface evil-visual-face
-;;   '((t (:inherit (region evil-state-face))))
-;;   "The evil visual state"
-;;   )
-
-;; (defun my-evil nil
-;;   (let ((state (if (bound-and-true-p evil-state)
-;;                    (symbol-name evil-state)
-;;                  "NORMAL")))
-;;     (propertize (format " %s " (upcase state))
-;;                 'face (intern (format "evil-%s-face" state)))))
-
-;; (setq-default mode-line-format '((:eval (my-evil))  ; Убираем пустую строку после eval
-;;                                 ("%e" mode-line-front-space
-;;                                 (:propertize
-;;                                  ("" mode-line-mule-info mode-line-client mode-line-modified mode-line-remote)
-;;                                  display (min-width (5.0)))
-;;                                 mode-line-frame-identification
-;;                                 mode-line-buffer-identification "   "
-;;                                 mode-line-position
-;;                                 (project-mode-line project-mode-line-format) (vc-mode vc-mode) "  "
-;;                                 minions-mode-line-modes
-;;                                 mode-line-misc-info
-;;                                 mode-line-frame-identification
-;;                                 mode-line-end-spaces)))
-
 
 (defface evil-state-face
   '((t (:weight bold)))
@@ -1162,75 +1084,54 @@ unreadable. Returns the names of envvars that were changed."
   '((t (:inherit (region evil-state-face))))
   "Face for evil visual state")
 
-
-(defvar my-evil-state-cache nil
-  "Кэш текущего состояния evil для modeline.")
-
-(defvar my-evil-last-state nil
-  "Последнее известное состояние evil.")
-;; setq evil-mode-line-format nil
-(defun my-evil-cached ()
-  "Быстрая функция для отображения состояния evil с кэшированием."
-  (let ((current-state (if (bound-and-true-p evil-state)
-                           evil-state
-                         'normal)))
-    ;; Обновляем кэш только если состояние изменилось
-    (unless (eq current-state my-evil-last-state)
-      (setq my-evil-last-state current-state)
-      (setq my-evil-state-cache
-            (propertize (format " %s " (upcase (symbol-name current-state)))
-                        'face (intern (format "evil-%s-face" (symbol-name current-state))))))
-    my-evil-state-cache))
+(setq-default my-evil-modeline-string 
+              (propertize " NORMAL " 'face 'evil-normal-face))
 
 (defun my-evil-update-modeline ()
-  "Обновить строку состояния в modeline."
-  (setq my-evil-modeline-string
-        (if (bound-and-true-p evil-state)
-            (let ((state-name (symbol-name evil-state)))
-              (propertize (format " %s " (upcase state-name))
-                          'face (intern (format "evil-%s-face" state-name))))
-          (propertize " NORMAL " 'face 'evil-normal-face))))
+  "Обновить строку состояния evil."
+  (when (bound-and-true-p evil-state)
+    (let* ((state-name (symbol-name evil-state))
+           (face-name (intern (format "evil-%s-face" state-name))))
+      (setq my-evil-modeline-string
+            (propertize (format " %s " (upcase state-name))
+                        'face face-name))
+      ;; ✅ Принудительно обновить modeline
+      (force-mode-line-update))))
 
-(add-hook 'evil-normal-state-entry-hook 'my-evil-update-modeline)
-(add-hook 'evil-insert-state-entry-hook 'my-evil-update-modeline)
-(add-hook 'evil-visual-state-entry-hook 'my-evil-update-modeline)
-(add-hook 'evil-replace-state-entry-hook 'my-evil-update-modeline)
-(add-hook 'evil-operator-state-entry-hook 'my-evil-update-modeline)
-(add-hook 'evil-motion-state-entry-hook 'my-evil-update-modeline)
-(add-hook 'evil-emacs-state-entry-hook 'my-evil-update-modeline)
+;; Хуки
+(dolist (hook '(evil-normal-state-entry-hook
+                evil-insert-state-entry-hook
+                evil-visual-state-entry-hook
+                evil-replace-state-entry-hook
+                evil-operator-state-entry-hook
+                evil-motion-state-entry-hook
+                evil-emacs-state-entry-hook))
+  (add-hook hook #'my-evil-update-modeline))
 
+;; ✅ Mode-line с правильным синтаксисом
 (setq-default mode-line-format 
-              '((:eval (my-evil-cached))      ; Кэшированная функция
-                "%e"                          ; Индикатор переполнения
-                mode-line-front-space         ; Пробел в начале
-                ;; Базовая информация о буфере
+              '((:eval my-evil-modeline-string)  ; ← Обёрнут в (:eval ...)
+                "%e" 
+                mode-line-front-space
                 (:propertize
                  (""
                   mode-line-mule-info 
                   mode-line-client 
                   mode-line-modified 
                   mode-line-remote
-                  " "
-                  )
+                  " ")
                  display (min-width (5.0)))
                 mode-line-buffer-identification
-                "   "                         ; Разделитель
-                ;; Позиция и информация о файле
+                "   "
                 mode-line-position
-                ;; Информация о проекте и VCS
-                (project-mode-line project-mode-line-format)
                 (vc-mode vc-mode)
-                "  "                          ; Разделитель
-                ;; Режимы (minions группирует их)
-                minions-mode-line-modes
-                ;; Дополнительная информация
+                "  "
+                mode-line-modes
                 mode-line-misc-info
-                ;; Пробел в конце
                 mode-line-end-spaces))
 
-
+;; Инициализация
 (my-evil-update-modeline)
-
 
 (defun benchmark-modeline ()
   "Измерить время обновления modeline."
@@ -1425,16 +1326,11 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package lsp-mode
   :hook (
-         ;; (c-mode . lsp)
-         ;; (c++-mode . lsp)
-         ;; (c-or-c++-mode . lsp)
          (js-mode . lsp)
          (js-jsx-mode . lsp)
          (typescript-mode . lsp)
-         ;; (python-ts-mode . lsp)
          (erlang-mode . lsp)
          (web-mode . lsp)
-         ;; (haskell-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   ;; . lsp-deferred
   ;;:commands lsp
@@ -1444,12 +1340,16 @@ unreadable. Returns the names of envvars that were changed."
   (lsp-completion-show-detail nil)
   (lsp-semgrep-languages nil)
   (lsp-enable-snippet nil)
-  ;; :init
-  ;;   (setq lsp-enabled-clients '(jedi 
-  ;;                             sqls
-  ;;                             jdtls
-  ;;                             ))
   :config
+  (defun my-dap-use-compilation-mode-augmentation (orig-fn session-name)
+    "Заменяем special-mode на compilation-mode в буферах DAP."
+    (with-current-buffer (funcall orig-fn session-name)
+      (compilation-mode)
+      (current-buffer)))
+
+  (advice-add 'dap--create-output-buffer :around
+            #'my-dap-use-compilation-mode-augmentation)
+
   (add-to-list 'exec-path (concat (getenv "HOME") "/.local/state/nix/profile/release"))
   (setq lsp-semgrep-languages nil)
   (setq lsp-auto-guess-root t)
@@ -1610,8 +1510,9 @@ unreadable. Returns the names of envvars that were changed."
   :defer t
   :delight "󰲒")
 
-;; (use-feature java-ts-mode
-;;   :mode "\\.java\\'")
+(use-feature java-ts-mode
+  :custom
+  (java-ts-mode-enable-doxygen t))
 
 ;; (use-package python-mode 
 ;;   :init 
@@ -1672,7 +1573,9 @@ unreadable. Returns the names of envvars that were changed."
  ;;                    :server-id 'erlang-language-platform))
 
 (use-package nim-mode
-  :defer 4)
+  :defer t
+  :mode ("\\.nim\\'" . nim-mode)
+        ("\\.nimble\\'" . nimscript-mode-maybe))
 
 (use-package rustic
   :ensure (rustic :host github :repo "emacs-rustic/rustic")
@@ -1696,6 +1599,7 @@ unreadable. Returns the names of envvars that were changed."
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (use-package nix-mode
+  :defer t
   :mode "\\.nix\\'")
 
 (use-package justl
@@ -1706,8 +1610,6 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package racket-mode
   :hook (racket-mode . racket-xp-mode)
- ;;   (define-key racket-mode-map (kbd "<up>") (kbd "M-p"))
- ;; (define-key racket-mode-map (kbd "<down>") (kbd "M-n"))
   :general
   (general-define-key :states '(normal) :keymaps 'racket-mode-map
                       (kbd "E") 'racket-eval-last-sexp)
@@ -1719,44 +1621,20 @@ unreadable. Returns the names of envvars that were changed."
 (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
 
 (use-package geiser
-  :defer t
-  ;; :config
-  ;; (setq geiser-default-implementation 'racket)
-  ;; (setq geiser-active-implementations '(racket))
-  ;; (setq geiser-implementations-alist '(((regexp "\\.scm$") racket))))
-  )
-  ;; (geiser-default-implementation 'guile))
+  :defer t)
 
 (use-package geiser-chez
-  :defer t
-  )
+  :defer t)
 
 (use-package geiser-guile
-  :defer t
-  )
+  :defer t)
 
 (use-package geiser-mit
-  :defer t
-  )
-
-;; (use-package geiser-racket
-;;  ;; :ensure (geiser-racket :host github :repo "emacsmirror/geiser-racket"
-;;  ;;                        :files (:defaults ("src" "src/*" "bin" "bin/*")))
-;;  ;; :ensure (geiser-racket :files (:defaults ("src/geiser" "bin" ) :wait t))
-;;   :load-path ("~/.config/emacs/geiser-racket"))
-;; (elpaca '(geiser-racket :repo "~/.config/emacs/geiser-racket"))
-;; (elpaca-test
-;;   :init (elpaca (geiser-racket :files (:defaults "src" "bin") :wait t))
-;;   (princ (elpaca-log "geiser-racket | ")))
+  :defer t)
 
 (use-package macrostep-geiser
   :after (geiser)
-  :hook ((geiser-mode geiser-repl-mode) . macrostep-geiser-setup)
-  ;; :init
-  ;; (+map-local! :keymaps '(geiser-mode-map geiser-repl-mode-map)
-  ;;   "m" '(macrostep-expand :wk "Expand macro")
-  ;;   "M" #'macrostep-geiser-expand-all)
-  )
+  :hook ((geiser-mode geiser-repl-mode) . macrostep-geiser-setup))
 
 (use-package web-mode
   :defer t
@@ -1788,8 +1666,6 @@ unreadable. Returns the names of envvars that were changed."
 (use-package treesit-fold
   :ensure (treesit-fold :host github :repo "emacs-tree-sitter/treesit-fold")
   :defer t)
-
-;;(use-package jsonrpc)
 
 ;; (use-feature nxml-mode
 ;;   :mode "\\.xml\\'"
@@ -2014,6 +1890,8 @@ unreadable. Returns the names of envvars that were changed."
         ("C-x t M-t" . treemacs-find-tag))
   :custom
   (treemacs-sorting 'alphabetic-numeric-asc)
+  :config
+  (setq treemacs-git-executable (executable-find "git"))
   :init
   ;; from doom
   (defun +treemacs/toggle ()
@@ -2076,7 +1954,7 @@ Use `treemacs' command for old functionality."
   (+general-global-application
     "o"   '(:ignore t :which-key "org")
     "oc"  'org-capture
-    "oC"  '+org-capture-again
+    ;; "oC"  '+org-capture-again
     "oi"  'org-insert-link
     "oj"  'org-chronicle
     "ok"  '(:ignore t :which-key "clock")
@@ -2307,17 +2185,23 @@ Use `treemacs' command for old functionality."
      ))
   ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
   ;; (org-ellipsis " ▾")
-  (org-ellipsis "▿")
+  (org-ellipsis " ▿")
   (org-priority-lowest ?D)
-  (org-priority-faces
-   ;; '((?A . nerd-icons-red)
-   ;;   (?B . warning)
-   ;;   (?C . success)))
-       '((?A . 'nerd-icons-red)
-        (?B . 'nerd-icons-orange)
-        (?C . 'nerd-icons-yellow)
-        (?D . 'nerd-icons-green)
-        (?E . 'nerd-icons-blue)))
+  ;; (org-priority-faces
+  ;;  ;; '((?A . nerd-icons-red)
+  ;;  ;;   (?B . warning)
+  ;;  ;;   (?C . success)))
+  ;;      '((?A . nerd-icons-red)
+  ;;       (?B . nerd-icons-orange)
+  ;;       (?C . nerd-icons-yellow)
+  ;;       (?D . nerd-icons-green)
+  ;;       (?E . nerd-icons-blue)))
+  (setq org-priority-faces
+  `((?A . (:foreground ,(nerd-icons-mdicon "nf-md-alert")))
+    (?B . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_up")))
+    (?C . (:foreground ,(nerd-icons-mdicon "nf-md-minus")))
+    (?D . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_down")))
+    (?E . (:foreground ,(nerd-icons-mdicon "nf-md-information")))))
   (org-fontify-done-headline t)
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
@@ -2350,7 +2234,7 @@ Use `treemacs' command for old functionality."
   :hook (yaml-ts-mode . my-yaml-ts-mode-setup))
 
 (use-package indent-bars
-  :hook ((python-mode yaml-ts-mode) . indent-bars-mode)
+  :hook ((python-ts-mode yaml-ts-mode) . indent-bars-mode)
   :custom
   (indent-bars-color '(highlight :face-bg t :blend 0.2))
   (indent-bars-pattern ".")
@@ -2365,6 +2249,7 @@ Use `treemacs' command for old functionality."
   :defer t)
 
 (use-package org-modern
+  ;; :disabled t
   :after (org)
   :custom
   (org-modern-block-fringe nil)
@@ -2425,9 +2310,21 @@ Use `treemacs' command for old functionality."
     :commands (org-babel-execute:perl))
   (use-feature ob-awk
     :commands (org-babel-execute:awk))
-
-
-
+  ;; (use-feature ob-sqlite
+  ;;   :commands (org-babel-execute:sqlite))
+  (use-feature ob-sqlite
+    :commands (org-babel-execute:sqlite)
+    :config
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     (append org-babel-load-languages
+             '((sqlite . t)))))
+  
+  (use-feature ob-sql
+    :commands (org-babel-execute:sql)
+    :config
+    (add-to-list 'org-babel-load-languages '(sql . t))
+    )
   (use-feature ob-python
     :commands (org-babel-execute:python))
   (use-feature ob-shell
@@ -2541,73 +2438,20 @@ Use `treemacs' command for old functionality."
   :commands (olivetti-mode))
 
 (use-feature org-capture
+  :after org
   :config
-  ;; (define-advice org-capture-fill-template (:around (fn &rest args) comma-for-crm)
-  ;;   (advice-add #'completing-read-multiple :around #'+org-tags-crm)
-  ;;   (apply fn args))
-  ;; (add-hook 'org-capture-mode-hook #'evil-insert-state)
 
-;;Utility functions for use inside Org capture templates.
-;; (defun +org-schedule-relative-to-deadline ()
-;;   "For use with my appointment capture template. User is first prompted for an
-;;   optional deadline. Then an optional schedule time. The scheduled default time is
-;;   the deadline. This makes it easier to schedule relative to the deadline using
-;;   the -- or ++ operators.
+  (defun +org-capture-here ()
+    "Convenience command to insert a template at point"
+    (interactive)
+    (org-capture 0))
 
-;;   Quitting during either date prompt results in an empty string for that prompt."
-;;   (interactive)
-;;   (condition-case nil
-;;       (org-deadline nil)
-;;     (quit nil))
-;;   (let ((org-overriding-default-time (or (org-get-deadline-time (point))
-;;                                          org-overriding-default-time)))
-;;     (org-schedule nil (org-element-interpret-data
-;;                        (org-timestamp-from-time
-;;                         org-overriding-default-time
-;;                         (and org-overriding-default-time 'with-time))))
-;;     (let ((org-log-reschedule nil))
-;;       (condition-case nil
-;;           (org-schedule nil)
-;;         (quit (org-schedule '(4)))))))
 
-;; (defun +org-capture-again (&optional arg)
-;;   "Call `org-capture' with last selected template.
-;;   Pass ARG to `org-capture'.
-;;   If there is no previous template, call `org-capture'."
-;;   (interactive "P")
-;;   (org-capture arg (plist-get org-capture-plist :key)))
-
-(defun +org-capture-here ()
-  "Convenience command to insert a template at point"
-  (interactive)
-  (org-capture 0))
-
-;; (defun +org-capture-property-drawer ()
-;;   "Hook function run durning `org-capture-mode-hook'.
-;;   If a template has a :properties keyword, add them to the entry."
-;;   (when (eq (org-capture-get :type 'local) 'entry)
-;;     (when-let ((properties (doct-get :properties t)))
-;;       (dolist (property properties)
-;;         (org-set-property
-;;          (symbol-name (car property))
-;;          (replace-regexp-in-string
-;;           "\n.*" ""
-;;           (org-capture-fill-template
-;;            (doct--replace-template-strings (cadr property)))))))))
-
-;; (defun +org-capture-todo ()
-;;   "Set capture entry to TODO automatically"
-;;   (org-todo "TODO"))
-
-(setq org-capture-templates
+  (setq org-capture-templates
       (doct `(("Appointment"
                :keys "a"
                :id "2cd2f75e-b600-4e9b-95eb-6baefeaa61ac"
                :properties ((Created "%U"))
-               ;; :template ("* %^{appointment} %^g" "%?")
-               ;; :hook (lambda ()
-               ;;         (+org-capture-property-drawer)
-               ;;         (unless org-note-abort (+org-schedule-relative-to-deadline)))
                )
 
               ("Interview Task"
@@ -2618,7 +2462,7 @@ Use `treemacs' command for old functionality."
                :function (lambda () (org-back-to-heading t) (org-end-of-meta-data t)) ; После существующего :PROPERTIES:
                :template (
                           ":PROPERTIES:"
-                          ":TaskType: %^{TaskType| |algorithm|system design|sql|writecode|review}"
+                          ":TaskType: %^{TaskType| |algorithm|system design|sql|writecode|review|testovoe_zadanie|}"
                           ":Difficulty: %^{Difficulty| |easy|medium|hard}"
                           ":Topics: %^{Topics| |array|hashmap|tree|graph|DP|transactions|spring|java_core|}"
                           ":Company: %^{Company}"
@@ -2629,210 +2473,23 @@ Use `treemacs' command for old functionality."
                ;; :prepend t                   ; Insert at the beginning of the headline
                :immediate-finish t ; Завершить сразу после заполнения
                )
-              
-              ;; ("Account"
-              ;;  :keys "A"
-              ;;  :properties ((Created "%U"))
-              ;;  :template ("* TODO %^{description} %^g" "%?")
-              ;;  :hook +org-capture-property-drawer
-              ;;  :children (("Buy"
-              ;;              :keys "b"
-              ;;              :id "e1dcca6e-6d85-4c8e-b935-d50492b2cc58")
-              ;;             ("Borrow"
-              ;;              :keys "B"
-              ;;              :id "a318b8ba-ed1a-4767-84bd-4f45eb409aab"
-              ;;              :template ("* TODO Return %^{description} to %^{person} %^g"
-              ;;                         "DEADLINE: %^T"
-              ;;                         "%?"))
-              ;;             ("Loan"
-              ;;              :keys "l"
-              ;;              :id "cfdd301d-c437-4aae-9738-da022eae8056"
-              ;;              :template ("* TODO Get %^{item} back from %^{person} %^g"
-              ;;                         "DEADLINE: %^T"
-              ;;                         "%?"))
-              ;;             ("Favor"
-              ;;              :keys "f"
-              ;;              :id "9cd02444-2465-4692-958b-f73edacd997f")
-              ;;             ("Sell"
-              ;;              :keys "s"
-              ;;              :id "9c4a39c5-3ba6-4665-ac43-67e72f461c15")))
-              ;; ("Bookmark"
-              ;;  :keys "b"
-              ;;  :hook +org-capture-property-drawer
-              ;;  :id "7c20c705-80a3-4f5a-9181-2ea14a18fa75"
-              ;;  :properties ((Created "%U"))
-              ;;  :template ("* [[%x][%^{title}]] %^g" "%?"))
-              ;; ("Health"
-              ;;  :keys "h"
-              ;;  :children (("Blood Pressure"
-              ;;              :keys "b"
-              ;;              :type table-line
-              ;;              :id "4d0c16dd-ce99-4e1b-bf9f-fb10802e48a1"
-              ;;              :template "%(+compute-blood-pressure-table-row)|%?|"
-              ;;              :table-line-pos "II-1")))
-              ;; ("Listen"
-              ;;  :keys "l"
-              ;;  :hook (lambda () (+org-capture-property-drawer) (+org-capture-todo))
-              ;;  :template ("* TODO %^{Title} %^g" "%^{Genre}")
-              ;;  :children (("Audio Book"
-              ;;              :keys "a"
-              ;;              :id "55a01ad5-24f5-40ec-947c-ed0bc507d4e8"
-              ;;              :template "* TODO %^{Title} %^g %^{Author}p %^{Year}p %^{Genre}p")
-              ;;             ("Music"
-              ;;              :keys "m"
-              ;;              :id "dc9cfb0f-c65b-4ebe-a082-e751bb3261a6"
-              ;;              :template "%(wikinforg-capture \"album\")")
-              ;;             ("Podcast"
-              ;;              :keys "p"
-              ;;              :id "881ee183-37aa-4e76-a5af-5be8446fc346"
-              ;;              :properties ((URL "[[%^{URL}][%^{Description}]]")))
-              ;;             ("Radio"
-              ;;              :keys "r"
-              ;;              :id "78da1d3e-c83a-4769-9fb2-91e8ff7ab5da")))
-              ;; ("Note"
-              ;;  :keys "n"
-              ;;  :file ,(defun +org-capture-repo-note-file ()
-              ;;           "Find note for current repository."
-              ;;           (require 'projectile)
-              ;;           (let* ((coding-system-for-write 'utf-8)
-              ;;                  ;;@MAYBE: extract this to a global variable.
-              ;;                  (notedir "~/Documents/devops/repo-notes/")
-              ;;                  (project-root (projectile-project-root))
-              ;;                  (name (concat (file-name-base (directory-file-name project-root)) ".org"))
-              ;;                  (path (expand-file-name name (file-truename notedir))))
-              ;;             (with-current-buffer (find-file-noselect path)
-              ;;               (unless (derived-mode-p 'org-mode) (org-mode)
-              ;;                       ;;set to utf-8 because we may be visiting raw file
-              ;;                       (setq buffer-file-coding-system 'utf-8-unix))
-              ;;               (when-let ((headline (doct-get :headline)))
-              ;;                 (unless (org-find-exact-headline-in-buffer headline)
-              ;;                   (goto-char (point-max))
-              ;;                   (insert "* " headline)
-              ;;                   (org-set-tags (downcase headline))))
-              ;;               (unless (file-exists-p path) (write-file path))
-              ;;               path)))
-              ;;  :template (lambda () (concat  "* %{todo-state} " (when (y-or-n-p "Link? ") "%A\n") "%?"))
-              ;;  :todo-state "TODO"
-              ;;  :children (("bug" :keys "b" :headline "Bug")
-              ;;             ("design"        :keys "d" :headline "Design")
-              ;;             ("documentation" :keys "D" :headline "Documentation")
-              ;;             ("enhancement"   :keys "e" :headline "Enhancement" :todo-state "IDEA")
-              ;;             ("feature"       :keys "f" :headline "Feature"     :todo-state "IDEA")
-              ;;             ("optimization"  :keys "o" :headline "Optimization")
-              ;;             ("miscellaneous" :keys "m" :headline "Miscellaneous")
-              ;;             ("security"      :keys "s" :headline "Security")))
-              ;; ("Play"
-              ;;  :keys "p"
-              ;;  :id "be517275-3779-477f-93cb-ebfe0204b614"
-              ;;  :hook +org-capture-todo
-              ;;  :template "%(wikinforg-capture \"game\")")
-              ;; ("Read"
-              ;;  :keys "r"
-              ;;  :template "%(wikinforg-capture \"book\")"
-              ;;  :hook +org-capture-todo
-              ;;  :children (("fiction"
-              ;;              :keys "f"
-              ;;              :id "0be106fc-a920-4ab3-8585-77ce3fb793e8")
-              ;;             ("non-fiction"
-              ;;              :keys "n"
-              ;;              :id "73c29c94-fb19-4012-ab33-f51158c0e59b")))
-              ;; ("Say"
-              ;;  :keys "s"
-              ;;  :children (("word" :keys "w"
-              ;;              :id "55e43a15-5523-49a6-b16c-b6fbae337f05"
-              ;;              :template ("* %^{Word}" "%?"))
-              ;;             ("Phrase" :keys "p"
-              ;;              :id "c3dabe22-db69-423a-9737-f90bfc47238a"
-              ;;              :template ("* %^{Phrase}" "%?"))
-              ;;             ("Quote" :keys "q"
-              ;;              :id "8825807d-9662-4d6c-a28f-6392d3c4dbe2"
-              ;;              :template ("* %^{Quote}" "%^{Quotee}p"))))
-              ;; ("Todo" :keys "t"
-              ;;  :id "0aeb95eb-25ee-44de-9ef5-2698514f6208"
-              ;;  :hook (lambda ()
-              ;;          (+org-capture-property-drawer)
-              ;;          ;;swallow org-todo quit so we don't abort the whole capture
-              ;;          (condition-case nil (org-todo) (quit nil)))
-              ;;  :properties ((Created "%U"))
-              ;;  :template ("* %^{description} %^g" "%?"))
-              ;; ("use-package" :keys "u"
-              ;;  :file ,(expand-file-name "init.org" user-emacs-directory)
-              ;;  :function
-              ;;  ,(defun +org-capture-use-package-form ()
-              ;;     "place point for use-package capture template."
-              ;;     (org-fold-show-all)
-              ;;     (goto-char (org-find-entry-with-id "f8affafe-3a4c-490c-a066-006aeb76f628"))
-              ;;     (org-narrow-to-subtree)
-              ;;     ;;popping off parent headline, evil and general.el since they are order dependent.
-              ;;     (when-let* ((name (read-string "package name: "))
-              ;;                 (headlines (nthcdr 4 (caddr (org-element-parse-buffer 'headline 'visible))))
-              ;;                 (packages (mapcar (lambda (headline) (cons (plist-get (cadr headline) :raw-value)
-              ;;                                                            (plist-get (cadr headline) :contents-end)))
-              ;;                                   headlines))
-              ;;                 (target (let ((n (downcase name)))
-              ;;                           (cdr
-              ;;                            (cl-some (lambda (package) (and (string-greaterp n (downcase (car package))) package))
-              ;;                                     (nreverse packages))))))
-              ;;       ;;put name on template's doct plist
-              ;;       (setq org-capture-plist
-              ;;             (plist-put org-capture-plist :doct
-              ;;                        (plist-put (org-capture-get :doct) :use-package name)))
-              ;;       (goto-char target)
-              ;;       (org-end-of-subtree)
-              ;;       (open-line 1)
-              ;;       (forward-line 1)))
-              ;;  :type plain
-              ;;  :empty-lines-after 1
-              ;;  :template ("** %(doct-get :use-package)"
-              ;;             "#+begin_quote"
-              ;;             "%(read-string \"package description:\")"
-              ;;             "#+end_quote"
-              ;;             "#+begin_src emacs-lisp"
-              ;;             "(use-package %(doct-get :use-package)%?)"
-              ;;             "#+end_src"))
-
-            ;;  ("Watch":keys "w"
-            ;;   :template "%(wikinforg-capture \"%{entity}\")"
-            ;;   :hook +org-capture-todo
-            ;;   :children (("Film" :keys "f" :id "a730a2db-7033-40af-82c1-9b73528ab7d9" :entity "film")
-            ;;              ("TV" :keys "t" :id "4a18a50e-909e-4d36-aa7a-b09e8c3b01f8" :entity "show")
-            ;;              ("Presentation" :keys "p" :id "343fe4f4-867a-4033-b31a-8b57aba0345e"
-            ;;               :template "* %^{Title} %^g %^{Year}p")))
-
+              ("Anki Decks"
+               :keys "d"
+               :type plain
+               :function (lambda () (org-back-to-heading t) (org-end-of-meta-data t))
+               :template (
+                          ":PROPERTIES:"
+                          ":ANKI_DECK: %^{ANKI_DECK| |Java|}"
+                          ":ANKI_NOTE_TYPE: %^{ANKI_NOTE_TYPE| |Basic|}"
+                          ":ANKI_TAGS: %^{ANKI_TAGS| |SQL|}"
+                          ":END:"
+                          "%?")
+               :immediate-finish t
+               )
               )))
 
-;; =make-capture-frame= cobbled together from:
-;; - http://cestlaz.github.io/posts/using-emacs-24-capture-2/
-;; - https://stackoverflow.com/questions/23517372/hook-or-advice-when-aborting-org-capture-before-template-selection
-;; Don't use this within Emacs. Rather, invoke it when connecting an Emacs client to a server with:
-;;emacsclient --create-frame \
-;;            --socket-name 'capture' \
-;;            --alternate-editor='' \
-;;            --frame-parameters='(quote (name . "capture"))' \
-;;            --no-wait \
-;;            --eval "(+org-capture-make-frame)"
-
-;; (defun +org-capture-delete-frame (&rest _args)
-;;   "Delete frame with a name frame-parameter set to \"capture\""
-;;   (when (and (daemonp) (string= (frame-parameter (selected-frame) 'name) "capture"))
-;;     (delete-frame)))
-;; (add-hook 'org-capture-after-finalize-hook #'+org-capture-delete-frame 100)
-
-;; (defun +org-capture-make-frame ()
-;;   "Create a new frame and run org-capture."
-;;   (interactive)
-;;   (select-frame-by-name "capture")
-;;   (delete-other-windows)
-;;   (cl-letf (((symbol-function 'switch-to-buffer-other-window) #'switch-to-buffer))
-;;     (condition-case err
-;;         (org-capture)
-;;       ;; "q" signals (error "Abort") in `org-capture'
-;;       ;; delete the newly created frame in this scenario.
-;;       (user-error (when (string= (cadr err) "Abort") (delete-frame))))))
-
-;; :commands (+org-capture-make-frame)
-:general
-(:states 'normal
+  :general
+  (:states 'normal
          :keymaps 'org-capture-mode-map
          ",c" 'org-capture-finalize
          ",k" 'org-capture-kill
@@ -2976,27 +2633,86 @@ Speeds up `org-agenda' remote operations."
  :after (org))
 
 (use-package org-download
-  :after org 
+  :after org
   :custom
   (org-download-method 'directory)
+  (org-download-heading-lvl nil)
   (org-download-image-org-width 600)
-  (org-download-link-format "[[file:%s]]\n")
-  (org-download-abbreviate-filename-function #'expand-file-name)
-  (org-download-link-format-function #'org-download-link-format-function-default)
   :config
-  (setq org-download-annotate-function (lambda (_link) "")) ;; #+Downloaded
-
-  (defun +my-org-download-set-dir ()
-    (interactive) ;; TODO temp fix 
-    "Set `org-download-image-dir` to an Images subdirectory in the current file's directory."
-    (let* ((filename (buffer-file-name))
-           (file-dir (file-name-directory filename))
-           (file-name (file-name-nondirectory (file-name-sans-extension filename)))
-           (images-dir (expand-file-name "Attachments" file-dir)))
-      (setq-local org-download-image-dir 
-                  (expand-file-name (concat file-name "-img") images-dir))))
-  (advice-add 'org-id-get-create :override (lambda () nil))
-  )
+  (setq org-download-annotate-function (lambda (_link) ""))
+  
+  (defun my/org-download-get-assets-dir ()
+    "Возвращает директорию для вложений, основанную на имени файла."
+    (when buffer-file-name
+      (let* ((file-dir (file-name-directory buffer-file-name))
+             (file-name-base (file-name-base buffer-file-name))
+             (assets-dir (expand-file-name ".assets" file-dir)))
+        (expand-file-name file-name-base assets-dir))))
+  
+  (defun my/org-download--get-parent-heading (level)
+    "Находит заголовок-родитель уровня LEVEL."
+    (save-excursion
+      (let (heading)
+        (org-back-to-heading t)
+        (while (> (org-outline-level) level)
+          (org-up-heading-safe))
+        (when (= (org-outline-level) level)
+          (setq heading (org-get-heading t t t t)))
+        heading)))
+  
+  (defun my/org-download--cleanup-string (s)
+    "Очищает строку S, делая ее пригодной для имени файла."
+    (when s
+      (let ((cleaned (replace-regexp-in-string "[^a-zA-Zа-яА-Я0-9]+" "_" s)))
+        ;; Убираем множественные подчеркивания
+        (setq cleaned (replace-regexp-in-string "_+" "_" cleaned))
+        ;; Убираем _ в начале и конце
+        (replace-regexp-in-string "^_+\\|_+$" "" cleaned))))
+  
+  (defun my/truncate-to-bytes (s max-bytes)
+    "Обрезает строку S так, чтобы она не превышала MAX-BYTES в UTF-8.
+     Обрезает по границе символов и убирает trailing underscore."
+    (let ((result ""))
+      (catch 'done
+        (dolist (char (string-to-list s))
+          (let* ((char-str (char-to-string char))
+                 (char-bytes (length (encode-coding-string char-str 'utf-8)))
+                 (current-bytes (length (encode-coding-string result 'utf-8)))
+                 (new-total (+ current-bytes char-bytes)))
+            (if (<= new-total max-bytes)
+                (setq result (concat result char-str))
+              (throw 'done result)))))
+      ;; Убираем trailing underscore
+      (string-trim-right result "_")))
+  
+  (defun my/org-download-format-filename (original-filename)
+    "Генерирует имя файла: Level1_Level2_Timestamp.ext
+     Заголовки обрезаются до 55 байт с учетом лимитов Anki."
+    (let* ((ext (file-name-extension original-filename t))
+           (extension (or ext ".png"))
+           (level1 (my/org-download--cleanup-string
+                    (my/org-download--get-parent-heading 1)))
+           (level2 (my/org-download--cleanup-string
+                    (my/org-download--get-parent-heading 2)))
+           (timestamp (format-time-string "%Y%m%dT%H%M%S"))
+           (title-part (mapconcat #'identity (delq nil (list level1 level2)) "_"))
+           ;; 120 (Anki) - 15 (timestamp) - 1 (sep) - 4 (ext) - 41 (hash) - 4 (reserve) = 55
+           (safe-title (my/truncate-to-bytes title-part 55)))
+      (concat safe-title "_" timestamp extension)))
+  
+  (setq org-download-file-format-function #'my/org-download-format-filename)
+  
+  (defun my/org-download-set-directory-before-download (&rest _)
+    "Устанавливает org-download-image-dir перед вызовом скачивания."
+    (setq-local org-download-image-dir (my/org-download-get-assets-dir)))
+  
+  (defun my-avoid-org-id-get-create (orig-fun &rest args)
+    "Around advice to prevent org-id-get-create in org-download-clipboard."
+    (cl-letf (((symbol-function 'org-id-get-create) (lambda () nil)))
+      (apply orig-fun args)))
+  
+  (advice-add #'org-download-image :before #'my/org-download-set-directory-before-download)
+  (advice-add 'org-download-clipboard :around #'my-avoid-org-id-get-create))
 
 (use-package org-appear
   :hook ((org-mode . org-appear-mode)
@@ -3011,6 +2727,13 @@ Speeds up `org-agenda' remote operations."
 
 (use-feature text-mode
   :hook (text-mode . visual-line-mode))
+
+(use-package mcp-server
+  :ensure (mcp-server :host github :repo "rhblind/emacs-mcp-server"
+             :files ("*.el" "mcp-wrapper.py" "mcp-wrapper.sh"))
+  :disabled t
+  :config
+  (add-hook 'emacs-startup-hook #'mcp-server-start-unix))
 
 (use-feature ox-latex
   :after org-mode
@@ -3104,8 +2827,31 @@ Speeds up `org-agenda' remote operations."
 
 (use-feature tramp
   :defer t
-  :custom (tramp-terminal-type "tramp")
-  :config (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors)))
+  :custom
+  (tramp-terminal-type "tramp")
+  :config
+  (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
+    ;; (defvar my-android-host "192.168.0.14"
+    ;; "IP address or hostname of Android device.")
+  
+  (add-to-list 'tramp-connection-properties
+               (list (regexp-quote "android") "remote-shell" "sh"))
+  
+  (add-to-list 'tramp-connection-properties
+               (list (regexp-quote "android")
+                     "tmpdir" "/data/data/com.termux/files/home/tmp"))
+  
+  (connection-local-set-profile-variables
+   'tramp-connection-local-termux-profile
+   `((tramp-remote-path
+      . ,(mapcar
+          (lambda (x)
+            (if (stringp x) (concat "/data/data/com.termux/files" x) x))
+          (copy-tree tramp-remote-path)))))
+  
+  (connection-local-set-profiles
+   '(:application tramp :machine "android")
+   'tramp-connection-local-termux-profile))
 
 (use-feature vc-hooks
   :custom
@@ -3166,6 +2912,11 @@ Speeds up `org-agenda' remote operations."
   (add-to-list 'project-switch-commands '(+project-magit-status "Magit" "m"))
   (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep" "F"))
   :custom
+  (project-vc-ignores '("result/"
+                        "*.png"
+                        ".direnv/"
+                        ".node_modules/"
+                        ".bloop/" ".metals/" "target/" ".DS_Store"))
   (project-vc-extra-root-markers
    '(".projectile.el" ".project.el" ".project" ; Emacs
      ".repo" ; Repo workspaces

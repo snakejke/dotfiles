@@ -1,0 +1,13 @@
+#!/bin/bash
+
+export DATA_DIR="$XDG_DATA_HOME/open-webui"
+export WEBUI_SECRET_KEY="$DATA_DIR/.webui_secret_key"
+
+if [ ! -d "$DATA_DIR" ]; then
+    mkdir -p "$DATA_DIR"
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+fi
+
+uvx --python 3.11 open-webui@latest serve

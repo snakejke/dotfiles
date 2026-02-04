@@ -87,6 +87,12 @@ handle_extension() {
             pandoc -s -t markdown -- "${FILE_PATH}" && exit 5
             exit 1;;
 
+        ## SRT
+        srt)
+            bat --color=always --plain --line-range :50 -- "${FILE_PATH}" && exit 0;
+            head -n 50 -- "${FILE_PATH}" && exit 0
+            exit 1;;
+
         ## XLSX
         xlsx)
             ## Preview as csv conversion
@@ -105,8 +111,14 @@ handle_extension() {
 
         ## JSON
         json)
-            jq --color-output . "${FILE_PATH}" && exit 5
-            python -m json.tool -- "${FILE_PATH}" && exit 5
+            JSON_PREVIEW_MAX_SIZE=512000 
+            FILE_SIZE=$(stat --printf='%s' -- "${FILE_PATH}")
+            if [[ "${FILE_SIZE}" -gt "${JSON_PREVIEW_MAX_SIZE}" ]]; then
+                head -n 200 -- "${FILE_PATH}" && exit 5
+            else
+                jq --color-output . "${FILE_PATH}" && exit 5
+                python -m json.tool -- "${FILE_PATH}" && exit 5
+            fi
             ;;
 
         ## Direct Stream Digital/Transfer (DSDIFF) and wavpack aren't detected
@@ -158,32 +170,10 @@ handle_image() {
             # Thumbnail
             ffmpegthumbnailer -i "${FILE_PATH}" -o "${IMAGE_CACHE_PATH}" -s 0 && exit 6
             exit 1;;
-            # mpv --no-terminal --force-window=no --really-quiet --vo=tct --loop-file "${FILE_PATH}"
-            # exit 1;;
 
         ## PDF
         application/pdf)
             mutool draw -o "${IMAGE_CACHE_PATH}" -w "${DEFAULT_SIZE%x*}" -F png "${FILE_PATH}" 1 && exit 6 || exit 1;;
-            
-
-            # pdftoppm -f 1 -l 1 \
-            #          -scale-to-x "${DEFAULT_SIZE%x*}" \
-            #          -scale-to-y -1 \
-            #          -singlefile \
-            #          -jpeg -tiffcompression jpeg \
-            #          -- "${FILE_PATH}" "${IMAGE_CACHE_PATH%.*}" \
-            #     && exit 6 || exit 1;;
-
-
-        ## ePub, MOBI, FB2 (using Calibre)
-        # application/epub+zip|application/x-mobipocket-ebook|\
-        # application/x-fictionbook+xml)
-        #     # ePub (using https://github.com/marianosimone/epub-thumbnailer)
-        #     epub-thumbnailer "${FILE_PATH}" "${IMAGE_CACHE_PATH}" \
-        #         "${DEFAULT_SIZE%x*}" && exit 6
-        #     ebook-meta --get-cover="${IMAGE_CACHE_PATH}" -- "${FILE_PATH}" \
-        #         >/dev/null && exit 6
-        #     exit 1;;
 
         ## Font
         application/font*|application/*opentype)
@@ -334,6 +324,15 @@ handle_mime() {
         video/* | audio/*)
             mediainfo "${FILE_PATH}" && exit 5
             exiftool "${FILE_PATH}" && exit 5
+            exit 1;;
+
+        ## Generic binary files (ВОТ ЭТО ДОБАВИТЬ)
+        # application/octet-stream)
+        #     hexdump -C -- "${FILE_PATH}" | head -n 200 && exit 5
+        #     exit 1;;
+
+        application/octet-stream)
+            strings -a -n 4 -- "${FILE_PATH}" | head -n 200 && exit 5
             exit 1;;
     esac
 }

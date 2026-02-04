@@ -40,10 +40,11 @@ path=($SDKMAN_DIR/candidates/java/current/bin $path)
 #maven
 export MAVEN_HOME="$SDKMAN_DIR/candidates/maven/current"
 export MVND_HOME="$SDKMAN_DIR/candidates/mvnd/current"
-path=($SDKMAN_DIR/candidates/maven/current/bin $path)
+path=($MAVEN_HOME/bin $path)
 #GRADLE
 export GRADLE_USER_HOME="$DEV_HOME/.gradle"
 export GRADLE_HOME="$SDKMAN_DIR/candidates/gradle/current"
+path=($GRADLE_HOME/bin $path)
 #
 export LIQUIBASE_HOME="$SDKMAN_DIR/candidates/liquibase/current"
 export VISUALVM_HOME="$SDKMAN_DIR/candidates/visualvm/current"
@@ -52,6 +53,7 @@ export ANDROID_USER_HOME="$DEV_HOME/android-sdk"
 export ANDROID_HOME="$DEV_HOME/android-sdk"
 export ANDROID_SDK_ROOT="$DEV_HOME/android-sdk"
 export ANDROID_SDK_HOME="$DEV_HOME/android-sdk"
+# export ADB_VENDOR_KEYS="$DEV_HOME/android-sdk/adb_keys"
 path=($ANDROID_HOME/cmdline-tools/latest/bin $path)
 path=($ANDROID_HOME/platform-tools $path)
 path=($ANDROID_HOME/emulator $path)
@@ -92,6 +94,8 @@ export MIX_XDG=1
 #Haskell
 export GHCUP_USE_XDG_DIRS=1
 export STACK_XDG=1
+#nimble
+path=($XDG_DATA_HOME/nimble/bin $path)
 #
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker/config"
 export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
@@ -139,3 +143,4 @@ export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc"
 export LYNX_CFG=~/.config/lynx/lynx.cfg
 export LESSHISTFILE=/tmp/.lesshst
 export LESSKEY=/tmp/.lesskey
+export NLTK_DATA="$XDG_DATA_HOME/nltk_data"

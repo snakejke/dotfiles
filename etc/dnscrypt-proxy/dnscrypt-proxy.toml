@@ -30,7 +30,10 @@
 # server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
 
 #server_names = ['dct-ru', 'cs-lv', 'controld-unfiltered', 'sth-dsncrypyt-se', 'nextdns'] 
-#server_names = ['dct-ru'] 
+# server_names = ['quad9-doh-ip4-port443-nofilter-pri','nextdns'] 
+server_names = ['quad9-doh-ip4-port443-nofilter-pri'] 
+# server_names = ['nextdns'] 
+# server_names = ['dnscry.pt-helsinki-ipv4'] 
 #cs-lv                 
 #controld-unfiltered  
 #sth-dnscrypt-se   
@@ -214,8 +217,8 @@ keepalive = 30
 
 ## Log level (0-6, default: 2 - 0 is very verbose, 6 only contains fatal errors)
 
-# log_level = 2
-log_level = 6
+log_level = 2
+# log_level = 6
 
 ## Log file for the application, as an alternative to sending logs to
 ## the standard system logging service (syslog/Windows event log).

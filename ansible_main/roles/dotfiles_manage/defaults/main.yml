@@ -1,4 +1,4 @@
-home_dir: "{{ ansible_env.HOME }}"
+home_dir: "{{ ansible_facts['env']['HOME'] }}"
 dotfiles_dir: "{{ home_dir }}/.local/dotfiles"
 user_config_dir: "{{ home_dir }}/.config"
 system_config_dir: "/etc"

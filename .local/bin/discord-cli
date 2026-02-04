@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# DiscordChatExporter CLI wrapper script
+# This script provides a convenient way to run DiscordChatExporter through Podman
+
+# Set the Docker image to use
+IMAGE="docker.io/tyrrrz/discordchatexporter:stable"
+
+# Check if podman is available
+if ! command -v podman &> /dev/null; then
+    echo "Error: podman is not installed or not in PATH"
+    exit 1
+fi
+
+# Pull the image if not already present
+podman inspect "$IMAGE" > /dev/null 2>&1 || podman pull "$IMAGE"
+
+# Run the command with current directory mounted to /out in the container
+# Use the same TTY settings as the current shell
+if [ -t 0 ] && [ -t 1 ]; then
+    # Both stdin and stdout are connected to a terminal
+    podman run --rm -it -v "$(pwd)":/out "$IMAGE" "$@"
+else
+    # Not running in a terminal, avoid TTY errors
+    podman run --rm -v "$(pwd)":/out "$IMAGE" "$@"
+fi

@@ -5,6 +5,7 @@
 - mise
 - rebar3
 - rtimer
+- acli
 - stack-*
 - uv
 - uvx

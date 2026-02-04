@@ -18,6 +18,12 @@
         user = "git";
         identityFile = "~/.ssh/id_ed25519";
       };
+
+      "android" = {
+        hostname = "192.168.0.14";
+        user = "u0_a680";
+        port = 8022;
+      };
       
       "*" = {
         forwardAgent = false;

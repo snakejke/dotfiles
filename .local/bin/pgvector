@@ -1,0 +1,6 @@
+#!/bin/bash
+USER=${PGUSER:-postgres}
+# DB=${PGDATABASE:-postgres}
+
+# podman exec -it postgres psql -U "$USER" -d "$DB" "$@"
+podman exec -it pgvector psql -U "$USER" "$@"
