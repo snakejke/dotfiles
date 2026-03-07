@@ -1,6 +1,6 @@
 {
     "BreezeX_Black": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "BreezeX_Black",
@@ -15,7 +15,7 @@
         "version": "v2.0.1"
     },
     "BreezeX_Dark": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "BreezeX_Dark",
@@ -30,7 +30,7 @@
         "version": "v2.0.1"
     },
     "elixir-ls": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "elixir-ls",
@@ -38,14 +38,14 @@
         "pinned": false,
         "src": {
             "name": null,
-            "sha256": "sha256-wHaAWTlz7pRl5zYVI7hzuqrNJYpHQTQrFTO+5axcbF4=",
+            "sha256": "sha256-kkw9RMnQS6My5GE2l+8Pkf96V8EgXU6fzBOVvQ5psEI=",
             "type": "url",
-            "url": "https://github.com/elixir-lsp/elixir-ls/releases/download/v0.29.3/elixir-ls-v0.29.3.zip"
+            "url": "https://github.com/elixir-lsp/elixir-ls/releases/download/v0.30.0/elixir-ls-v0.30.0.zip"
         },
-        "version": "v0.29.3"
+        "version": "v0.30.0"
     },
     "erlang-lsp": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "erlang-lsp",
@@ -53,25 +53,25 @@
         "pinned": false,
         "src": {
             "name": null,
-            "sha256": "sha256-3hY+5TDBobRjKgfptvgHmdtuWm8UE7KoWFhsR2qmQhc=",
+            "sha256": "sha256-0AhI+5tKnUtuoHtK9LXd6GQ9ranj2VWDVl1mnCCdZ1g=",
             "type": "url",
-            "url": "https://github.com/WhatsApp/erlang-language-platform/releases/download/2025-07-21/elp-linux-x86_64-unknown-linux-gnu-otp-28.tar.gz"
+            "url": "https://github.com/WhatsApp/erlang-language-platform/releases/download/2026-02-10/elp-linux-x86_64-unknown-linux-gnu-otp-28.tar.gz"
         },
-        "version": "2025-07-21"
+        "version": "2026-02-10"
     },
     "palantir-cli": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "palantir-cli",
         "passthru": null,
         "pinned": false,
         "src": {
-            "name": "palantir-cli-2.73.0-standalone.jar",
-            "sha256": "sha256-Fxq6H6XbzjW8n3dMUGndgBD+4geBDLIGc57V5RUuuYY=",
+            "name": "palantir-cli-2.89.0-standalone.jar",
+            "sha256": "sha256-6YPJNrr3efPacelcUkPAM4EAuiFcBYnuJSAvR2f10sY=",
             "type": "url",
-            "url": "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/2.73.0/palantir-cli-2.73.0-standalone.jar"
+            "url": "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/2.89.0/palantir-cli-2.89.0-standalone.jar"
         },
-        "version": "2.73.0"
+        "version": "2.89.0"
     }
 }

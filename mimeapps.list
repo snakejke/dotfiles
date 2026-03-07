@@ -76,3 +76,4 @@ text/x-lisp=emacsclient.desktop
 text/x-python3=emacsclient.desktop
 application/x-subrip=emacsclient.desktop
 text/vtt=emacsclient.desktop
+text/x-clojure=emacsclient.desktop

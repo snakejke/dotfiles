@@ -1,0 +1,17 @@
+#!/bin/sh
+exec 2>&1
+
+SETUP=/home/snake/.local/state/nix/profile/bin/non-nixos-gpu-setup
+
+if [ ! -f "$SETUP" ]; then
+  echo "non-nixos-gpu-setup not found, waiting..."
+  exec sleep 30
+fi
+
+DRIVER=$(grep -o '/nix/store/[a-z0-9-]*-non-nixos-gpu' \
+  "$(readlink -f "$SETUP")" | \
+  xargs -I{} cat {}/lib/systemd/system/non-nixos-gpu.service | \
+  grep -o '/nix/store/[a-z0-9-]*-non-nixos-gpu')
+
+ln -nsf "$DRIVER" /run/opengl-driver
+exec sleep infinity

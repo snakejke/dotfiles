@@ -60,5 +60,5 @@ if [[ -o interactive ]] && [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
         sdk "$@"
     }
 fi
-
-eval "$(atuin init zsh)"
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
+command -v atuin &>/dev/null && eval "$(atuin init zsh)"

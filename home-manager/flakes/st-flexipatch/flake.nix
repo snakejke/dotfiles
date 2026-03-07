@@ -30,8 +30,8 @@
           ];
 
           buildInputs = with pkgs; [
-            xorg.libX11 xorg.libXft xorg.libXcursor xorg.libXinerama
-            xorg.libXrender xorg.libXext xorg.libXrandr
+            libX11 libXft libXcursor libXinerama
+            libXrender libXext libXrandr
             harfbuzz gd imlib2 libsixel
           ];
 

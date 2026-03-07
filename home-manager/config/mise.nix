@@ -5,9 +5,16 @@
     globalConfig = {
       settings = {
         npm.bun = true;
+        disable_tools = [ "java" ];
         idiomatic_version_file_enable_tools = [];
+        aqua.github_attestations = false; # wait fix <2026-02-26 Thu>
       };
       tools = {
+        rust = {
+          version = "stable";
+          profile = "default"; # rustc, cargo, rustfmt, clippy
+          components = "rust-analyzer,rust-src,llvm-tools";
+        };
         babashka = "latest";
         elixir = "latest";
         erlang = "latest";
@@ -21,9 +28,10 @@
         uv = "latest";
         spring-boot = "latest";
         github-cli = "latest";
-        dotnet = "latest";
+        # dotnet = "latest";
         # ollama = "latest";
         just = "latest";
+        coursier = "latest";
         # "cargo:https://github.com/aws/amazon-q-developer-cli" = { 
         #   version = "latest";
         #   crate = "crates/chat-cli";
@@ -32,6 +40,7 @@
         "npm:@google/gemini-cli" = "latest";
         "npm:@qwen-code/qwen-code" = "latest";
         "pipx:jedi-language-server" = "latest";
+        "pipx:ty" = "latest";
         "pipx:my-cookies" = "latest";
         "pipx:sqlfluff" = "latest";
         "pipx:huggingface_hub" = {

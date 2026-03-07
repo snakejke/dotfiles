@@ -1,0 +1,54 @@
+#!/bin/bash
+# Toggle Discord audio between null-sink (isolated) and default output device
+# while keeping OBS recording from the monitor ports.
+#
+# CONFIGURATION:
+# - NULL_SINK: must match 'node.name' in your pipewire null-sink config
+# - PLAYBACK_NODE: must match 'node.name' of the loopback playback node
+# - Assumes audio ports are named 'playback_FL' and 'playback_FR' (standard for most devices)
+#
+# REQUIREMENTS:
+# - pipewire with configured null-sink and loopback module
+# - pw-cli, pw-link, and pactl (or wpctl as fallback)
+# - Discord must be running and using the capture.Discord sink
+
+NULL_SINK="null-sink"
+PLAYBACK_NODE="playback.Discord"
+
+send_notification() {
+    notify-send -i audio-speakers -t 2000 "Discord Audio" "$1"
+}
+
+if ! pw-cli ls Node | grep -q "node.name = \"$PLAYBACK_NODE\""; then
+    echo "Error: $PLAYBACK_NODE not found. Is Discord running?" >&2
+    exit 1
+fi
+
+if ! pw-cli ls Node | grep -q "node.name = \"$NULL_SINK\""; then
+    echo "Error: $NULL_SINK not found. Check pipewire config." >&2
+    exit 1
+fi
+
+CURRENT=$(pw-link -l | awk "/$PLAYBACK_NODE:output_FL/{getline; if(\$1==\"|->\") print \$2}" | cut -d: -f1)
+
+if [ -z "$CURRENT" ]; then
+    echo "Error: Cannot determine current connection" >&2
+    exit 1
+fi
+
+if [ "$CURRENT" = "$NULL_SINK" ]; then
+    DEFAULT_SINK=$(pactl get-default-sink 2>/dev/null || wpctl inspect @DEFAULT_AUDIO_SINK@ | awk -F'"' '/node.name/{print $2}')
+    pw-link -d $PLAYBACK_NODE:output_FL $NULL_SINK:playback_FL 2>/dev/null
+    pw-link -d $PLAYBACK_NODE:output_FR $NULL_SINK:playback_FR 2>/dev/null
+    pw-link $PLAYBACK_NODE:output_FL $DEFAULT_SINK:playback_FL || exit 1
+    pw-link $PLAYBACK_NODE:output_FR $DEFAULT_SINK:playback_FR || exit 1
+    echo "✓ Switched to default sink (you can hear Discord)"
+    send_notification "Mode: UNMUTED (Hearing Discord)"
+else
+    pw-link -d $PLAYBACK_NODE:output_FL $CURRENT:playback_FL 2>/dev/null
+    pw-link -d $PLAYBACK_NODE:output_FR $CURRENT:playback_FR 2>/dev/null
+    pw-link $PLAYBACK_NODE:output_FL $NULL_SINK:playback_FL || exit 1
+    pw-link $PLAYBACK_NODE:output_FR $NULL_SINK:playback_FR || exit 1
+    echo "✓ Switched to null-sink (Discord isolated)"
+    send_notification "Mode: ISOLATED (Discord Muted)"
+fi

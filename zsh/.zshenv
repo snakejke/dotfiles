@@ -65,7 +65,7 @@ export AWT_TOOLKIT=MToolkit
 export _JAVA_AWT_WM_NONREPARENTING=1
 #Pass
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
-export PASSWORD_STORE_EXTENSIONS_DIR="$HOME/.local/lib/python3.10/site-packages/usr/lib/password-store/extensions/"
+export PASSWORD_STORE_EXTENSIONS_DIR="$XDG_STATE_HOME/nix/profile/lib/password-store/extensions"
 export PASSWORD_STORE_DIR="$HOME/.password-store"
 #
 export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch/.notmuch-config"
@@ -82,11 +82,19 @@ export RUSTUP_HOME="$XDG_DATA_HOME/.rustup"
 #Python
 export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
 export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
+export PYTHON_HISTORY="$XDG_STATE_HOME/.python_history"
 export RUFF_CACHE_DIR="$XDG_CACHE_HOME/.ruff_cache"
 #Scala.coursier
 #export G8_HOME="$XDG_DATA_HOME/g8"
-path=($XDG_DATA_HOME/coursier/bin $path)
+# path=($XDG_DATA_HOME/coursier/bin $path)
 #export SCALA_REPL_HISTORY="$HOME/.local/share/scala/.dotty_history"
+_sbt_opts=(
+  "-Dsbt.global.base=$XDG_DATA_HOME/sbt"
+  "-Dsbt.ivy.home=$XDG_CACHE_HOME/ivy2"
+  "-DG8_HOME=$XDG_DATA_HOME/sbt/.g8"
+)
+export SBT_OPTS="${_sbt_opts[*]}"
+unset _sbt_opts
 #export SCALA_REPL_OPTS="-Dscala.color -Dscala.shell.histfile=${SCALA_REPL_HISTORY}"
 #mise Erlang/Elixir/Ruby 
 path=($XDG_DATA_HOME/mise/shims $path)
@@ -112,6 +120,7 @@ export SAVEHIST=$HISTSIZE
 # JS 
 export NODE_REPL_HISTORY="$XDG_CONFIG_HOME/nodejs/.node_repl_history"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"
 export PNPM_HOME="$XDG_DATA_HOME/pnpm"
 path=($PNPM_HOME $path)
@@ -144,3 +153,5 @@ export LYNX_CFG=~/.config/lynx/lynx.cfg
 export LESSHISTFILE=/tmp/.lesshst
 export LESSKEY=/tmp/.lesskey
 export NLTK_DATA="$XDG_DATA_HOME/nltk_data"
+#
+# export LD_LIBRARY_PATH="$XDG_STATE_HOME/nix/profile/lib:${LD_LIBRARY_PATH:-}"

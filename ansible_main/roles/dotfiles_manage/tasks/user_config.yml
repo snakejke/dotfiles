@@ -4,6 +4,7 @@
   vars:
     config_directories:
       - emacs/lisp
+      - emacs/templates
       - fontconfig 
       - fvwm
       - home-manager 

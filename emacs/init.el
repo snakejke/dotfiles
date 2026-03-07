@@ -418,6 +418,7 @@
   (column-number-mode t)
   (create-lockfiles nil) ;; TODO 
   (use-short-answers t) ;; yes-no to y-n
+  (resize-mini-windows nil) 
   (completion-styles '(flex basic partial-completion emacs22))
   ;; c corfu. если не будет работать. положить в init
   (completion-cycle-threshold 3)
@@ -452,17 +453,6 @@
 
 ;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-;; (use-package eat
-;;   :defer t
-;;  ;; :ensure(eat :host codeberg :repo "akib/emacs-eat"
-;;  ;;         :files ("*.el" ("term" "term/*.el") "*.texi"
-;;  ;;                 "*.ti" ("terminfo/e" "terminfo/e/*")
-;;  ;;                 ("terminfo/65" "terminfo/65/*")
-;;  ;;                 ("integration" "integration/*")
-;;  ;;                 (:exclude ".dir-locals.el" "*-tests.el")))
-;;  :config
-;;  (add-hook 'eshell-load-hook #'eat-eshell-mode))
 
 (use-package which-key
   :demand t
@@ -533,14 +523,6 @@ unreadable. Returns the names of envvars that were changed."
   ;; (electric-pair-mode t)
   )
 
-(use-package atomic-chrome
-  :demand t
-  :ensure (atomic-chrome :host github :repo "KarimAziev/atomic-chrome")
-  :commands (atomic-chrome-start-server)
-  :config
-  (setq-default atomic-chrome-extension-type-list '(atomic-chrome))
-  (atomic-chrome-start-server))
-
 (use-feature eshell
   :custom
   (eshell-banner-message "")
@@ -587,6 +569,7 @@ unreadable. Returns the names of envvars that were changed."
   (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color"))))
 
 (use-package modus-themes
+  ;; :ensure (modus-themes :ref "4.8.1")
   :config 
   (setq modus-themes-custom-auto-reload nil
       modus-themes-bold-constructs nil
@@ -1199,8 +1182,8 @@ unreadable. Returns the names of envvars that were changed."
   :config
   (consult-customize
    consult-recent-file
-   consult--source-recent-file
-   consult--source-buffer
+   consult-source-recent-file
+   consult-source-buffer
    :preview-key nil)
   (define-key evil-normal-state-map (kbd "gb") 'consult-buffer)
   (define-key evil-visual-state-map (kbd "gb") 'consult-buffer)
@@ -1359,7 +1342,6 @@ unreadable. Returns the names of envvars that were changed."
   ;; (setq lsp-log-io t)
   (setq lsp-restart 'auto-restart)
   ;;TODO: 
-  ;; (setq lsp-semgrep-languages '())
   ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
   ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
   ;; (setq lsp-enable-on-type-formatting nil)
@@ -1430,13 +1412,9 @@ unreadable. Returns the names of envvars that were changed."
   (setq lsp-ui-sideline-show-code-actions t)
   (setq lsp-ui-sideline-delay 0.05))
 
-(use-package lsp-jedi
-  :after lsp-mode
-  ;; :config
-  ;; (add-to-list 'lsp-disabled-clients 'pyls)
-  ;; (add-to-list 'lsp-disabled-clients 'pylsp)
-  ;; (add-to-list 'lsp-enabled-clients 'jedi)
-  )
+;; (use-package lsp-jedi
+;;   :after lsp-mode
+;;   )
 
 (use-package lsp-java
   :after lsp
@@ -1506,9 +1484,15 @@ unreadable. Returns the names of envvars that were changed."
   :ensure (eglot-hierarchy :host github :repo "dolmens/eglot-hierarchy")
   :defer t)
 
+(use-package envrc
+  :config
+  (add-hook 'elpaca-after-init-hook
+            (lambda () (envrc-global-mode 1))))
+
 (use-package haskell-mode
   :defer t
-  :delight "󰲒")
+  :delight "󰲒"
+  )
 
 (use-feature java-ts-mode
   :custom
@@ -1583,7 +1567,33 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package scala-mode
   :defer t
-  :interpreter ("scala" . scala-mode))
+  :interpreter ("scala" . scala-mode)
+  :config
+  (defvar scala3-project-cache (make-hash-table :test 'equal))
+
+  (defun is-scala3-project ()
+    (when-let* ((proj (project-current))
+              (root (project-root proj)))
+      (or (gethash root scala3-project-cache)
+          (puthash root
+                   (when (file-exists-p (concat root "build.sbt"))
+                     (with-temp-buffer
+                       (insert-file-contents (concat root "build.sbt"))
+                       (when (re-search-forward
+                              "scalaVersion[[:space:]]*:=[[:space:]]*\\([a-zA-Z0-9\"._-]+\\)"
+                              nil t)
+                         (let ((val (match-string 1)))
+                           (goto-char (point-min))
+                           (re-search-forward
+                            (concat val "[[:space:]]*=[[:space:]]*\"3\\.")
+                            nil t)))))
+                   scala3-project-cache))))
+
+  (defun disable-scala-indent ()
+    (when (is-scala3-project)
+      (setq indent-line-function 'indent-relative-maybe)))
+
+  (add-hook 'scala-mode-hook #'disable-scala-indent))
 
 (use-package sbt-mode
   :defer t
@@ -1832,7 +1842,7 @@ unreadable. Returns the names of envvars that were changed."
   :custom (flycheck-emacs-lisp-load-path 'inherit "necessary with alternatives to package.el"))
 
 (use-package flycheck-package
-  :after (flychceck)
+  :after (flycheck)
   :config (flycheck-package-setup)
   (add-to-list 'display-buffer-alist
                '("\\*Flycheck errors\\*"  display-buffer-below-selected (window-height . 0.15))))
@@ -2327,6 +2337,8 @@ Use `treemacs' command for old functionality."
     )
   (use-feature ob-python
     :commands (org-babel-execute:python))
+  (use-feature ob-haskell
+    :commands (org-babel-execute:haskell))
   (use-feature ob-shell
     :commands (org-babel-execute:bash
                org-babel-execute:shell
@@ -2921,6 +2933,7 @@ Speeds up `org-agenda' remote operations."
    '(".projectile.el" ".project.el" ".project" ; Emacs
      ".repo" ; Repo workspaces
      "autogen.sh" ; Autotools
+     "build.sbt"
      "rebar.config"
      ".dir-locals.el"
      "*.csproj" "*.vbproj" "*.vcxproj" "*.vdproj" ".code-workspace" ; Visual Studio

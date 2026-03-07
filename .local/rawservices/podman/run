@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 exec 2>&1
+
+export PATH=$HOME/.local/state/nix/profile/bin/:$PATH
+
 
 [ -r ./conf ] && . ./conf
 exec podman --log-level warn system service ${OPTS:---time=0} 2>&1

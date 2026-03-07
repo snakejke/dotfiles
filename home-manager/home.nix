@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 
 let
-  externalPackages = pkgs.callPackage ./external {};
+  externalPackages = pkgs.callPackage ./external { };
 in
 
 {
-    imports = [
+  imports = [
     ./config/fdm.nix
     ./config/git.nix
     ./config/devilspie2.nix
@@ -14,7 +14,7 @@ in
     ./config/wget.nix
     ./config/aria2.nix
     ./config/dunst.nix
-    #./config/tmux.nix 
+    #./config/tmux.nix
     ./config/rofi.nix
     ./config/ssh.nix
     ./config/texlive.nix
@@ -24,186 +24,238 @@ in
     ./config/themes.nix
     ./config/atuin.nix
     ./config/aria2.nix
+    ./config/desktop-entries.nix
     # ./config/zsh.nix
     # ./config/gpu-apps.nix
-    ];
-    
+  ];
+
   home.username = "snake";
   home.homeDirectory = "/home/snake";
   # nixpkgs.config.allowUnfree = true;
-  nixpkgs.config = import ./nixpkgs-config.nix;
+  nixpkgs.config = import ./nixpkgs-config.nix; # FIXME
   xdg.configFile."nixpkgs/config.nix".source = ./nixpkgs-config.nix;
-
-
 
   home.stateVersion = "24.11"; # Please read the comment before changing!!!
   home.preferXdgDirectories = true;
 
+  targets.genericLinux.gpu = {
+    enable = true;
+    nvidia = {
+      enable = true;
+      version = "580.105.08";
+      sha256 = "sha256-2cboGIZy8+t03QTPpp3VhHn6HQFiyMKMjRdiV2MpNHU=";
+    };
+  };
+
   home.packages = with pkgs; [
-    ueberzugpp
-    fd
-    jq
-    fzf
-    ripgrep
-    bat
-    gdu
-    lf
-    ranger
-    xdotool
-    wmname
-    vlc
-    fastfetch
-    qtpass
-    qbittorrent
-    parallel
-    parted
-    pandoc
-    lnav
-    neovim
-    # i3lock https://github.com/nix-community/home-manager/issues/7027
-    hdparm
-    keepassxc
-    fdupes
-    evtest
-    ditaa
-    devilspie2
-    maildrop
-    lynx
-    tree
-    mermaid-cli
-    zstd
-    _7zz-rar # 7zz
-    zip
-    pv # Pipe Viewer
-    unixtools.xxd
-    wmctrl
-    yt-dlp
-    cachix
-    sysfsutils # systool
-    scrcpy
-    pgloader
-    amazon-q-cli
+      ueberzugpp
+      fd
+      jq
+      fzf
+      ripgrep
+      bat
+      gdu
+      lf
+      ranger
+      xdotool
+      wmname
+      vlc
+      fastfetch
+      qtpass
+      qbittorrent
+      parallel
+      parted
+      pandoc
+      lnav
+      neovim
+      # i3lock https://github.com/nix-community/home-manager/issues/7027
+      hdparm
+      keepassxc
+      fdupes
+      evtest
+      ditaa
+      delta
+      devilspie2
+      maildrop
+      lynx
+      tree
+      mermaid-cli
+      zstd
+      _7zz-rar # 7zz
+      zip
+      pv # Pipe Viewer
+      unixtools.xxd
+      wmctrl
+      yt-dlp
+      cachix
+      sysfsutils # systool
+      scrcpy
+      #pgloader #bug 04.02.2026
+      #amazon-q-cli # kiro-li
+      firefox
+      discord
+      zed-editor
 
-    #
+      #
+      duckdb
 
-    # gst_all_1.gstreamer
-    # gst_all_1.gst-plugins-ugly
-    # gst_all_1.gst-plugins-good
-    # gst_all_1.gst-plugins-base
-    # gst_all_1.gst-plugins-bad
+      # gst_all_1.gstreamer
+      # gst_all_1.gst-plugins-ugly
+      # gst_all_1.gst-plugins-good
+      # gst_all_1.gst-plugins-base
+      # gst_all_1.gst-plugins-bad
 
-    #
-    bridge-utils # brctl
-    tcpdump
-    dig
-    #curl
-    drill
-    speedtest-cli
-    nettools
-    nmap # ncat, gnu netcat nc, openbsd nc
-    mtr # ping + traceroute
-    ndisc6 
+      #
+      bridge-utils # brctl
+      tcpdump
+      dig
+      #curl
+      drill
+      speedtest-cli
+      nettools
+      nmap # ncat, gnu netcat nc, openbsd nc
+      mtr # ping + traceroute
+      ndisc6
 
-    #
-    socat
-    zsync
-    swtpm
+      #
+      socat
+      zsync
+      swtpm
 
-    #
-    restic
-    rclone
-    rsync
+      #
+      restic
+      rclone
+      rsync
 
-    #
-    nsxiv
-    maim
-    slop
-    scrot
-    flameshot
-    feh
-    pngquant
-    (tesseract5.override {
-      enableLanguages = [ "eng" "rus" ];
-    })
-    libsixel
-    lsix
+      #
+      nsxiv
+      maim
+      slop
+      scrot
+      flameshot
+      feh
+      pngquant
+      (tesseract5.override {
+        enableLanguages = [
+          "eng"
+          "rus"
+        ];
+      })
+      libsixel
+      lsix
 
-    #
-    poppler-utils
-    exiftool # alt pdfinfo 
-    mupdf-headless
-    hexapdf # pdf cover 
-    ocrmypdf
-    librsvg # rsvg-convert
-    wkhtmltopdf # rendering web pages to PDF or images
-    ghostscript
-    #koodo-reader #broken 
-    foliate
-    djvulibre # ddjvu
-    visidata
+      #
+      poppler-utils
+      exiftool # alt pdfinfo
+      mupdf-headless
+      hexapdf # pdf cover
+      # ocrmypdf <2026-02-26 Thu> Bug
+      librsvg # rsvg-convert
+      wkhtmltopdf # rendering web pages to PDF or images
+      ghostscript
+      koodo-reader
+      foliate
+      djvulibre # ddjvu
+      visidata
 
-    #lsp
-    nil # nix 
+      #
+      ansible
+      ansible-lint
+      k3d
+      # (pkgs.k3d.override {
+      #   k3sVersion = "1.30.14-k3s2";
+      # })
+      kubectl
+      k9s
+      podman
+      podman-tui
+      podman-compose
+      lazydocker
+      kubernetes-helm
+      skopeo
 
-    #
-    ansible
-    ansible-lint
-    (pkgs.k3d.override {
-      k3sVersion = "1.30.14-k3s2";
-    })
-    kubectl
-    k9s
-    podman-tui
-    podman-compose
-    lazydocker
-    kubernetes-helm
-    skopeo
+      #
+      exercism
 
-    #
-    exercism
+      #google-chrome ugly fonts
 
-    #google-chrome ugly fonts 
-    #discord need gpu accel 
+      #
+      lxappearance
+      adapta-gtk-theme
+      mate-themes
+      papirus-icon-theme
+      bibata-cursors
+      capitaine-cursors
+      greybird
+      yaru-theme
+      fluent-gtk-theme
 
-    #
-    lxappearance
-    adapta-gtk-theme
-    mate.mate-themes
-    papirus-icon-theme
-    bibata-cursors
-    capitaine-cursors
-    greybird
-    yaru-theme
-    fluent-gtk-theme
+      #
+      btop
+      htop
+      lsof
+      strace
 
-    #
-    btop
-    htop
-    lsof
-    strace
+      zsh-z
+      zsh-autosuggestions
+      zsh-syntax-highlighting
 
-    zsh-z
-    zsh-autosuggestions
-    zsh-syntax-highlighting
+      nvfetcher
 
-    nvfetcher
+      mitschemeX11
+      guile
+      racket
+      fpc # pascal
+      nim
+      nimble
+      nil # lsp nix
+      nixfmt
 
-    mitschemeX11
-    guile
-    racket
-    fpc #pascal
-    nim
-    nimble
-    nimlangserver
+      zeromq # libzmq.so jupyternim
+      nimlangserver
+      html-tidy
 
-  ] ++ externalPackages;
+      # (python311.withPackages (ps: with ps; [
+      #   jupyterlab
+      #   ipython
+      #   ipykernel
 
+      #   numpy
+      #   pandas
+      #   matplotlib
+      #   seaborn
+      #   scipy
+
+      #   requests
+      #   beautifulsoup4
+      # ]))
+      jupyter-all
+
+      devenv
+      qrencode # QR generate
+      zbar # QR reader
+
+    ] ++ externalPackages;
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
+  programs.password-store = {
+    enable = true;
+    package = pkgs.pass.withExtensions (exts: [
+      exts.pass-otp
+      exts.pass-audit
+    ]);
+    settings = { };
+  };
 
   home.file.".config/python/pythonrc".text = ''
     import readline
     readline.write_history_file = lambda *args: None
   '';
-  
+
   xdg.configFile."npm/npmrc".text = ''
     prefix=''${XDG_DATA_HOME}/npm
     cache=''${XDG_CACHE_HOME}/npm
@@ -226,8 +278,11 @@ in
     default=gtk
     org.freedesktop.impl.portal.FileChooser=gtk
   '';
-
-
+  xdg.configFile."jupyter/jupyter_notebook_config.py".text = ''
+    c = get_config()
+    c.FileContentsManager.checkpoints_class =
+        "notebook.services.contents.checkpoints.NoOpCheckpoints"
+  '';
 
   nix = {
     package = pkgs.nix;
@@ -238,20 +293,18 @@ in
         "https://cachix.cachix.org"
         "https://devenv.cachix.org"
       ];
-      
+
       trusted-public-keys = [
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
-          "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
+        "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
 
-      # Дополнительные настройки
       # auto-optimise-store = true;
       # experimental-features = ["nix-command" "flakes"];
     };
   };
-  
 
   home.sessionVariables = {
   };

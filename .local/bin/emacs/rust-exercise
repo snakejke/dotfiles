@@ -1,0 +1,126 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: rust-exercise <exercise-name> [edition=2021] [no_std] [custom_dir=pwd]"
+    exit 1
+fi
+
+EXERCISE_NAME="$1"
+EDITION="${2:-2021}"  # Default to 2021 as string
+NO_STD="${3:-}"       # Empty by default (use std); set to "no_std" for no_std mode
+CUSTOM_DIR="${4:-$(pwd)}"  # Default to current pwd; optional fourth arg for custom base dir
+
+# Validate edition
+case "$EDITION" in
+    2015|2018|2021|2024) ;;
+    *) echo "Invalid edition: $EDITION. Must be 2015, 2018, 2021, or 2024."; exit 1 ;;
+esac
+
+DIR="$CUSTOM_DIR/$EXERCISE_NAME"
+
+if [ -d "$DIR" ]; then
+    echo "Directory $DIR already exists. Overwrite? (y/n)"
+    read -r overwrite
+    if [ "$overwrite" != "y" ]; then
+        exit 0
+    fi
+fi
+
+mkdir -p "$DIR"
+
+SYSROOT=$(rustc --print sysroot)
+SYSROOT_SRC="$SYSROOT/lib/rustlib/src/rust/library"
+ROOT_MODULE="main.rs"  # Relative to json
+
+# Get correct target tuple (e.g., x86_64-unknown-linux-gnu)
+TARGET=$(rustc -vV | grep host | cut -d' ' -f2)
+
+# For no_std setup
+if [ "$NO_STD" = "no_std" ]; then
+    CRATE_ATTRS='["no_std"]'
+    MAIN_TEMPLATE='
+#![no_std]
+
+fn main() {
+    // Your no_std code here
+}
+'
+    echo "Setting up for no_std mode."
+else
+    CRATE_ATTRS='[]'
+    MAIN_TEMPLATE='
+fn main() {
+    println!("Hello from '"$EXERCISE_NAME"'!");
+}
+'
+fi
+
+cat <<EOF > "$DIR/rust-project.json"
+{
+  "sysroot": "$SYSROOT",
+  "sysroot_src": "$SYSROOT_SRC",
+  "crates": [
+    {
+      "display_name": "$EXERCISE_NAME",
+      "root_module": "$ROOT_MODULE",
+      "edition": "$EDITION",
+      "version": "0.1.0",
+      "deps": [],
+      "is_workspace_member": true,
+      "source": {
+        "include_dirs": ["."],
+        "exclude_dirs": []
+      },
+      "cfg": [],
+      "target": "$TARGET",
+      "env": {},
+      "crate_attrs": $CRATE_ATTRS,
+      "is_proc_macro": false,
+      "build": {
+        "label": "$EXERCISE_NAME",
+        "build_file": "$DIR/rust-project.json",
+        "target_kind": "bin"
+      }
+    }
+  ],
+  "runnables": [
+    {
+      "program": "rustc",
+      "args": ["{saved_file}", "--edition=$EDITION", "--emit=metadata", "--error-format=json"],
+      "cwd": "$DIR",
+      "kind": "check"
+    },
+    {
+      "program": "rustc",
+      "args": ["$ROOT_MODULE", "--edition=$EDITION", "-o", "$EXERCISE_NAME"],
+      "cwd": "$DIR",
+      "kind": "run"
+    },
+    {
+      "program": "rustc",
+      "args": ["{label}", "--test", "--edition=$EDITION"],
+      "cwd": "$DIR",
+      "kind": "testOne"
+    }
+  ]
+}
+EOF
+
+#.dir-locals.el
+cat <<EOF > "$DIR/.dir-locals.el"
+((rustic-mode . ((eval . (setq-local compile-command
+      (concat "rustc " (file-name-nondirectory buffer-file-name)
+              " -o " (file-name-sans-extension (file-name-nondirectory buffer-file-name))
+              " && ./" (file-name-sans-extension (file-name-nondirectory buffer-file-name))))))))
+ (rust-ts-mode . ((eval . (setq-local compile-command
+      (concat "rustc " (file-name-nondirectory buffer-file-name)
+              " -o " (file-name-sans-extension (file-name-nondirectory buffer-file-name))
+              " && ./" (file-name-sans-extension (file-name-nondirectory buffer-file-name)))))))))
+EOF
+
+ROOT_MODULE_PATH="$DIR/$ROOT_MODULE"
+if [ ! -f "$ROOT_MODULE_PATH" ]; then
+    echo "$MAIN_TEMPLATE" > "$ROOT_MODULE_PATH"
+fi
+
+echo "Created/Updated: $DIR with rust-project.json and main.rs. Restart LSP in Emacs (M-x lsp-restart-workspace) and check autocompletions!"

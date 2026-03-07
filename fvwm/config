@@ -315,6 +315,7 @@ Key Tab A M  SwitchWindow
 # Silent suppresses any errors (such as keyboards with no Menu key).
 Silent Key Return  A 4  Exec exec st
 Silent Key d       A 4  Exec exec rofi_launch.sh
+Silent Key F1      A 4  Exec exec toggle-discord-audio
 Silent Key s       A 4C Exec exec maimscreenshot
 Silent Key o       A 4C Exec exec ocr_clipboard
 Silent Key f       A 4C Exec exec flameshot.sh

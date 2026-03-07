@@ -29,6 +29,7 @@
     - 'sv/amneziavpn/run'
     - 'sv/runsvdir-snake/run'
     - 'sv/nix-daemon/run'
+    - 'sv/nixgpu/run'
     - 'sv/determinate-nixd/run'
     - 'sv/smtpd_bypass/run'
     - 'sv/smtpd_bypass/finish'
