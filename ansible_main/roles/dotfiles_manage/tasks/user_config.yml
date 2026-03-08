@@ -17,9 +17,6 @@
 
     config_files:
       - ansible/ansible.cfg
-      - containers/registries.conf
-      - containers/storage.conf
-      - containers/policy.json
       - emacs/early-init.el
       - emacs/init-dev.el
       - emacs/init.el

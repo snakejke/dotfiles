@@ -1,34 +1,31 @@
 #!/usr/bin/env bash
 
-# Kill the GPG agent and start a new one
 gpg-connect-agent killagent /bye
 gpg-connect-agent /bye
 
-# Configuration
 icon="$HOME/Documents/Pictures/lock_icons/lock.png"
-tmpbg="/tmp/screen_$(date +%s).png"  # Unique temporary file
-lockargs=()                          # Array for i3lock arguments
+tmpbg="/tmp/screen_$(date +%s).png"
+tmpblur="/tmp/screen_blur_$(date +%s).png"
+lockargs=()
 
 cleanup() {
-    rm -f "$tmpbg"  # Remove temporary file on script exit
+    rm -f "$tmpbg" "$tmpblur"
 }
+trap cleanup EXIT
 
-trap cleanup EXIT  # Ensure cleanup happens even if script fails
+rm -f "$tmpbg"
 
-# Take a fresh screenshot
 if ! scrot "$tmpbg"; then
     echo "Failed to take screenshot"
     exit 1
 fi
 
-# Apply blur and overlay icon
-if magick "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg" && \
-   magick "$tmpbg" "$icon" -gravity center -composite "$tmpbg"; then
-    lockargs+=(-i "$tmpbg")  # Add image argument if processing succeeded
+if magick "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpblur" && \
+   magick "$tmpblur" "$icon" -gravity center -composite "$tmpblur"; then
+    lockargs+=(-i "$tmpblur")
 else
     echo "Image processing failed"
-    lockargs+=(-c 000000)    # Fallback to solid color if image processing fails
+    lockargs+=(-c 000000)
 fi
 
-# Lock screen
 i3lock "${lockargs[@]}"

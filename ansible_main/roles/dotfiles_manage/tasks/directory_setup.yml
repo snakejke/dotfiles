@@ -11,7 +11,6 @@
     - 'emacs/lisp'
     - 'emacs/templates'
     - 'zsh'
-    - 'containers'
     - 'wireplumber/wireplumber.conf.d'
     - 'libvirt'
     - 'mpv'

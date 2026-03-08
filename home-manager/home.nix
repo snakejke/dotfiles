@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   externalPackages = pkgs.callPackage ./external { };
@@ -25,6 +30,7 @@ in
     ./config/atuin.nix
     ./config/aria2.nix
     ./config/desktop-entries.nix
+    ./config/podman.nix
     # ./config/zsh.nix
     # ./config/gpu-apps.nix
   ];
@@ -47,7 +53,9 @@ in
     };
   };
 
-  home.packages = with pkgs; [
+  home.packages =
+    with pkgs;
+    [
       ueberzugpp
       fd
       jq
@@ -91,7 +99,6 @@ in
       sysfsutils # systool
       scrcpy
       #pgloader #bug 04.02.2026
-      #amazon-q-cli # kiro-li
       firefox
       discord
       zed-editor
@@ -167,9 +174,6 @@ in
       # })
       kubectl
       k9s
-      podman
-      podman-tui
-      podman-compose
       lazydocker
       kubernetes-helm
       skopeo
@@ -236,7 +240,8 @@ in
       zbar # QR reader
       amnezia-vpn
 
-    ] ++ externalPackages;
+    ]
+    ++ externalPackages;
 
   programs.direnv = {
     enable = true;
@@ -306,6 +311,8 @@ in
       # experimental-features = ["nix-command" "flakes"];
     };
   };
+
+
 
   home.sessionVariables = {
   };
