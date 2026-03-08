@@ -10,10 +10,18 @@ nix_source() {
 download() { aria2c -d ~/Downloads "$1"; }
 
 nvm() {
-  unset -f nvm  
-  source "$NVM_DIR/nvm.sh"
-  nvm "$@"
+    unset -f nvm  
+    source "$NVM_DIR/nvm.sh"
+    nvm "$@"
 }
+
+rm() {
+    local RED=$'\033[0;31m'
+    local NC=$'\033[0m'
+    print "Do you want to ${RED}REMOVE${NC} this? (y/n)"
+    command rm -i "$@"
+}
+
 
 docx2emacs() {
     local tmpfile=$(mktemp --suffix=.txt)

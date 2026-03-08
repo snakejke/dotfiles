@@ -234,6 +234,7 @@ in
       devenv
       qrencode # QR generate
       zbar # QR reader
+      amnezia-vpn
 
     ] ++ externalPackages;
 

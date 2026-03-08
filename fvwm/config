@@ -321,7 +321,7 @@ Silent Key o       A 4C Exec exec ocr_clipboard
 Silent Key f       A 4C Exec exec flameshot.sh
 Silent Key r       A 4C Exec exec video.sh
 Silent Key p       A 4  Exec exec passmenu.sh
-Silent Key Pause   A A  Exec lock_and_blur.sh
+Silent Key Pause   A A  Exec exec lock_and_blur.sh
 Silent Key F1      A M  Menu MenuFvwmRoot
 Silent Key Menu    A A  Menu MenuFvwmRoot
 #Silent Key Tab     A M WindowList Root c c NoDeskSort, NoGeometry, SelectOnRelease Meta_L, CurrentAtEnd
