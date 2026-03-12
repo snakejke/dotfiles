@@ -96,8 +96,6 @@ const userConfigs: seq[Entry] = @[
   ("wireplumber/wireplumber.conf.d/80-disable-logind.conf",         locHome, ekFile, 0o644),
 
   # Прочие
-  ("libvirt/libvirt.conf",                                          locHome, ekFile, 0o644),
-  ("ansible/ansible.cfg",                                           locHome, ekFile, 0o644),
   ("mimeapps.list",                                                 locHome, ekFile, 0o644),
   ("fontconfig",                                                    locHome, ekDir, 0o755),
   ("picom",                                                         locHome, ekDir, 0o755),
@@ -126,7 +124,7 @@ const userConfigs: seq[Entry] = @[
   (".local/rawservices",                                            locHome, ekDir, 0o755),
 
   # ~/.local/ansible_main (в dotfiles хранится как ansible_main/)
-  ("ansible_main",                                                  locHome, ekDir, 0o755),
+  #("ansible_main",                                                  locHome, ekDir, 0o755),
 ]
 
 const securityConfigs: seq[Entry] = @[
