@@ -11,10 +11,12 @@
       };
       tools = {
         rust = {
-          version = "stable";
+          # version = "stable";
+          version = "1.94.0";
           profile = "default"; # rustc, cargo, rustfmt, clippy
           components = "rust-analyzer,rust-src,llvm-tools";
         };
+        codex = "latest";
         babashka = "latest";
         elixir = "latest";
         erlang = "latest";

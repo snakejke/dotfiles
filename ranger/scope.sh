@@ -261,6 +261,14 @@ handle_mime() {
             python -m json.tool -- "${FILE_PATH}" && exit 5
             exit 2;;
 
+        ## Email messages (Maildir, mbox, RFC 822)
+        ## file --mime-type возвращает message/rfc822 для писем без расширения
+        message/rfc822)
+            env COLORTERM=8bit bat --color=always --style="plain" --language=Email \
+                -- "${FILE_PATH}" && exit 5
+            cat -- "${FILE_PATH}" && exit 5
+            exit 2;;
+
         ## XLS
         *ms-excel)
             ## Preview as csv conversion

@@ -207,22 +207,23 @@ ELP полезен для поиска горячих функций
 * Elpaca настройка
 ** Основные настройки elpaca
 #+begin_src emacs-lisp :lexical t
-(defvar elpaca-installer-version 0.11)
+(defvar elpaca-installer-version 0.12)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1
+                              :ref nil :depth 1 :inherit ignore
                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+                              :build (:not elpaca-activate)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-sources-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
        (default-directory repo))
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
+    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -242,7 +243,7 @@ ELP полезен для поиска горячих функций
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
     (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
+    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 (setq elpaca-queue-limit 30)
@@ -298,7 +299,9 @@ ELP полезен для поиска горячих функций
 на Void Linux  ~/usr/share/emacs/site-lisp/notmuch~ 
 #+begin_src emacs-lisp :lexical t
 
-(let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch"))) 
+;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch"))) 
+
+(let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
   (mapc (lambda (path)
           (when (file-directory-p path) 
             (add-to-list 'load-path path)))
@@ -786,7 +789,10 @@ Shows match counts in mode line.
   ;;(which-key-idle-delay 1)
   )
 #+end_src
-
+* TESTTTTTTTTTTTTTTT
+#+begin_src emacs-lisp :lexical t
+;; (load-file "/home/snake/tree/java.el")
+#+end_src
 * exec-path-from-shell Переменные среды
 #+begin_src emacs-lisp :lexical t :tangle yes
 ;;; Code to replace exec-path-from-shell
@@ -849,20 +855,9 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature elec-pair
   :defer t
   :hook (prog-mode . electric-pair-mode)
-  ;; :config
-  ;; (electric-pair-mode t)
-  )
-#+end_src
-
-* atomic-chrome
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package atomic-chrome
-  :demand t
-  :ensure (atomic-chrome :host github :repo "KarimAziev/atomic-chrome")
-  :commands (atomic-chrome-start-server)
   :config
-  (setq-default atomic-chrome-extension-type-list '(atomic-chrome))
-  (atomic-chrome-start-server))
+  (setq electric-pair-pairs 
+            (append electric-pair-pairs '(( "[^ ]<" . ">")))))
 #+end_src
 
 * eshell
@@ -1053,7 +1048,7 @@ unreadable. Returns the names of envvars that were changed."
 #+begin_src emacs-lisp :lexical t
 (use-feature treesit
   :custom
-  (treesit-font-lock-level 4)
+  (treesit-font-lock-level 2)
   :config
   ;; https://www.reddit.com/r/emacs/comments/1j53j8v/comment/mge63rp/
   (add-to-list 'treesit-language-source-alist
@@ -1813,13 +1808,17 @@ for your search query.
   ;;:custom (completion-styles '(orderless basic)))
   :custom
   ;; (completion-styles '(orderless basic))
-  (completion-styles '(orderless flex))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles orderless partial-completion)))))
+  ;; (completion-styles '(orderless flex))
+  ;; (completion-category-defaults nil)
+  ;; (completion-category-overrides '((file (styles orderless partial-completion)))))
   ;; (completion-category-overrides '((file (styles orderless partial-completion)))))
   ;; :config
   ;; (setq completion-styles '(orderless flex)
   ;;       completion-category-overrides '((eglot (styles . (orderless flex))))))
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles basic partial-completion))))
+    (orderless-component-separator #'orderless-escapable-split-on-space))
 #+end_src
 * marginalia
 #+begin_src emacs-lisp :lexical t
@@ -1915,6 +1914,19 @@ for your search query.
                               (turn-off-hide-mode-line-mode))))))
 #+end_src
 
+* dabbrev
+#+begin_src emacs-lisp :lexical t
+(use-feature dabbrev
+  :custom
+  (dabbrev-case-fold-search nil)             ; Регистрозависимый поиск
+  (dabbrev-case-replace nil)                 ; Сохранять регистр найденного
+  (dabbrev-abbrev-char-regexp "\\sw\\|\\s_") ; Символы = буквы + _
+  (dabbrev-backward-only nil)                ; Искать везде
+  (dabbrev-check-other-buffers nil))         ; Только текущий буфер
+  ;; (setq dabbrev-check-other-buffers t)
+  ;; (setq dabbrev-check-all-buffers nil)  ; Но не все, только "дружественные"
+#+end_src
+
 * corfu
 #+begin_src emacs-lisp :lexical t 
 (use-package corfu
@@ -1929,7 +1941,7 @@ for your search query.
   (corfu-seperator ?\s)
   :config
   (global-corfu-mode)
-  ;; не ясно как это работает. 
+  ;; 
   (with-eval-after-load 'evil
     (setq evil-complete-next-func (lambda (_) (completion-at-point))))
   )
@@ -3312,287 +3324,6 @@ Use `treemacs' command for old functionality."
   :config (treemacs-set-scope-type 'Tabs))
 #+end_src
 
-* org mode
-#+begin_src emacs-lisp :lexical t
-(use-package org
-  :ensure (:autoloads "org-loaddefs.el")
-  :hook ((org-mode . visual-line-mode)
-         (org-mode . variable-pitch-mode))
-
-  :defer t
-  :general
-  (general-define-key :states '(normal) :keymaps 'org-mode-map
-                      (kbd "<tab>") 'org-cycle
-                      (kbd "<backtab>") 'org-shifttab)
-  (general-define-key :states '(normal insert) :keymaps 'org-mode-map
-                      (kbd "M-l") 'org-metaright
-                      (kbd "M-h") 'org-metaleft
-                      (kbd "M-k") 'org-metaup
-                      (kbd "M-j") 'org-metadown
-                      (kbd "M-L") 'org-shiftmetaright
-                      (kbd "M-H") 'org-shiftmetaleft
-                      (kbd "M-K") 'org-shiftmetaup
-                      (kbd "M-J") 'org-shiftmetadown
-                      (kbd "C-M-<return>") 'org-insert-subheading)
-  (general-define-key :states  '(motion) :keymaps 'org-mode-map
-                      (kbd "RET") 'org-open-at-point)
-  ;;<tab> is for GUI only. TAB maps to C-i on terminals.
-  (+general-global-application
-    "o"   '(:ignore t :which-key "org")
-    "oc"  'org-capture
-    ;; "oC"  '+org-capture-again
-    "oi"  'org-insert-link
-    "oj"  'org-chronicle
-    "ok"  '(:ignore t :which-key "clock")
-    "okg" 'org-clock-goto
-    "oki" 'org-clock-in-last
-    "okj" 'org-clock-jump-to-current-clock
-    "oko" 'org-clock-out
-    "okr" 'org-resolve-clocks
-    "ol"  'org-store-link
-    "om"  'org-tags-view
-    ;;"os"  'org-search-view
-    "oT"  'org-todo-list
-    "ot"  '(:ignore t :which-key "timer")
-    "ott" 'org-timer
-    "otS" 'org-timer-stop
-    "otC" 'org-timer-change-times-in-region
-    "otc" 'org-timer-set-timer
-    "ots" 'org-timer-start
-    "oti" 'org-timer-item
-    "otp" 'org-timer-pause-or-continue
-    "otr" 'org-timer-show-remaining-time)
-
-  (global-leader
-    ;;for terminals
-    :keymaps '(org-mode-map)
-    "TAB" 'org-cycle
-    "."  'org-time-stamp
-    "!"  'org-time-stamp-inactive
-    "<"  'org-date-from-calendar
-    ">"  'org-goto-calendar
-
-    "C"  '(:ignore t :which-key "clock")
-    "Cc" 'org-clock-cancel
-    "Ci" 'org-clock-in
-    "Co" 'org-clock-out
-    "Cr" 'org-clock-report
-    "CR" 'org-resolve-clocks
-
-    "d"  '(:ignore t :which-key "dates")
-    "dd" 'org-deadline
-    "df" '((lambda () (interactive) (+org-fix-close-times))
-           :which-key "org-fix-close-time")
-    "ds" 'org-schedule
-    "di" 'org-time-stamp-inactive
-    "dt" 'org-time-stamp
-
-    "e"   '(:ignore t :which-key "export")
-    "ee"  'org-export-dispatch
-
-    "h"   '(:ignore t :which-key "heading")
-    "hf"  'org-forward-heading-same-level
-    "hb"  'org-backward-heading-same-level
-
-    "i"  '(:ignore t :which-key "insert")
-    "id" 'org-insert-drawer
-    "ie" 'org-set-effort
-
-    "l" '(:ignore t :which-key "links")
-    "lc" 'org-cliplink
-    "ll" 'org-insert-link
-
-    "n"  '(:ignore t :which-key "narrow")
-    "nb" 'org-narrow-to-block
-    "ne" 'org-narrow-to-element
-    "ns" 'org-narrow-to-subtree
-    "nt" 'org-toggle-narrow-to-subtree
-    "nw" 'widen
-
-    "s"  '(:ignore t :which-key "trees/subtrees")
-    "sA" 'org-archive-subtree
-    "sa" 'org-toggle-archive-tag
-
-    "t"   '(:ignore t :which-key "tables")
-    "ta"  'org-table-align
-    "tb"  'org-table-blank-field
-    "tc"  'org-table-convert
-
-    "td"  '(:ignore t :which-key "delete")
-    "tdc" 'org-table-delete-column
-    "tdr" 'org-table-kill-row
-    "tE"  'org-table-export
-    "te"  'org-table-eval-formula
-    "tH"  'org-table-move-column-left
-    "th"  'org-table-previous-field
-    "tI"  'org-table-import
-
-    "ti"  '(:ignore t :which-key "insert")
-    "tic" 'org-table-insert-column
-    "tih" 'org-table-insert-hline
-    "tiH" 'org-table-hline-and-move
-    "tir" 'org-table-insert-row
-    "tJ"  'org-table-move-row-down
-    "tj"  'org-table-next-row
-    "tK"  'org-table-move-row-up
-    "tL"  'org-table-move-column-right
-    "tl"  'org-table-next-field
-    "tN"  'org-table-create-with-table.el
-    "tn"  'org-table-create
-    "tp"  'org-plot/gnuplot
-    "tr"  'org-table-recalculate
-    "ts"  'org-table-sort-lines
-
-    "tt"  '(:ignore t :which-key "toggle")
-    "ttf" 'org-table-toggle-formula-debugger
-    "tto" 'org-table-toggle-coordinate-overlays
-    "tw"  'org-table-wrap-region
-
-    "T"  '(:ignore t :which-key "toggle")
-    "Tc"  'org-toggle-checkbox
-    "Te"  'org-toggle-pretty-entities
-    "TE"  '+org-toggle-hide-emphasis-markers
-    "Th"  'org-toggle-heading
-    "Ti"  'org-toggle-item
-    "TI"  'org-toggle-inline-images
-    "Tl"  'org-toggle-link-display
-    "TT"  'org-todo
-    "Tt"  'org-show-todo-tree
-    "Tx"  'org-latex-preview
-    ;;"RET" 'org-ctrl-c-ret
-    "RET" 'org-meta-return
-    "#"   'org-update-statistics-cookies
-    "'"   'org-edit-special
-    "*"   'org-ctrl-c-star
-    "-"   'org-ctrl-c-minus
-    "A"   'org-attach)
-  :config
-    (add-to-list 'org-src-lang-modes '("xml" . sgml))
-    (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
-    (add-to-list 'org-src-lang-modes '("json" . json-ts))
-    (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
-    (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
-    (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
-    (add-to-list 'org-src-lang-modes '("go" . go-ts))
-    (add-to-list 'org-src-lang-modes '("mermaid" . mermaid-ts))
-    (add-to-list 'org-src-lang-modes '("tsx" . tsx-ts))
-    (add-to-list 'org-src-lang-modes '("html" . html-ts))
-    (add-to-list 'org-src-lang-modes '("css" . css-ts))
-    (add-to-list 'org-src-lang-modes '("gherkin" . feature))
-  
-    (setq org-tags-column -120) ;; так лучше 
-    (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
-    (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ?
-    (setq org-bookmark-names-plist nil)  ;;org-capture. don't automatically set bookmarks
-
-  (defun +md-to-org-region (start end)
-    "Convert region from markdown to org, replacing selection"
-    (interactive "r")
-    (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
-
-(defun +md-to-org-region-python (start end)
-  "Convert region from markdown to org, replacing selection"
-  (interactive "r")
-  (shell-command-on-region 
-   start end 
-      (format "python3 %s" 
-           (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
-   t t))
-
-  ;; (defun +md-to-org-region (start end)
-  ;; "Convert region from markdown to org, replacing selection"
-  ;; (interactive "r")
-  ;; (save-excursion
-  ;;   (delete-trailing-whitespace start end)
-  ;;   (shell-command-on-region start end 
-  ;;     "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " 
-  ;;     ;; t t)))
-
-   (defun +org-align-all-tags ()
-    "Wrap org-align-tags to be interactive and apply to all"
-    (interactive)
-    (org-align-tags t))
-
-  (defun +org-sparse-tree (&optional arg type)
-    (interactive)
-    (funcall #'org-sparse-tree arg type)
-    (org-remove-occur-highlights))
-
-  (defun +insert-heading-advice (&rest _args)
-    "Enter insert mode after org-insert-heading. Useful so I can tab to control level of inserted heading."
-    (when evil-mode (evil-insert 1)))
-
-  (advice-add #'org-insert-heading :after #'+insert-heading-advice)
-
-  (defun +org-update-cookies ()
-    (interactive)
-    (org-update-statistics-cookies "ALL"))
-
-  ;; Offered a patch to fix this upstream. Too much bikeshedding for such a simple fix.
-  ;; TODO:
-  ;; (defun +org-tags-crm (fn &rest args)
-  ;;   "Workaround for bug which excludes \",\" when reading tags via `completing-read-multiple'.
-  ;; I offered a patch to fix this, but it was met with too much resistance to be
-  ;; worth pursuing."
-  ;;   (let ((crm-separator "\\(?:[[:space:]]*[,:][[:space:]]*\\)"))
-  ;;     (unwind-protect (apply fn args)
-  ;;       (advice-remove #'completing-read-multiple #'+org-tags-crm))))
-
-  ;; (define-advice org-set-tags-command (:around (fn &rest args) comma-for-crm)
-  ;;   (advice-add #'completing-read-multiple :around #'+org-tags-crm)
-  ;;   (apply fn args))
-
-  (add-to-list 'org-emphasis-alist
-             '("*" (bold :foreground "#f1e00a")
-               ("_" (underline :foreground "#c1d0a4")
-               )))
-
-  :custom
-  ;;default:
-  ;;(org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail)
-  ;;org-toc is interesting, but I'm not sure if I need it.
-
-  (org-modules '(org-habit))
-  ;; 
-  (org-todo-keywords
-   ;; '((sequence  "TODO(t)" "STARTED(s!)" "NEXT(n!)" "BLOCKED(b@/!)" "|" "DONE(d)")
-   ;;   (sequence  "IDEA(i)" "|" "CANCELED(c@/!)" "DELEGATED(D@/!)")
-   ;;   (sequence  "RESEARCH(r)" "|"))
-   '((sequence  "TODO(t)" "DONE(d)" )
-     (sequence "DEPRECATED(o)"))
-   ;;move to theme?
-   org-todo-keyword-faces
-   `(("CANCELED" . (:foreground "IndianRed1" :weight bold))
-     ("TODO" . (:foreground "#ffddaa"
-                            :weight bold
-                            :background "#202020"
-                            :box (:line-width 3 :width -2 :style released-button)))
-     ("DEPRECATED" . (:foreground "yellow-faint" :weight bold))
-     ))
-  ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
-  ;; (org-ellipsis " ▾")
-  (org-ellipsis " ▿")
-  (org-priority-lowest ?D)
-  ;; (org-priority-faces
-  ;;  ;; '((?A . nerd-icons-red)
-  ;;  ;;   (?B . warning)
-  ;;  ;;   (?C . success)))
-  ;;      '((?A . nerd-icons-red)
-  ;;       (?B . nerd-icons-orange)
-  ;;       (?C . nerd-icons-yellow)
-  ;;       (?D . nerd-icons-green)
-  ;;       (?E . nerd-icons-blue)))
-  (setq org-priority-faces
-  `((?A . (:foreground ,(nerd-icons-mdicon "nf-md-alert")))
-    (?B . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_up")))
-    (?C . (:foreground ,(nerd-icons-mdicon "nf-md-minus")))
-    (?D . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_down")))
-    (?E . (:foreground ,(nerd-icons-mdicon "nf-md-information")))))
-  (org-fontify-done-headline t)
-  (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
-  (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
-#+end_src
-
 * [#A] org-contrib(походу не надо это)
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-package org-contrib)
@@ -3827,6 +3558,246 @@ select * from greeting;
   (denote-rename-buffer-mode 1))
 
 #+end_src
+* org mode
+#+begin_src emacs-lisp :lexical t
+(use-package org
+  :ensure (:autoloads "org-loaddefs.el")
+  :hook ((org-mode . visual-line-mode)
+         (org-mode . variable-pitch-mode))
+
+  :defer t
+  :general
+  (general-define-key :states '(normal) :keymaps 'org-mode-map
+                      (kbd "<tab>") 'org-cycle
+                      (kbd "<backtab>") 'org-shifttab)
+  (general-define-key :states '(normal insert) :keymaps 'org-mode-map
+                      (kbd "M-l") 'org-metaright
+                      (kbd "M-h") 'org-metaleft
+                      (kbd "M-k") 'org-metaup
+                      (kbd "M-j") 'org-metadown
+                      (kbd "M-L") 'org-shiftmetaright
+                      (kbd "M-H") 'org-shiftmetaleft
+                      (kbd "M-K") 'org-shiftmetaup
+                      (kbd "M-J") 'org-shiftmetadown
+                      (kbd "C-M-<return>") 'org-insert-subheading)
+  (general-define-key :states  '(motion) :keymaps 'org-mode-map
+                      (kbd "RET") 'org-open-at-point)
+  ;;<tab> is for GUI only. TAB maps to C-i on terminals.
+  (+general-global-application
+    "o"   '(:ignore t :which-key "org")
+    "oc"  'org-capture
+    ;; "oC"  '+org-capture-again
+    "oi"  'org-insert-link
+    "oj"  'org-chronicle
+    "ok"  '(:ignore t :which-key "clock")
+    "okg" 'org-clock-goto
+    "oki" 'org-clock-in-last
+    "okj" 'org-clock-jump-to-current-clock
+    "oko" 'org-clock-out
+    "okr" 'org-resolve-clocks
+    "ol"  'org-store-link
+    "om"  'org-tags-view
+    ;;"os"  'org-search-view
+    "oT"  'org-todo-list
+    "ot"  '(:ignore t :which-key "timer")
+    "ott" 'org-timer
+    "otS" 'org-timer-stop
+    "otC" 'org-timer-change-times-in-region
+    "otc" 'org-timer-set-timer
+    "ots" 'org-timer-start
+    "oti" 'org-timer-item
+    "otp" 'org-timer-pause-or-continue
+    "otr" 'org-timer-show-remaining-time)
+
+  (global-leader
+    ;;for terminals
+    :keymaps '(org-mode-map)
+    "TAB" 'org-cycle
+    "."  'org-time-stamp
+    "!"  'org-time-stamp-inactive
+    "<"  'org-date-from-calendar
+    ">"  'org-goto-calendar
+
+    "C"  '(:ignore t :which-key "clock")
+    "Cc" 'org-clock-cancel
+    "Ci" 'org-clock-in
+    "Co" 'org-clock-out
+    "Cr" 'org-clock-report
+    "CR" 'org-resolve-clocks
+
+    "d"  '(:ignore t :which-key "dates")
+    "dd" 'org-deadline
+    "df" '((lambda () (interactive) (+org-fix-close-times))
+           :which-key "org-fix-close-time")
+    "ds" 'org-schedule
+    "di" 'org-time-stamp-inactive
+    "dt" 'org-time-stamp
+
+    "e"   '(:ignore t :which-key "export")
+    "ee"  'org-export-dispatch
+
+    "h"   '(:ignore t :which-key "heading")
+    "hf"  'org-forward-heading-same-level
+    "hb"  'org-backward-heading-same-level
+
+    "i"  '(:ignore t :which-key "insert")
+    "id" 'org-insert-drawer
+    "ie" 'org-set-effort
+
+    "l" '(:ignore t :which-key "links")
+    "lc" 'org-cliplink
+    "ll" 'org-insert-link
+
+    "n"  '(:ignore t :which-key "narrow")
+    "nb" 'org-narrow-to-block
+    "ne" 'org-narrow-to-element
+    "ns" 'org-narrow-to-subtree
+    "nt" 'org-toggle-narrow-to-subtree
+    "nw" 'widen
+
+    "s"  '(:ignore t :which-key "trees/subtrees")
+    "sA" 'org-archive-subtree
+    "sa" 'org-toggle-archive-tag
+
+    "t"   '(:ignore t :which-key "tables")
+    "ta"  'org-table-align
+    "tb"  'org-table-blank-field
+    "tc"  'org-table-convert
+
+    "td"  '(:ignore t :which-key "delete")
+    "tdc" 'org-table-delete-column
+
+    "ti"  '(:ignore t :which-key "insert")
+    "tic" 'org-table-insert-column
+
+    "tt"  '(:ignore t :which-key "toggle")
+    "ttf" 'org-table-toggle-formula-debugger
+    "tto" 'org-table-toggle-coordinate-overlays
+    "tw"  'org-table-wrap-region
+
+    "T"  '(:ignore t :which-key "toggle")
+    "Tc"  'org-toggle-checkbox
+    "Tx"  'org-latex-preview
+    ;;"RET" 'org-ctrl-c-ret
+    "RET" 'org-meta-return
+    "#"   'org-update-statistics-cookies
+    "'"   'org-edit-special
+    "*"   'org-ctrl-c-star
+    "-"   'org-ctrl-c-minus
+    "A"   'org-attach)
+  :config
+    (add-to-list 'org-src-lang-modes '("xml" . sgml))
+    (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
+    (add-to-list 'org-src-lang-modes '("json" . json-ts))
+    (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
+    (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
+    (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
+    (add-to-list 'org-src-lang-modes '("go" . go-ts))
+    (add-to-list 'org-src-lang-modes '("mermaid" . mermaid-ts))
+    (add-to-list 'org-src-lang-modes '("tsx" . tsx-ts))
+    (add-to-list 'org-src-lang-modes '("html" . html-ts))
+    (add-to-list 'org-src-lang-modes '("css" . css-ts))
+    (add-to-list 'org-src-lang-modes '("gherkin" . feature))
+  
+    (setq org-tags-column -120) ;; так лучше 
+    (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
+    (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ?
+    (setq org-bookmark-names-plist nil)  ;;org-capture. don't automatically set bookmarks
+
+  (defun +md-to-org-region (start end)
+    "Convert region from markdown to org, replacing selection"
+    (interactive "r")
+    (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
+
+(defun +md-to-org-region-python (start end)
+  "Convert region from markdown to org, replacing selection"
+  (interactive "r")
+  (shell-command-on-region 
+   start end 
+      (format "python3 %s" 
+           (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
+   t t))
+
+  ;; (defun +md-to-org-region (start end)
+  ;; "Convert region from markdown to org, replacing selection"
+  ;; (interactive "r")
+  ;; (save-excursion
+  ;;   (delete-trailing-whitespace start end)
+  ;;   (shell-command-on-region start end 
+  ;;     "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " 
+  ;;     ;; t t)))
+
+   (defun +org-align-all-tags ()
+    "Wrap org-align-tags to be interactive and apply to all"
+    (interactive)
+    (org-align-tags t))
+
+  (defun +org-sparse-tree (&optional arg type)
+    (interactive)
+    (funcall #'org-sparse-tree arg type)
+    (org-remove-occur-highlights))
+
+  (defun +insert-heading-advice (&rest _args)
+    "Enter insert mode after org-insert-heading. Useful so I can tab to control level of inserted heading."
+    (when evil-mode (evil-insert 1)))
+
+  (advice-add #'org-insert-heading :after #'+insert-heading-advice)
+
+  (defun +org-update-cookies ()
+    (interactive)
+    (org-update-statistics-cookies "ALL"))
+
+  (add-to-list 'org-emphasis-alist
+             '("*" (bold :foreground "#f1e00a")
+               ("_" (underline :foreground "#c1d0a4")
+               )))
+
+  :custom
+  ;;default:
+  ;;(org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail)
+  ;;org-toc is interesting, but I'm not sure if I need it.
+
+  (org-modules '(org-habit))
+  ;; 
+  (org-todo-keywords
+   ;; '((sequence  "TODO(t)" "STARTED(s!)" "NEXT(n!)" "BLOCKED(b@/!)" "|" "DONE(d)")
+   ;;   (sequence  "IDEA(i)" "|" "CANCELED(c@/!)" "DELEGATED(D@/!)")
+   ;;   (sequence  "RESEARCH(r)" "|"))
+   '((sequence  "TODO(t)" "DONE(d)" )
+     (sequence "DEPRECATED(o)"))
+   ;;move to theme?
+   org-todo-keyword-faces
+   `(("CANCELED" . (:foreground "IndianRed1" :weight bold))
+     ("TODO" . (:foreground "#ffddaa"
+                            :weight bold
+                            :background "#202020"
+                            :box (:line-width 3 :width -2 :style released-button)))
+     ("DEPRECATED" . (:foreground "yellow-faint" :weight bold))
+     ))
+  ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
+  ;; (org-ellipsis " ▾")
+  (org-ellipsis " ▿")
+  (org-priority-lowest ?D)
+  ;; (org-priority-faces
+  ;;  ;; '((?A . nerd-icons-red)
+  ;;  ;;   (?B . warning)
+  ;;  ;;   (?C . success)))
+  ;;      '((?A . nerd-icons-red)
+  ;;       (?B . nerd-icons-orange)
+  ;;       (?C . nerd-icons-yellow)
+  ;;       (?D . nerd-icons-green)
+  ;;       (?E . nerd-icons-blue)))
+  (setq org-priority-faces
+  `((?A . (:foreground ,(nerd-icons-mdicon "nf-md-alert")))
+    (?B . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_up")))
+    (?C . (:foreground ,(nerd-icons-mdicon "nf-md-minus")))
+    (?D . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_down")))
+    (?E . (:foreground ,(nerd-icons-mdicon "nf-md-information")))))
+  (org-fontify-done-headline t)
+  (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
+  (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
+#+end_src
+
 * ox-gfm
 #+begin_src emacs-lisp :lexical t
 (use-package ox-gfm :defer t)
@@ -4492,35 +4463,21 @@ https://github.com/org-mime/org-mime
 * vterm
 #+begin_src emacs-lisp :lexical t
 (use-package vterm
-  :ensure (vterm :post-build
-                 (progn
-                   (setq vterm-always-compile-module t)
-                   (require 'vterm)
-                   ;;print compilation info for elpaca
-                   (with-current-buffer (get-buffer-create vterm-install-buffer-name)
-                     (goto-char (point-min))
-                     (while (not (eobp))
-                       (message "%S"
-                                (buffer-substring (line-beginning-position)
-                                                  (line-end-position)))
-                       (forward-line)))
-                   (when-let ((so (expand-file-name "./vterm-module.so"))
-                              ((file-exists-p so)))
-                     (make-symbolic-link
-                      so (expand-file-name (file-name-nondirectory so)
-                                           "../../builds/vterm")
-                      'ok-if-already-exists))))
+  :ensure
+  `(vterm
+    :build
+    (:after elpaca-build-compile
+     ,(elpaca-defscript +vterm-compile-module (:type elisp)
+        (add-to-list 'load-path ,(elpaca<-build-dir e))
+        (setq vterm-always-compile-module t)
+        (require 'vterm))))
   :commands (vterm vterm-other-window)
   :general
   (+general-global-open
-    ;;"t" '(:ignore t :which-key "terminal")
     "T" 'vterm-other-window
     "t" 'vterm)
-  ;; :config
-  ;; (evil-set-initial-state 'vterm-mode 'emacs)
   :init
-  (add-to-list 'evil-insert-state-modes #'vterm-mode)
-  )
+  (add-to-list 'evil-insert-state-modes #'vterm-mode))
 #+end_src
 
 * TODO diminish
@@ -4537,6 +4494,13 @@ https://github.com/org-mime/org-mime
     "u" 'winner-undo
     "r" 'winner-redo)
   :config (winner-mode))
+#+end_src
+* expand-region
+#+begin_src emacs-lisp :lexical t
+(use-package expand-region
+  :commands (er/expand-region)
+  :bind (("C-=" . er/expand-region)))
+
 #+end_src
 * +yasnippets+ ( tempel )
 #+begin_src emacs-lisp :lexical t

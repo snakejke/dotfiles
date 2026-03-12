@@ -37,7 +37,6 @@ in
 
   home.username = "snake";
   home.homeDirectory = "/home/snake";
-  # nixpkgs.config.allowUnfree = true;
   nixpkgs.config = import ./nixpkgs-config.nix; # FIXME
   xdg.configFile."nixpkgs/config.nix".source = ./nixpkgs-config.nix;
 
@@ -102,6 +101,8 @@ in
       firefox
       discord
       zed-editor
+      notmuch
+      notmuch.emacs
 
       #
       duckdb
@@ -238,7 +239,7 @@ in
       devenv
       qrencode # QR generate
       zbar # QR reader
-      amnezia-vpn
+      # amnezia-vpn
 
     ]
     ++ externalPackages;
@@ -293,7 +294,13 @@ in
   nix = {
     package = pkgs.nix;
     settings = {
+      # fallback = true;
+      # stalled-download-timeout = 10;
+      # connect-timeout = 4;
+      
       substituters = [
+        "https://cache.nixos.kz"
+        "https://mirror.yandex.ru/nixos"
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
         "https://cachix.cachix.org"
@@ -306,9 +313,6 @@ in
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
-
-      # auto-optimise-store = true;
-      # experimental-features = ["nix-command" "flakes"];
     };
   };
 

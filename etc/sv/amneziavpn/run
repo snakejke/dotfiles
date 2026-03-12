@@ -1,3 +1,5 @@
 #!/bin/sh
 exec 2>&1
-exec /home/snake/.local/state/nix/profile/bin/AmneziaVPN-service
+# exec /home/snake/.local/state/nix/profile/bin/AmneziaVPN-service
+exec /opt/AmneziaVPN/service/./AmneziaVPN-service.sh
+
