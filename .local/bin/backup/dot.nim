@@ -122,8 +122,8 @@ const userConfigs: seq[Entry] = @[
   ("xsettingsd",                                                    locHome, ekDir, 0o755),
 
   # ~/.local/*
-  (".local/bin",                                                    locHome, ekDir, 0o775),
-  (".local/rawservices",                                            locHome, ekDir, 0o775),
+  (".local/bin",                                                    locHome, ekDir, 0o755),
+  (".local/rawservices",                                            locHome, ekDir, 0o755),
 
   # ~/.local/ansible_main (в dotfiles хранится как ansible_main/)
   ("ansible_main",                                                  locHome, ekDir, 0o755),
@@ -183,8 +183,8 @@ type
     crUnknown
 
 const sensitiveEntries: seq[SensitiveEntry] = @[
-  ("zsh/.zhistory", "zsh/.zhistory.gpg", 0o600),
-  ("zsh/.z",        "zsh/.z.gpg",        0o600),
+  ("zsh/.zhistory", "zsh/.zhistory.gpg", 0o644),
+  ("zsh/.z",        "zsh/.z.gpg",        0o644),
 ]
 
 # =============================================================================
