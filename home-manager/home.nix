@@ -41,7 +41,7 @@ in
   nixpkgs.config = import ./nixpkgs-config.nix; # FIXME
   xdg.configFile."nixpkgs/config.nix".source = ./nixpkgs-config.nix;
 
-  home.stateVersion = "24.11"; # Please read the comment before changing!!!
+  home.stateVersion = "25.11"; # Please read the comment before changing!!!
   home.preferXdgDirectories = true;
 
   targets.genericLinux.gpu = {
@@ -100,7 +100,7 @@ in
       scrcpy
       #pgloader #bug 04.02.2026
       firefox
-      discord
+      # discord 
       zed-editor
       notmuch
       notmuch.emacs
@@ -162,10 +162,11 @@ in
       librsvg # rsvg-convert
       wkhtmltopdf # rendering web pages to PDF or images
       ghostscript
-      koodo-reader
+      koodo-reader # electron bug
       foliate
       djvulibre # ddjvu
       visidata
+      convmv
 
       #
       ansible
@@ -216,6 +217,7 @@ in
       nimble
       nil # lsp nix
       nixfmt
+      yq
 
       zeromq # libzmq.so jupyternim
       nimlangserver
@@ -240,7 +242,9 @@ in
       devenv
       qrencode # QR generate
       zbar # QR reader
+      # haskellPackages.greenclip
       # amnezia-vpn
+      bubblewrap
 
     ]
     ++ externalPackages;
@@ -268,8 +272,8 @@ in
       # connect-timeout = 4;
       
       substituters = [
-        "https://cache.nixos.kz"
-        "https://mirror.yandex.ru/nixos"
+        # "https://cache.nixos.kz"
+        # "https://mirror.yandex.ru/nixos"
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
         "https://cachix.cachix.org"

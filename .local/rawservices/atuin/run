@@ -1,0 +1,10 @@
+#!/bin/bash
+exec 2>&1
+export HOME=/home/$USER
+export DISPLAY=:1
+export XAUTHORITY=/home/snake/.local/share/sx/xauthority
+export XDG_RUNTIME_DIR=/run/user/$(id -g $USER)
+
+cd $HOME
+
+exec /home/snake/.local/state/nix/profile/bin/atuin daemon start

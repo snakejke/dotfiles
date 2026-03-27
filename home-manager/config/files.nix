@@ -1,3 +1,4 @@
+{ config, pkgs, ... }:
 {
   home.file.".config/python/pythonrc".text = ''
     import readline
@@ -14,12 +15,16 @@
     uri_default = "qemu:///system"
   '';
 
-  xdg.configFile."npm/npmrc".text = ''
-    prefix=''${XDG_DATA_HOME}/npm
-    cache=''${XDG_CACHE_HOME}/npm
-    init-module=''${XDG_CONFIG_HOME}/npm/config/npm-init.js
-    logs-dir=''${XDG_STATE_HOME}/npm/logs
-  '';
+  programs.npm = {
+    enable = true;
+    package = null;
+    settings = {
+      prefix = "${config.xdg.dataHome}/npm";
+      cache = "${config.xdg.cacheHome}/npm";
+      init-module = "${config.xdg.configHome}/npm/config/npm-init.js";
+      logs-dir = "${config.xdg.stateHome}/npm/logs";
+    };
+  };
 
   xdg.configFile."pnpm/rc".text = ''
     auto-install-peers=true

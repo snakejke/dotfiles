@@ -18,6 +18,8 @@
         };
         codex = "latest";
         babashka = "latest";
+        jbang = "latest";
+        claude = "latest";
         elixir = "latest";
         erlang = "latest";
         rebar = "latest";
@@ -33,6 +35,7 @@
         # dotnet = "latest";
         # ollama = "latest";
         just = "latest";
+        "github:arnetheduck/nph" = "latest";
         coursier = "latest";
         # "cargo:https://github.com/aws/amazon-q-developer-cli" = { 
         #   version = "latest";

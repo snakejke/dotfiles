@@ -103,6 +103,7 @@ in
       name = "Sans";
       size = 10;
     };
+    gtk4.theme = config.gtk.theme;
     gtk2.extraConfig = gtk2ExtraConfig;
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
     gtk3.extraConfig = gtk3ExtraConfig;

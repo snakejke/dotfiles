@@ -3,6 +3,7 @@
 
 (setq package-enable-at-startup nil)
 (setq inhibit-default-init nil)
+;; (setq use-package-compute-statistics t)
 
 (setq native-comp-async-report-warnings-errors nil)
 ;; (debug-on-entry 'emacs-repository-branch-git)

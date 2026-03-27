@@ -19,9 +19,19 @@ rm() {
     local RED=$'\033[0;31m'
     local NC=$'\033[0m'
     print "Do you want to ${RED}REMOVE${NC} this? (y/n)"
-    command rm -i "$@"
+    command rm "$@" -i
 }
 
+function copy-line-to-clipboard() {
+  echo -n "$BUFFER" | xclip -selection clipboard
+  region_highlight=("0 $#BUFFER bg=blue,fg=white,bold")
+  zle -R
+  read -t 0.15 _ </dev/tty 2>/dev/null || true
+  region_highlight=()
+  zle -R
+}
+
+zle -N copy-line-to-clipboard
 
 docx2emacs() {
     local tmpfile=$(mktemp --suffix=.txt)

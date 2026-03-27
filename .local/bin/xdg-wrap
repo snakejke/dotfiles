@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+
+TOOL="$1"
+shift
+
+# Проверяем что имя инструмента передано
+if [[ -z "$TOOL" ]]; then
+    echo "Usage: xdg-wrap <tool-name> [args...]"
+    exit 1
+fi
+
+# Находим реальный путь к исполняемому файлу
+TOOL_BIN="$(which "$TOOL")" || {
+    echo "Error: '$TOOL' not found in PATH"
+    exit 1
+}
+
+# XDG-совместимый путь где будут жить данные инструмента
+XDG_BASE="${XDG_DATA_HOME:-$HOME/.local/share}"
+REAL_DIR="$XDG_BASE/$TOOL"
+FAKE_DIR="$HOME/.$TOOL"
+
+mkdir -p "$REAL_DIR"
+mkdir -p "$FAKE_DIR"
+
+# Запускаем через bwrap с одним точечным bind-mount
+exec bwrap \
+    --dev-bind / / \
+    --bind "$REAL_DIR" "$FAKE_DIR" \
+    -- "$TOOL_BIN" "$@"

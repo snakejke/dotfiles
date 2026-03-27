@@ -11,7 +11,6 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CONFIG_DIRS=/etc/xdg
-#export XDG_DATA_DIRS="/usr/share:/usr/local/share:/var/lib/flatpak/exports/share:/home/snake/.local/share/flatpak/exports/share"
 export DEV_HOME="$HOME/.local/devjava"
 export SDKMAN_DIR="$DEV_HOME/sdkman"
 export SDKMAN_CANDIDATES_DIR="$SDKMAN_DIR/candidates"
@@ -19,10 +18,6 @@ export SDKMAN_CANDIDATES_DIR="$SDKMAN_DIR/candidates"
 export FVWM_USERDIR="$XDG_CONFIG_HOME/fvwm"
 #
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
-#c vpdau были проблемы. пробуем nvidia
-#export LIBVA_DRIVER_NAME=nvidia
-#export MOZ_DISABLE_RDD_SANDBOX=1
-#export NVD_BACKEND=direct
 #
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 #CUDA
@@ -35,13 +30,10 @@ path=(/usr/lib/psql16/bin $path)
 #java 
 export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
 path=($SDKMAN_DIR/candidates/java/current/bin $path)
-# /etc/man.conf 
-# manpath+=($SDKMAN_DIR/candidates/java/21.0.5.tem/man/man1)
-#maven
+#maven + gradle
 export MAVEN_HOME="$SDKMAN_DIR/candidates/maven/current"
 export MVND_HOME="$SDKMAN_DIR/candidates/mvnd/current"
 path=($MAVEN_HOME/bin $path)
-#GRADLE
 export GRADLE_USER_HOME="$DEV_HOME/.gradle"
 export GRADLE_HOME="$SDKMAN_DIR/candidates/gradle/current"
 path=($GRADLE_HOME/bin $path)
@@ -53,12 +45,10 @@ export ANDROID_USER_HOME="$DEV_HOME/android-sdk"
 export ANDROID_HOME="$DEV_HOME/android-sdk"
 export ANDROID_SDK_ROOT="$DEV_HOME/android-sdk"
 export ANDROID_SDK_HOME="$DEV_HOME/android-sdk"
-# export ADB_VENDOR_KEYS="$DEV_HOME/android-sdk/adb_keys"
 path=($ANDROID_HOME/cmdline-tools/latest/bin $path)
 path=($ANDROID_HOME/platform-tools $path)
 path=($ANDROID_HOME/emulator $path)
 #Clojure
-#path=($DEV_HOME/clojure/bin $path)
 export LEIN_HOME="$XDG_CACHE_HOME/leiningen"
 #
 export AWT_TOOLKIT=MToolkit
@@ -84,10 +74,7 @@ export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
 export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 export PYTHON_HISTORY="$XDG_STATE_HOME/.python_history"
 export RUFF_CACHE_DIR="$XDG_CACHE_HOME/.ruff_cache"
-#Scala.coursier
-#export G8_HOME="$XDG_DATA_HOME/g8"
-# path=($XDG_DATA_HOME/coursier/bin $path)
-#export SCALA_REPL_HISTORY="$HOME/.local/share/scala/.dotty_history"
+#Scala
 _sbt_opts=(
   "-Dsbt.global.base=$XDG_DATA_HOME/sbt"
   "-Dsbt.ivy.home=$XDG_CACHE_HOME/ivy2"
@@ -95,7 +82,6 @@ _sbt_opts=(
 )
 export SBT_OPTS="${_sbt_opts[*]}"
 unset _sbt_opts
-#export SCALA_REPL_OPTS="-Dscala.color -Dscala.shell.histfile=${SCALA_REPL_HISTORY}"
 #mise Erlang/Elixir/Ruby 
 path=($XDG_DATA_HOME/mise/shims $path)
 export MIX_XDG=1
@@ -153,5 +139,3 @@ export LYNX_CFG=~/.config/lynx/lynx.cfg
 export LESSHISTFILE=/tmp/.lesshst
 export LESSKEY=/tmp/.lesskey
 export NLTK_DATA="$XDG_DATA_HOME/nltk_data"
-#
-# export LD_LIBRARY_PATH="$XDG_STATE_HOME/nix/profile/lib:${LD_LIBRARY_PATH:-}"

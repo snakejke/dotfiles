@@ -48,6 +48,27 @@ AddToFunc SwapEmacsWindows
 Key Left A 4 Scroll -100 0
 Key Right A 4 Scroll +100 0
 
+# DestroyFunc FVWM_Check_Fullscreen
+# AddToFunc   FVWM_Check_Fullscreen
+# + I All (Fullscreen, !Layer 7) Layer 0 7
+# + I All (!Fullscreen, Layer 7, !xfce4-panel) Layer 0 4
+
+# DestroyModuleConfig FvwmEvent: *
+# *FvwmEvent: extended_wm_hints FVWM_Check_Fullscreen
+# *FvwmEvent: focus_in          FVWM_Check_Fullscreen
+
+# AddToFunc StartFunction I Module FvwmEvent
+
+# Key F12 A M Function FVWM_Check_Fullscreen
+
+# DestroyFunc FixPanelLayer
+# AddToFunc   FixPanelLayer
+# + I ThisWindow (xfce4-panel) Layer 0 6
+# + I ThisWindow (xfce4-panel) State 1
+
+# AddToFunc StartFunction I Module FvwmEvent
+# AddToFunc InitFunction   I All (xfce4-panel) Function FixPanelLayer
+# AddToFunc RestartFunction I All (xfce4-panel) Function FixPanelLayer
 #############
 # 2: Styles #
 #############
@@ -67,16 +88,21 @@ MoveThreshold 3
 
 Style * EdgeMoveDelay 30, EdgeMoveResistance 30
 Style * SloppyFocus, MouseFocusClickRaises
-
+# Style * Layer 4
 Style * !Icon
 Style * Lenience
 Style * MWMFunctions, MWMDecor, HintOverride
+# Style * EWMHMaximizeIgnoreWorkingArea
 
 # Window Specific Styles
 #Style * CursorStyle Bibata-Original-Ice-Right
 Style ConfirmQuit !Title, PositionPlacement Center, WindowListSkip, Layer 6
 Style FvwmIdent WindowListSkip
+# StaysOnTop StaysOnBottom
 Style xfce4-panel !Title, !Borders, !Handles, Sticky, NeverFocus, WindowListSkip, StaysOnTop, EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
+# Style xfce4-panel !Title, !Borders, !Handles, Sticky, NeverFocus, \
+#     WindowListSkip, Layer 6, \
+#     EWMHPlacementIgnoreWorkingArea, EWMHIgnoreStrutHints
 Style "Whisker Menu" !Title, !Borders
 #Style jetbrains-idea FPLenient
 # Style "jetbrains-idea" Lenience, ClickToFocus
@@ -158,6 +184,9 @@ AddToMenu   MenuFvwmRoot "Fvwm" Title
 + "Refresh " Refresh
 + "Restart " Restart
 + "Quit "    Module FvwmScript FvwmScript-ConfirmQuit
++ "" Nop
++ "Reboot PC"   Exec exec loginctl reboot
++ "Poweroff PC" Exec exec loginctl poweroff
 
 # Window Operations Menus
 DestroyMenu MenuWindowOps

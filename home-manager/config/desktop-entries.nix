@@ -5,7 +5,7 @@
 
     discord = {
       name = "Discord";
-      exec = "sh -c \"exec discord >/dev/null 2>&1\"";
+      exec = "sh -c \"exec /usr/lib/discord/Discord >/dev/null 2>&1\"";
       icon = "discord";
       comment = "All-in-one voice and text chat";
       genericName = "Internet Messenger";
@@ -24,13 +24,11 @@
       terminal = false;
       type = "Application";
       categories = [ "Development" ];
-      # Version убираем — оно означает версию спецификации, не приложения
     };
 
     telegram-web = {
       name = "Telegram Web";
       comment = "Open Telegram links in the browser";
-      # Здесь homeDirectory не нужен — telegram-handler.sh ищется через $PATH
       exec = "telegram-handler.sh %u";
       terminal = false;
       type = "Application";

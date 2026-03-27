@@ -7,6 +7,11 @@
                              (float-time
                               (time-subtract (current-time) before-init-time)))
                      gcs-done)))
+(advice-add 'load :before
+            (lambda (file &rest _)
+              (when (string-match "racket" file)
+                (message "racket loaded from: %s"
+                         (with-output-to-string (backtrace))))))
 
 (setq initial-buffer-choice t) ;;*scratch*
 
@@ -139,9 +144,47 @@
           (cons (cadr (split-string (car arg) " "))
                 (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
 
+;; (defmacro +general-global-menu! (name prefix-key &rest body)
+;;   "Create a definer named +general-global-NAME wrapping global-definer.
+;;   Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
+;;   (declare (indent 2))
+;;   (let* ((n (concat "+general-global-" name))
+;;          (prefix-map (intern (concat n "-map"))))
+;;     `(progn
+;;        (general-create-definer ,(intern n)
+;;          :wrapping global-definer
+;;          :prefix-map (quote ,prefix-map)
+;;          :prefix ,prefix-key
+;;          :wk-full-keys nil
+;;          "" '(:ignore t :which-key ,name))
+;;        (,(intern n) ,@body))))
+
+
+;; (defmacro +general-global-menu! (name prefix-key &rest body)
+;;   "Create a definer named +general-global-NAME wrapping global-definer.
+;;   Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY.
+;;   Uses which-key-add-key-based-replacements directly (like Doom) to avoid
+;;   general's regex-based replacement which can bleed into unrelated keymaps."
+;;   (declare (indent 2))
+;;   (let* ((n (concat "+general-global-" name))
+;;          (prefix-map (intern (concat n "-map"))))
+;;     `(progn
+;;        (general-create-definer ,(intern n)
+;;          :wrapping global-definer
+;;          :prefix-map (quote ,prefix-map)
+;;          :prefix ,prefix-key
+;;          :wk-full-keys nil
+;;          "" '(:ignore t)   
+;;          )
+;;        (,(intern n) ,@body)
+;;        (with-eval-after-load 'which-key
+;;          (which-key-add-key-based-replacements
+;;            (concat "SPC " ,prefix-key) ,name)))))
+
+(defvar +leader-key "SPC")
+(defvar +leader-alt-key "S-SPC")
+
 (defmacro +general-global-menu! (name prefix-key &rest body)
-  "Create a definer named +general-global-NAME wrapping global-definer.
-  Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
   (declare (indent 2))
   (let* ((n (concat "+general-global-" name))
          (prefix-map (intern (concat n "-map"))))
@@ -151,8 +194,13 @@
          :prefix-map (quote ,prefix-map)
          :prefix ,prefix-key
          :wk-full-keys nil
-         "" '(:ignore t :which-key ,name))
-       (,(intern n) ,@body))))
+         "" '(:ignore t))
+       (,(intern n) ,@body)
+       (with-eval-after-load 'which-key
+         (which-key-add-key-based-replacements
+           (concat +leader-key " " ,prefix-key) ,name)
+         (which-key-add-key-based-replacements
+           (concat +leader-alt-key " " ,prefix-key) ,name)))))
 
 (+general-global-menu! "application" "a"
   "p" '(:ignore t "elpaca")
@@ -261,7 +309,7 @@
   "d" 'delete-frame
   "Q" 'kill-emacs)
 
-(+general-global-menu! "searchhh" "s"
+(+general-global-menu! "search" "s"
   "b" 'consult-line
   "h" 'consult-outline
   "p" 'consult-ripgrep)
@@ -345,20 +393,20 @@
     "?" 'evil-command-window-search-backward)
   ;; https://superuser.com/questions/684540/evil-mode-evil-shift-left-loses-selection
   ;; Overload shifts so that they don't lose the selection
-  (define-key evil-visual-state-map (kbd ">") 'djoyner/evil-shift-right-visual)
-  (define-key evil-visual-state-map (kbd "<") 'djoyner/evil-shift-left-visual)
-  (define-key evil-visual-state-map [tab] 'djoyner/evil-shift-right-visual)
-  (define-key evil-visual-state-map [S-tab] 'djoyner/evil-shift-left-visual)
-
-  (defun djoyner/evil-shift-left-visual ()
-    (interactive)
-    (evil-shift-left (region-beginning) (region-end))
+    (define-key evil-visual-state-map (kbd ">") 'djoyner/evil-shift-right-visual)
+    (define-key evil-visual-state-map (kbd "<") 'djoyner/evil-shift-left-visual)
+    (define-key evil-visual-state-map [tab] 'djoyner/evil-shift-right-visual)
+    (define-key evil-visual-state-map (kbd "<backtab>") 'djoyner/evil-shift-left-visual)
+  
+  (defun djoyner/evil-shift-left-visual (beg end)
+    (interactive "r")
+    (evil-shift-left beg end)
     (evil-normal-state)
     (evil-visual-restore))
 
-  (defun djoyner/evil-shift-right-visual ()
-    (interactive)
-    (evil-shift-right (region-beginning) (region-end))
+  (defun djoyner/evil-shift-right-visual (beg end)
+    (interactive "r")
+    (evil-shift-right beg end)
     (evil-normal-state)
     (evil-visual-restore))
 
@@ -786,6 +834,7 @@ unreadable. Returns the names of envvars that were changed."
   :custom
   (mail-user-agent 'notmuch-user-agent)
   (eval-expression-debug-on-error nil)
+  (save-interprogram-paste-before-kill t)
   (fill-column 80 "Wrap at 80 columns."))
 
 (use-package popper
@@ -1083,10 +1132,8 @@ unreadable. Returns the names of envvars that were changed."
       (setq my-evil-modeline-string
             (propertize (format " %s " (upcase state-name))
                         'face face-name))
-      ;; ✅ Принудительно обновить modeline
       (force-mode-line-update))))
 
-;; Хуки
 (dolist (hook '(evil-normal-state-entry-hook
                 evil-insert-state-entry-hook
                 evil-visual-state-entry-hook
@@ -1096,19 +1143,23 @@ unreadable. Returns the names of envvars that were changed."
                 evil-emacs-state-entry-hook))
   (add-hook hook #'my-evil-update-modeline))
 
-;; ✅ Mode-line с правильным синтаксисом
 (setq-default mode-line-format 
               '((:eval my-evil-modeline-string)  ; ← Обёрнут в (:eval ...)
                 "%e" 
                 mode-line-front-space
-                (:propertize
-                 (""
-                  mode-line-mule-info 
-                  mode-line-client 
-                  mode-line-modified 
-                  mode-line-remote
-                  " ")
-                 display (min-width (5.0)))
+                ;; (:propertize
+                ;;  (""
+                ;;   mode-line-mule-info 
+                ;;   mode-line-client 
+                ;;   mode-line-modified 
+                ;;   mode-line-remote
+                ;;   " ")
+                ;;  display (min-width (5.0)))
+                mode-line-mule-info
+                mode-line-client
+                mode-line-modified
+                mode-line-remote
+                " "
                 mode-line-buffer-identification
                 "   "
                 mode-line-position
@@ -1117,8 +1168,8 @@ unreadable. Returns the names of envvars that were changed."
                 mode-line-modes
                 mode-line-misc-info
                 mode-line-end-spaces))
+(setq mode-line-modes-delimiters nil)
 
-;; Инициализация
 (my-evil-update-modeline)
 
 (defun benchmark-modeline ()
@@ -1137,8 +1188,9 @@ unreadable. Returns the names of envvars that were changed."
   (minions-prominent-modes '(flymake-mode flycheck-mode))
   :config
   (setq minions-mode-line-lighter "  "
-        minions-mode-line-delimiters '("" . ""))
-  
+        ;; minions-mode-line-delimiters '("" . "")
+        )
+  ;; (setq minion
   (minions-mode 1))
 
 (use-package reverse-im
@@ -1317,11 +1369,12 @@ unreadable. Returns the names of envvars that were changed."
   :config
   (setf (alist-get 'google-java-format apheleia-formatters)
         '("google-java-format" "-a" "-"))
-    ;; Добавляем новый форматтер
   (setf (alist-get 'rebar3 apheleia-formatters)
       '("rebar3" "fmt" "-"))
-
-  ;; Привязываем его к erlang-mode
+  (setf (alist-get 'nph apheleia-formatters)
+       '("nph" "-"))
+  (setf (alist-get 'nim-mode apheleia-mode-alist)
+        'nph)
   (setf (alist-get 'erlang-mode apheleia-mode-alist)
         'rebar3)       
   )
@@ -2094,7 +2147,13 @@ Use `treemacs' command for old functionality."
     (nconc org-babel-default-header-args:java
            '((:dir . nil)
              (:results . "output")))
-  ))
+  )
+  (use-feature ob-jshell
+    :load-path "~/.config/emacs/lisp"
+    :commands (org-babel-execute:jshell)
+    :config
+    (add-to-list 'org-babel-load-languages '(jshell . t)))
+  )
 
 (use-package ob-mermaid
   :after org
@@ -2250,6 +2309,7 @@ Use `treemacs' command for old functionality."
     "A"   'org-attach)
   :config
     (add-to-list 'org-src-lang-modes '("xml" . sgml))
+    (add-to-list 'org-src-lang-modes '("jshell" . java-ts))
     (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
     (add-to-list 'org-src-lang-modes '("json" . json-ts))
     (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))

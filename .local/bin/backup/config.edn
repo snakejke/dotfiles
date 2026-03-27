@@ -1,0 +1,81 @@
+{:log {:dir "./logs"}
+ ;; Один общий файл исключений для rsync и rclone
+ :exclude {:abs-file "exclude.txt"}
+ :allow-exit-codes {:rsync [23 24]
+                    :rclone [6 7]}
+ :default-profile :full
+ :profiles
+ {:cloud
+  {:targets [:cloud]
+   :sources ["~/.gnupg"
+             "~/.password-store"
+             "~/.local/bin"
+             "~/.local/rawservices"
+             "~/.local/dotfiles"
+             "~/.local/share/atuin"
+             "~/.ssh"
+             "~/Documents"
+             "~/Downloads"
+             "~/Mail"
+             "~/OrgFiles"]
+   :missing-source :skip
+   :cloud {:remote "mailru:"
+           :prefix "backup"
+           :flags ["--transfers" "16" "--checkers" "32" "--fast-list" "--drive-chunk-size" "64M" "--skip-links" "-P"]}
+   :disk {:mount nil}}
+
+  :hdd
+  {:targets [:disk]
+   :sources ["~/.gnupg"
+             "~/.password-store"
+             "~/.ssh"
+             "~/Documents"
+             "~/Downloads"
+             "~/Mail"
+             "~/OrgFiles"]
+   :missing-source :skip
+   :disk {:mount "/tmp/test"
+          :prefix "backup-hdd"
+          :require-mounted? false
+          :flags []}
+   :cloud {:remote nil :prefix nil}}
+
+  :usb
+  {:targets [:disk]
+   :sources ["~/.gnupg"
+             "~/.password-store"
+             "~/.local/bin"
+             "~/.local/rawservices"
+             "~/.config"
+             "~/.ssh"
+             "~/Documents"
+             "~/Downloads"
+             "~/Mail"
+             "~/OrgFiles"]
+   :missing-source :skip
+   :disk {:mount "/tmp/test"
+          :prefix "backup-usb"
+          :require-mounted? false
+          :flags []}
+   :cloud {:remote nil :prefix nil}}
+
+  :full
+  {:targets [:disk :cloud]
+   :sources ["~/.gnupg"
+             "~/.password-store"
+             "~/.local/bin"
+             "~/.local/rawservices"
+             "~/.config"
+             "~/.ssh"
+             "~/Documents"
+             "~/Downloads"
+             "~/Mail"
+             "~/OrgFiles"]
+   :missing-source :skip
+   :cloud {:remote "mailru:"
+           :prefix "backup"
+           :flags ["--transfers" "8" "--skip-links"]}
+   :disk {:mount "/tmp/test"
+          :prefix "backup"
+          :require-mounted? false
+          :flags []}}}}

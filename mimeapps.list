@@ -77,3 +77,4 @@ text/x-python3=emacsclient.desktop
 application/x-subrip=emacsclient.desktop
 text/vtt=emacsclient.desktop
 text/x-clojure=emacsclient.desktop
+x-scheme-handler/jetbrains=jetbrainsd.desktop

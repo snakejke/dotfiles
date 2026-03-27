@@ -1,9 +1,13 @@
 bindkey -e
 bindkey '^ ' autosuggest-accept
+bindkey '^Y' copy-line-to-clipboard
 
 setopt PROMPT_SUBST
 setopt extendedglob
 setopt autocd
+setopt extended_history
+setopt inc_append_history
+setopt hist_ignore_all_dups
 
 if [[ -z "$GPG_TTY" ]]; then
     export GPG_TTY=$(tty)
