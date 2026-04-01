@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# pass-otp-add.sh — добавить новую TOTP запись в pass
+# Понимает три формата ввода:
+#   1. otpauth://totp/... — готовый URI (из QR скана или документации)
+#   2. ГОЛЫЙ BASE32 КЛЮЧ  — "backup key" как даёт GitHub, Gitlab и т.д.
+#   3. (пусто)            — попросит ввести вручную через rofi
+set -e
+
+STORE="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+
+die() {
+    # Показываем ошибку через rofi и выходим
+    rofi -e "$1"
+    exit 1
+}
+
+# Нормализует любой ввод в валидный otpauth:// URI
+# Это ключевая функция: pass otp insert понимает только otpauth://
+normalize_to_uri() {
+    local input="$1"
+
+    # --- Случай 1: уже готовый URI ---
+    if [[ "$input" == otpauth://* ]]; then
+        echo "$input"
+        return 0
+    fi
+
+    # --- Случай 2: голый Base32 ключ ---
+    # Убираем пробелы (GitHub даёт ключ с пробелами для читаемости: ABCD EFGH ...)
+    # и приводим к верхнему регистру
+    local secret
+    secret=$(echo "$input" | tr -d ' ' | tr '[:lower:]' '[:upper:]')
+
+    # Проверяем что строка похожа на Base32: только A-Z и 2-7, возможно = на конце
+    if [[ ! "$secret" =~ ^[A-Z2-7]+=*$ ]]; then
+        die "Не распознан формат: ожидался otpauth:// URI или Base32 ключ"
+    fi
+
+    # Нужно собрать URI вручную — спрашиваем минимум необходимого
+    local issuer account
+    issuer=$(rofi -dmenu -lines 0 -p "Название сервиса (например: GitHub):")
+    [[ -z "$issuer" ]] && exit 0
+
+    account=$(rofi -dmenu -lines 0 -p "Аккаунт (например: user@example.com):")
+    [[ -z "$account" ]] && exit 0
+
+    # Собираем URI по стандарту: https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+    # period=30 и algorithm=SHA1 — дефолты, большинство сервисов их используют
+    echo "otpauth://totp/${issuer}:${account}?secret=${secret}&issuer=${issuer}&period=30&algorithm=SHA1"
+}
+
+# --- Получаем исходный материал ---
+# Если в буфере уже лежит otpauth:// или Base32 (после scan_qr например) — предлагаем использовать
+clipboard=$(xclip -o -selection clipboard 2>/dev/null || echo "")
+
+input=""
+if [[ "$clipboard" == otpauth://* ]] || [[ "$clipboard" =~ ^[A-Z2-7\ ]+=*$ ]]; then
+    use_clip=$(printf "Да\nНет, введу сам" | rofi -dmenu -p "Использовать из буфера: ${clipboard:0:40}...?")
+    [[ "$use_clip" == "Да" ]] && input="$clipboard"
+fi
+
+# Если не взяли из буфера — просим ввести
+if [[ -z "$input" ]]; then
+    input=$(rofi -dmenu -lines 0 -p "Вставь otpauth:// URI или Base32 ключ:")
+    [[ -z "$input" ]] && exit 0
+fi
+
+# --- Нормализуем в URI ---
+uri=$(normalize_to_uri "$input") || exit 1
+
+# --- Спрашиваем имя записи в pass ---
+# Показываем существующие otp записи для ориентира
+existing=$(find "$STORE/otp" -name "*.gpg" -type f 2>/dev/null \
+    | sed -e "s|^$STORE/||" -e 's|\.gpg$||' \
+    | sort)
+
+# Подставляем "otp/" как начальный текст — пользователь просто допишет имя
+entry_name=$(echo "$existing" | rofi -dmenu -lines 10 \
+    -p "Имя записи:" \
+    -filter "otp/")
+
+# --- Вставляем ---
+# -f = перезаписать если уже существует (без вопросов)
+echo "$uri" | pass otp insert -f "$entry_name" \
+    || die "pass otp insert завершился с ошибкой"
+
+notify-send "OTP" "Запись '$entry_name' сохранена"

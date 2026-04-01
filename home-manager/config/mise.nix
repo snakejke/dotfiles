@@ -19,7 +19,8 @@
         codex = "latest";
         babashka = "latest";
         jbang = "latest";
-        claude = "latest";
+        # claude = "latest";
+        "asdf:asdf-community/asdf-nim" = "latest";
         elixir = "latest";
         erlang = "latest";
         rebar = "latest";

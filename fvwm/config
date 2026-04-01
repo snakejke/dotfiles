@@ -72,6 +72,8 @@ Key Right A 4 Scroll +100 0
 #############
 # 2: Styles #
 #############
+EwmhNumberOfDesktops 1 # fix Avalonia xprop -root _NET_WORKAREA. 
+
 EwmhBaseStruts screen $[monitor.primary] 0 0 0 37 
 
 DesktopSize 2x1

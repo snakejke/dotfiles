@@ -32,6 +32,7 @@ nix_source "zsh-autosuggestions/zsh-autosuggestions.zsh"
 nix_source "zsh-z/zsh-z.plugin.zsh"
 nix_source "fzf/key-bindings.zsh"
 
+
 autoload -Uz compinit
 
 local zdump=${ZDOTDIR}/.zcompdump
@@ -45,11 +46,10 @@ if [[ -f $zdump && ! -f ${zdump}.zwc || $zdump -nt ${zdump}.zwc ]]; then
     zcompile $zdump
 fi
 
+
 zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' menu select
-zstyle ':completion:*' use-cache yes
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
 
 zle_highlight=(region:bg=blue,fg=white,bold)
 
@@ -64,5 +64,18 @@ if [[ -o interactive ]] && [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
         sdk "$@"
     }
 fi
-command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
-command -v atuin &>/dev/null && eval "$(atuin init zsh)"
+
+_cached_init() {
+    local cmd=$1 init_cmd=$2
+    command -v $cmd &>/dev/null || return 0
+    
+    local cache="$XDG_CACHE_HOME/zsh/${cmd}_init.zsh"
+    if [[ ! -f $cache ]]; then
+        mkdir -p "${cache:h}"
+        eval "$init_cmd" > $cache
+    fi
+    source $cache
+}
+
+_cached_init atuin "atuin init zsh"
+_cached_init direnv "direnv hook zsh"

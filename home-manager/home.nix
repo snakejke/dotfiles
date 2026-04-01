@@ -213,8 +213,8 @@ in
       guile
       racket
       fpc # pascal
-      nim
-      nimble
+      # nim
+      # nimble
       nil # lsp nix
       nixfmt
       yq

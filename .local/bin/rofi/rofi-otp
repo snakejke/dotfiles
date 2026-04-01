@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# rofi-otp.sh — основное меню: сканировать QR или получить TOTP код
+set -e
+
+STORE="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+
+notify() {
+    notify-send "OTP" "$1"
+}
+
+# --- Пункт 1: Сканировать QR и скопировать содержимое в буфер ---
+scan_qr() {
+    local tmpfile
+    tmpfile=$(mktemp /tmp/qr-XXXXXX.png)
+    trap 'rm -f "$tmpfile"' EXIT
+
+    # -s = выбор области мышью; если пользователь нажал Escape — выходим тихо
+    maim -s "$tmpfile" 2>/dev/null || { notify "Захват отменён"; exit 0; }
+
+    local result
+    result=$(zbarimg -q --raw "$tmpfile" 2>/dev/null)
+
+    if [[ -z "$result" ]]; then
+        notify "QR код не найден"
+        exit 1
+    fi
+
+    echo -n "$result" | xclip -selection clipboard
+    echo -n "$result" | xclip -selection primary
+
+    # Показываем что получили — для otpauth:// обрезаем чтобы не светить секрет
+    if [[ "$result" == otpauth://* ]]; then
+        notify "Скопирован otpauth:// URI (готов для pass-otp-add)"
+    else
+        notify "Скопировано: ${result:0:80}"
+    fi
+}
+
+# --- Пункт 2: Выбрать TOTP запись и скопировать текущий код ---
+get_totp() {
+    local entries
+    # Ищем только в ~/.password-store/otp/
+    entries=$(find "$STORE/otp" -name "*.gpg" -type f \
+        | sed -e "s|^$STORE/||" -e 's|\.gpg$||' \
+        | sort)
+
+    [[ -z "$entries" ]] && { notify "Нет OTP записей в $STORE/otp"; exit 1; }
+
+    local chosen
+    chosen=$(echo "$entries" | rofi -dmenu -i -p "Выбери TOTP запись:")
+    [[ -z "$chosen" ]] && exit 0
+
+    local code
+    code=$(pass otp "$chosen" 2>/dev/null) || {
+        notify "Ошибка: '$chosen' не содержит OTP данных"
+        exit 1
+    }
+
+    echo -n "$code" | xclip -selection clipboard
+    echo -n "$code" | xclip -selection primary
+    notify "Код для '$chosen': $code (30с)"
+}
+
+# --- Пункт 3: Показать QR код для записи (чтобы добавить в телефон) ---
+show_qr() {
+    local entries
+    entries=$(find "$STORE/otp" -name "*.gpg" -type f \
+        | sed -e "s|^$STORE/||" -e 's|\.gpg$||' \
+        | sort)
+
+    [[ -z "$entries" ]] && { notify "Нет OTP записей в $STORE/otp"; exit 1; }
+
+    local chosen
+    chosen=$(echo "$entries" | rofi -dmenu -i -p "QR для записи:")
+    [[ -z "$chosen" ]] && exit 0
+
+    local uri
+    uri=$(pass otp uri "$chosen" 2>/dev/null) || {
+        notify "Ошибка: не удалось получить URI для '$chosen'"
+        exit 1
+    }
+
+    local tmpfile
+    tmpfile=$(mktemp /tmp/otp-qr-XXXXXX.png)
+
+    qrencode -o "$tmpfile" -s 8 -m 4 "$uri" || {
+        notify "Ошибка генерации QR"
+        exit 1
+    }
+
+    nsxiv "$tmpfile"
+}
+
+# --- Главное меню ---
+choice=$(printf "Сканировать QR\nПолучить TOTP код\nПоказать QR для записи" \
+    | rofi -dmenu -p "OTP:")
+case "$choice" in
+    "Сканировать QR")        scan_qr ;;
+    "Получить TOTP код")     get_totp ;;
+    "Показать QR для записи") show_qr ;;
+    *)                        exit 0 ;;
+esac
