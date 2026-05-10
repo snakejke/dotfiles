@@ -74,7 +74,7 @@ let
     # gtk-toolbar-icon-size - removed  
     # gtk-button-images - removed
     # gtk-menu-images - removed
-    gtk-application-prefer-dark-theme = 1; #- deprecated since 4.20, use gtk-interface-color-scheme
+    # gtk-application-prefer-dark-theme = 1; #- deprecated since 4.20, use gtk-interface-color-scheme
   };
 in
 {
@@ -96,7 +96,7 @@ in
     #   name = "Bibata-Original-Ice-Right";
     #   size = 24;
     # };
-    theme.name = "Greybird";
+    theme.name = "Adwaita-dark";
     # theme.name = "Yaru-dark";
     iconTheme.name = "Papirus-Light";
     font = {

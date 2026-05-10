@@ -19,6 +19,7 @@
         codex = "latest";
         babashka = "latest";
         jbang = "latest";
+        pkl = "latest";
         # claude = "latest";
         "asdf:asdf-community/asdf-nim" = "latest";
         elixir = "latest";
@@ -33,6 +34,7 @@
         uv = "latest";
         spring-boot = "latest";
         github-cli = "latest";
+        opencode = "latest";
         # dotnet = "latest";
         # ollama = "latest";
         just = "latest";
@@ -43,8 +45,8 @@
         #   crate = "crates/chat-cli";
         # };
         "npm:prettier" = "latest";
-        "npm:@google/gemini-cli" = "latest";
-        "npm:@qwen-code/qwen-code" = "latest";
+        # "npm:@google/gemini-cli" = "latest";
+        # "npm:@qwen-code/qwen-code" = "latest";
         "pipx:jedi-language-server" = "latest";
         "pipx:ty" = "latest";
         "pipx:my-cookies" = "latest";

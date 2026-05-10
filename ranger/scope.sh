@@ -51,7 +51,8 @@ handle_extension() {
     case "${FILE_EXTENSION_LOWER}" in
         ## Archive
         a|ace|alz|arc|arj|bz|bz2|cab|cpio|deb|gz|jar|lha|lz|lzh|lzma|lzo|\
-        rpm|rz|t7z|tar|tbz|tbz2|tgz|tlz|txz|tZ|tzo|war|xpi|xz|Z|zip)
+            rpm|rz|t7z|tar|tbz|tbz2|tgz|tlz|txz|tZ|tzo|war|xpi|xz|Z|zip)
+            7zz l -p -- "${FILE_PATH}" && exit 5
             atool --list -- "${FILE_PATH}" && exit 5
             bsdtar --list --file "${FILE_PATH}" && exit 5
             exit 1;;
@@ -60,19 +61,9 @@ handle_extension() {
             unrar lt -p- -- "${FILE_PATH}" && exit 5
             exit 1;;
         7z)
-            ## Avoid password prompt by providing empty password
-            7z l -p -- "${FILE_PATH}" && exit 5
+            ## avoid password prompt by providing empty password
+            7z l -p -- "${FILE_PATH=}" && exit 5
             exit 1;;
-
-        ## PDF
-        # pdf)
-        #     ## Preview as text conversion
-        #     pdftotext -l 10 -nopgbrk -q -- "${FILE_PATH}" - | \
-        #       fmt -w "${PV_WIDTH}" && exit 5
-        #     mutool draw -F txt -i -- "${FILE_PATH}" 1-10 | \
-        #       fmt -w "${PV_WIDTH}" && exit 5
-        #     exiftool "${FILE_PATH}" && exit 5
-        #     exit 1;;
 
         ## BitTorrent
         torrent)

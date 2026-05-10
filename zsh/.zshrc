@@ -29,9 +29,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PROMPT_EOL_MARK='' # hide %
 
 nix_source "zsh-autosuggestions/zsh-autosuggestions.zsh"
-nix_source "zsh-z/zsh-z.plugin.zsh"
 nix_source "fzf/key-bindings.zsh"
-
 
 autoload -Uz compinit
 
@@ -78,4 +76,5 @@ _cached_init() {
 }
 
 _cached_init atuin "atuin init zsh"
+_cached_init zoxide "zoxide init zsh"
 _cached_init direnv "direnv hook zsh"

@@ -9,7 +9,7 @@
       statusbar-v-padding = 0;
       page-padding = 1;
       window-title-basename = true;
-      font = "IBM Plex Serif 10";
+      font = "IBM Plex Serif 19";
       
       # Цветовая схема
       default-bg = "#000000";

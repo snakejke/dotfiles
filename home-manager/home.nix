@@ -44,14 +44,14 @@ in
   home.stateVersion = "25.11"; # Please read the comment before changing!!!
   home.preferXdgDirectories = true;
 
-  targets.genericLinux.gpu = {
-    enable = true;
-    nvidia = {
-      enable = true;
-      version = "580.105.08";
-      sha256 = "sha256-2cboGIZy8+t03QTPpp3VhHn6HQFiyMKMjRdiV2MpNHU=";
-    };
-  };
+  # targets.genericLinux.gpu = {
+  #   enable = true;
+  #   nvidia = {
+  #     enable = true;
+  #     version = "595.71.05";
+  #     sha256 = "sha256-NiA7iWC35JyKQva6H1hjzeNKBek9KyS3mK8G3YRva4I=";
+  #   };
+  # };
 
   home.packages =
     with pkgs;
@@ -116,7 +116,7 @@ in
 
       #
       bridge-utils # brctl
-      tcpdump
+      # tcpdump
       dig
       #curl
       drill
@@ -125,6 +125,7 @@ in
       nmap # ncat, gnu netcat nc, openbsd nc
       mtr # ping + traceroute
       ndisc6
+      whois
 
       #
       socat
@@ -141,7 +142,8 @@ in
       maim
       slop
       scrot
-      flameshot
+      # flameshot
+      # satty
       feh
       pngquant
       (tesseract5.override {
@@ -167,6 +169,7 @@ in
       djvulibre # ddjvu
       visidata
       convmv
+      asciidoctor
 
       #
       ansible
@@ -218,6 +221,7 @@ in
       nil # lsp nix
       nixfmt
       yq
+      zoxide
 
       zeromq # libzmq.so jupyternim
       nimlangserver

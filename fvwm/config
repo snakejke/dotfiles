@@ -109,6 +109,7 @@ Style "Whisker Menu" !Title, !Borders
 #Style jetbrains-idea FPLenient
 # Style "jetbrains-idea" Lenience, ClickToFocus
 Style jetbrains-idea Lenience
+Style Zotero !Title
 Style "Eclipse Memory Analyzer" ClickToFocus
 Style Steam ClickToFocus, !Title
 Style steam ClickToFocus, !Title 

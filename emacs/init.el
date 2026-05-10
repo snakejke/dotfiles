@@ -312,6 +312,7 @@
 (+general-global-menu! "search" "s"
   "b" 'consult-line
   "h" 'consult-outline
+  "f" 'consult-outline-directory
   "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
@@ -783,6 +784,8 @@ unreadable. Returns the names of envvars that were changed."
   (dired-hide-details-hide-symlink-targets nil) 
   (dired-omit-mode t nil) 
   (dired-omit-verbose nil)
+  (dired-guess-shell-alist-user
+      '(("\\.py\\'" "python3")))
   ;; :hook (dired-mode-hook . dired-hide-details-mode)
   :config
   ;;(setq dired-omit-files (rx (seq bol ".")))
@@ -1241,6 +1244,66 @@ unreadable. Returns the names of envvars that were changed."
 (use-package consult
   :demand t
   :config
+
+  (defun consult--outline-directory-candidates (files)
+    (let ((candidates nil))
+      (dolist (file files)
+        (when (file-readable-p file)
+          (condition-case nil
+              (let ((file-candidates
+                     (with-current-buffer (find-file-noselect file)
+                       (consult--outline-candidates))))
+                (dolist (cand file-candidates)
+                  (push (propertize
+                         (concat cand
+                                 (propertize (format "  [%s]" (file-name-nondirectory file))
+                                             'face 'consult-file))
+                         'consult--outline-level (get-text-property 0 'consult--outline-level cand)
+                         'consult-location (get-text-property 0 'consult-location cand))
+                        candidates)))
+            (error nil))))
+      (nreverse candidates)))
+
+  (defun consult-outline-directory (&optional dir level)
+    "Jump to an outline heading across all Org files in DIR."
+    (interactive
+     (list nil (and current-prefix-arg
+                    (prefix-numeric-value current-prefix-arg))))
+    (let* ((dir (or dir default-directory))
+           (files (directory-files dir t "\\.org\\'"))
+           (candidates (consult--slow-operation
+                           "Collecting headings..."
+                         (consult--outline-directory-candidates files)))
+           (min-level (if candidates
+                          (- (cl-loop for cand in candidates minimize
+                                      (get-text-property 0 'consult--outline-level cand))
+                             ?1)
+                        0))
+           (narrow-pred (lambda (cand)
+                          (<= (get-text-property 0 'consult--outline-level cand)
+                              (+ consult--narrow min-level))))
+           (narrow-keys (mapcar (lambda (c) (cons c (format "Level %c" c)))
+                                (number-sequence ?1 ?9)))
+           (narrow-init (and level (max ?1 (min ?9 (+ level ?0))))))
+      (unless candidates
+        (user-error "No headings found in %s" dir))
+      (consult--read
+       candidates
+       :prompt (format "Go to heading [%s]: " (abbreviate-file-name dir))
+       :annotate (consult--line-fontify)
+       :category 'consult-location
+       :sort nil
+       :require-match t
+       :lookup #'consult--line-match
+       :initial-narrow narrow-init
+       :narrow (list :predicate narrow-pred :keys narrow-keys)
+       :history '(:input consult--line-history)
+       :add-history (thing-at-point 'symbol)
+       :state (consult--location-state candidates))))
+  
+
+
+  
   (consult-customize
    consult-recent-file
    consult-source-recent-file
@@ -1253,10 +1316,10 @@ unreadable. Returns the names of envvars that were changed."
   (+general-global-buffer
     "b" 'consult-buffer)
   :init
-
- (setq
-  xref-show-xrefs-function #'consult-xref 
-  xref-show-definitions-function #'consult-xref)
+  
+  (setq
+   xref-show-xrefs-function #'consult-xref 
+   xref-show-definitions-function #'consult-xref)
 
   )
 
@@ -1338,7 +1401,6 @@ unreadable. Returns the names of envvars that were changed."
   (setq corfu-popinfo-delay '(0.5 . 1.0)))
 
 (use-package cape
-  :init 
   :custom
   (cape-dabbrev-buffer-function 'current-buffer)
   :init
@@ -1353,6 +1415,27 @@ unreadable. Returns the names of envvars that were changed."
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 )
+  ;; (use-package cape
+  ;;   :commands (cape-file cape-elisp-block cape-keyword)
+  ;;   :autoload (cape-wrap-noninterruptible cape-wrap-nonexclusive cape-wrap-buster)
+  ;;   :autoload (cape-wrap-silent)
+  ;;   :custom
+  ;;   (cape-dabbrev-buffer-function 'current-buffer)
+
+  ;;   :init
+  ;;   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  ;;   (add-to-list 'completion-at-point-functions #'cape-file)
+  ;;   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;;   (add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;   ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+
+  ;;   ;; Make these capfs composable.
+  ;;   (advice-add 'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
+  ;;   (advice-add 'lsp-completion-at-point :around #'cape-wrap-nonexclusive)
+  ;;   (advice-add 'comint-completion-at-point :around #'cape-wrap-nonexclusive)
+  ;;   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+  ;;   (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
+  ;;   (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive))
 
 (use-package nerd-icons-corfu
   :after corfu
@@ -1363,6 +1446,9 @@ unreadable. Returns the names of envvars that were changed."
 (use-package quickrun
   :bind (("C-<f5>" . quickrun)
          ("C-c X"  . quickrun)))
+
+(use-feature executable
+  :hook (after-save . executable-make-buffer-file-executable-if-script-p))
 
 (use-package apheleia
   :defer t
@@ -1381,11 +1467,11 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package lsp-mode
   :hook (
-         (js-mode . lsp)
-         (js-jsx-mode . lsp)
-         (typescript-mode . lsp)
-         (erlang-mode . lsp)
-         (web-mode . lsp)
+         ;; (js-mode . lsp)
+         ;; (js-jsx-mode . lsp)
+         ;; (typescript-mode . lsp)
+         ;; (erlang-mode . lsp)
+         ;; (web-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   ;; . lsp-deferred
   ;;:commands lsp
@@ -2186,7 +2272,6 @@ Use `treemacs' command for old functionality."
   :ensure (:autoloads "org-loaddefs.el")
   :hook ((org-mode . visual-line-mode)
          (org-mode . variable-pitch-mode))
-
   :defer t
   :general
   (general-define-key :states '(normal) :keymaps 'org-mode-map
@@ -2846,6 +2931,11 @@ Speeds up `org-agenda' remote operations."
   ;; :hook ((text-mode) . +tempel-setup-capf-h)
 
   :config
+  (advice-add 'tempel--insert :after
+              (lambda (&rest _)
+                (when (bound-and-true-p evil-mode)
+                  (evil-insert-state))))
+  
   (setq tempel-path "~/.config/emacs/templates/*.eld")
   (defun +tempel-setup-capf-h ()
     (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
@@ -3178,6 +3268,29 @@ append it to ENTRY."
                                          found)))
                   nil nil t)
                 (nreverse found))))))
+
+  (defun +elfeed-reload-feeds ()
+  "Перечитать elfeed.org и обновить elfeed-feeds."
+  (interactive)
+  (setq elfeed-feeds
+        (with-current-buffer (find-file-noselect +elfeed-feed-file)
+          (save-excursion
+            (save-restriction
+              (org-fold-show-all)
+              (goto-char (point-min))
+              (let ((found nil))
+                (org-element-map (org-element-parse-buffer) 'link
+                  (lambda (node)
+                    (when-let ((props (cadr node))
+                               (standards (plist-get props :standard-properties))
+                               (tags (org-get-tags (aref standards 0)))
+                               ((member "elfeed" tags))
+                               ((not (member "ignore" tags))))
+                      (push (cons (plist-get props :raw-link)
+                                  (delq 'elfeed (mapcar #'intern tags)))
+                            found)))
+                  nil nil t)
+                (nreverse found)))))))
 
   (defun +elfeed-play-in-mpv ()
     "Play selected videos in a shared mpv instance in chronological order."

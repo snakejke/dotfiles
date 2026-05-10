@@ -83,10 +83,14 @@ untar() {
     return 1
   fi
 
-  local size
-  size=$(stat -c %s "$file")
+  if [[ ! -f "$file" ]]; then
+    echo "Error: '$file' not found"
+    return 1
+  fi
 
-  local base="${file##*/}"
+  local size base mime
+  size=$(stat -c %s "$file")
+  base="${file##*/}"
   base="${base%.*}"
 
   case "$file" in
@@ -100,7 +104,17 @@ untar() {
       7zz x "$file" -o"$base"
       ;;
     *)
-      echo "Unsupported archive format: $file"
+      mime=$(file --brief --mime-type "$file")
+
+      case "$mime" in
+        application/zip|application/x-7z-compressed|application/x-rar)
+          mkdir -p "$base"
+          7zz x "$file" -o"$base"
+          ;;
+        *)
+          echo "Unsupported format: $file (MIME: $mime)"
+          ;;
+      esac
       ;;
   esac
 }

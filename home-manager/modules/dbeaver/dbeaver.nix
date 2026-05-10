@@ -1,18 +1,14 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.programs.dbeaver;
+  cfg = config.programs.dbeaverCustom;
   
-  # Получаем имя пользователя и домашнюю директорию из конфигурации
   username = config.home.username;
   homeDir = config.home.homeDirectory;
   
-  # Формируем путь для DBeaver на основе имени пользователя
   defaultUserHome = "-Duser.home=${homeDir}/.local/share/dbeaver";
   
-  # Создаем кастомный пакет DBeaver
   customDBeaver = pkgs.dbeaver-bin.overrideAttrs (oldAttrs: {
-    # Переопределяем prePatch для добавления настроек
     prePatch = ''
       ${oldAttrs.prePatch or ""}
       
@@ -32,7 +28,7 @@ let
     '';
   });
 in {
-  options.programs.dbeaver = {
+  options.programs.dbeaverCustom = {
     enable = mkEnableOption "DBeaver database tool";
     
     vmPath = mkOption {

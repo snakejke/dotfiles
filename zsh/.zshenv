@@ -126,6 +126,7 @@ export EMACS_SOCKET_NAME="/run/user/1000/emacs/vanilla"
 export LSP_USE_PLISTS=true
 #
 export ZSHZ_DATA="$ZDOTDIR/.z"
+export _ZO_DATA_DIR="$ZDOTDIR/"
 #
 export XCURSOR_PATH="$HOME/.local/state/nix/profile/share/icons:/usr/share/icons:$HOME/.local/share/icons"
 #
