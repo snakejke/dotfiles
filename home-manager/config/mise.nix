@@ -64,7 +64,7 @@
         "pipx:ruff" = "latest";
         "pipx:semgrep" = "latest";
         "pipx:streamlink" = "latest";
-        "pipx:docx2txt" = "latest";
+        # "pipx:docx2txt" = "latest";
       };
       tasks."update:hex" = {
       description = "Обновляет Hex и Rebar для Elixir";

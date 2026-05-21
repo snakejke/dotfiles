@@ -26,6 +26,7 @@
       };
       
       "*" = {
+        identityFile = "~/.ssh/id_ed25519_gmail";
         forwardAgent = false;
         addKeysToAgent = "yes";
         compression = false;

@@ -7,11 +7,6 @@
                              (float-time
                               (time-subtract (current-time) before-init-time)))
                      gcs-done)))
-(advice-add 'load :before
-            (lambda (file &rest _)
-              (when (string-match "racket" file)
-                (message "racket loaded from: %s"
-                         (with-output-to-string (backtrace))))))
 
 (setq initial-buffer-choice t) ;;*scratch*
 
@@ -85,11 +80,12 @@
 
 ;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch"))) 
 
-(let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
-  (mapc (lambda (path)
-          (when (file-directory-p path) 
-            (add-to-list 'load-path path)))
-        additional-paths))
+
+;; (let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
+;;   (mapc (lambda (path)
+;;           (when (file-directory-p path) 
+;;             (add-to-list 'load-path path)))
+;;         additional-paths))
 
 (setq literate-file (concat user-emacs-directory "init.org"))
 
@@ -143,43 +139,6 @@
         (lambda (arg)
           (cons (cadr (split-string (car arg) " "))
                 (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
-
-;; (defmacro +general-global-menu! (name prefix-key &rest body)
-;;   "Create a definer named +general-global-NAME wrapping global-definer.
-;;   Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
-;;   (declare (indent 2))
-;;   (let* ((n (concat "+general-global-" name))
-;;          (prefix-map (intern (concat n "-map"))))
-;;     `(progn
-;;        (general-create-definer ,(intern n)
-;;          :wrapping global-definer
-;;          :prefix-map (quote ,prefix-map)
-;;          :prefix ,prefix-key
-;;          :wk-full-keys nil
-;;          "" '(:ignore t :which-key ,name))
-;;        (,(intern n) ,@body))))
-
-
-;; (defmacro +general-global-menu! (name prefix-key &rest body)
-;;   "Create a definer named +general-global-NAME wrapping global-definer.
-;;   Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY.
-;;   Uses which-key-add-key-based-replacements directly (like Doom) to avoid
-;;   general's regex-based replacement which can bleed into unrelated keymaps."
-;;   (declare (indent 2))
-;;   (let* ((n (concat "+general-global-" name))
-;;          (prefix-map (intern (concat n "-map"))))
-;;     `(progn
-;;        (general-create-definer ,(intern n)
-;;          :wrapping global-definer
-;;          :prefix-map (quote ,prefix-map)
-;;          :prefix ,prefix-key
-;;          :wk-full-keys nil
-;;          "" '(:ignore t)   
-;;          )
-;;        (,(intern n) ,@body)
-;;        (with-eval-after-load 'which-key
-;;          (which-key-add-key-based-replacements
-;;            (concat "SPC " ,prefix-key) ,name)))))
 
 (defvar +leader-key "SPC")
 (defvar +leader-alt-key "S-SPC")
@@ -304,7 +263,8 @@
   )
 
 (+general-global-menu! "quit" "q"
-  "q" 'save-buffers-kill-emacs
+  "s" 'save-buffers-kill-emacs ;; Total exit: saves everything and kills the Emacs(Emacsclient) process completely
+  "q" 'save-buffers-kill-terminal ;; save all buffers and kill emacs. but emacsclient will keep buffer alive
   "r" 'restart-emacs
   "d" 'delete-frame
   "Q" 'kill-emacs)
@@ -313,6 +273,7 @@
   "b" 'consult-line
   "h" 'consult-outline
   "f" 'consult-outline-directory
+  "w" 'my-consult-ripgrep-word
   "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
@@ -368,6 +329,7 @@
 )
 
 (use-package evil
+  ;; :defer t
   :demand t
   :preface (setq evil-want-keybinding nil) ;; бинды с evil-collection
   :custom
@@ -481,6 +443,9 @@
   (bidi-paragraph-direction 'left-to-right)
   (bidi-display-reordering 'left-to-right)
   (bidi-inhibit-bpa t)
+  ;; Emacs 31+
+  (mode-line-collapse-minor-modes '(not flymake-mode flycheck-mode))
+  (mode-line-collapse-minor-modes-to "  ")
   :init
   (setq locale-coding-system 'utf-8
         coding-system-for-read 'utf-8
@@ -578,6 +543,7 @@ unreadable. Returns the names of envvars that were changed."
             (append electric-pair-pairs '(( "[^ ]<" . ">")))))
 
 (use-feature eshell
+  :commands (eshell eshell-command)
   :custom
   (eshell-banner-message "")
   :config
@@ -585,7 +551,7 @@ unreadable. Returns the names of envvars that were changed."
   (setq eshell-modules-list
         (append eshell-modules-list
                 '(eshell-smart eshell-elecslash eshell-tramp)))
-  :init
+  
   (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
         eshell-prompt-function
         (lambda nil
@@ -620,7 +586,9 @@ unreadable. Returns the names of envvars that were changed."
           (unless (derived-mode-p 'eshell-mode)
             (eshell-mode))
           buf))))
-  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color"))))
+  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
+  ;;
+  )
 
 (use-package modus-themes
   ;; :ensure (modus-themes :ref "4.8.1")
@@ -949,13 +917,27 @@ unreadable. Returns the names of envvars that were changed."
   (leetcode-prefer-language "java"))
 
 (use-package elcord
+  :defer 3
   ;;:commands elcord 
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
   (setq elcord-idle-message "Thinking 🤔")
   (setq elcord-quiet t)
-  (elcord-mode))
+  ;; (elcord-mode))
+
+  (defun my/discord-running-p ()
+    "Возвращает t если процесс Discord запущен."
+    (eq 0 (call-process "pgrep" nil nil nil "-ix" "Discord")))
+
+  (defun my/elcord-sync ()
+    "Включает/выключает elcord в зависимости от того, запущен ли Discord."
+    (if (my/discord-running-p)
+        (unless elcord-mode (elcord-mode 1))
+      (when elcord-mode (elcord-mode -1))))
+
+  (my/elcord-sync)
+  (run-with-timer 30 30 #'my/elcord-sync))
 
 (use-package telega
   :commands (telega)
@@ -1060,7 +1042,7 @@ unreadable. Returns the names of envvars that were changed."
 (use-package undo-fu
   :defer t)
 
-(use-package delight)
+;; (use-package delight)
 
 (use-package undo-fu-session
   :defer t
@@ -1186,16 +1168,6 @@ unreadable. Returns the names of envvars that were changed."
       (message "Modeline updated %d times in %.3f seconds (%.4f per update)"
                iterations elapsed (/ elapsed iterations)))))
 
-(use-package minions
-  :custom
-  (minions-prominent-modes '(flymake-mode flycheck-mode))
-  :config
-  (setq minions-mode-line-lighter "  "
-        ;; minions-mode-line-delimiters '("" . "")
-        )
-  ;; (setq minion
-  (minions-mode 1))
-
 (use-package reverse-im
   :defer 5
   ;;:after (general evil)
@@ -1245,6 +1217,14 @@ unreadable. Returns the names of envvars that were changed."
   :demand t
   :config
 
+  ;; Альтернатива #foo -w  '\bword\b'
+  (defun my-consult-ripgrep-word ()
+    "Поиск целого слова через consult-ripgrep."
+    (interactive)
+    (let ((consult-ripgrep-args (concat consult-ripgrep-args " -w")))
+      (consult-ripgrep)))
+  
+  ;; Поиск по всем заголовка в директории
   (defun consult--outline-directory-candidates (files)
     (let ((candidates nil))
       (dolist (file files)
@@ -1587,6 +1567,7 @@ unreadable. Returns the names of envvars that were changed."
   ;; :hook (java-ts-mode . lsp-deferred)
 
 (use-package lsp-metals
+  :defer t
   :custom
   ;; You might set metals server options via -J arguments. This might not always work, for instance when
   ;; metals is installed using nix. In this case you can use JAVA_TOOL_OPTIONS environment variable.
@@ -1602,7 +1583,8 @@ unreadable. Returns the names of envvars that were changed."
   ;; setting `lsp-semantic-tokens-apply-modifiers' to `nil' because metals sends `abstract' modifier
   ;; which is mapped to `keyword' face.
   (lsp-metals-enable-semantic-highlighting t)
-  :hook (scala-mode . lsp))
+  ;; :hook (scala-mode . lsp)
+  )
 
 (use-package lsp-treemacs
   :after (lsp-mode)
@@ -1643,19 +1625,24 @@ unreadable. Returns the names of envvars that were changed."
   :defer t)
 
 (use-package envrc
-  :config
-  (add-hook 'elpaca-after-init-hook
-            (lambda () (envrc-global-mode 1))))
+  :hook (elpaca-after-init . envrc-global-mode))
+
+  ;; :config
+  ;; (add-hook 'elpaca-after-init-hook
+  ;;           (lambda () (envrc-global-mode 1))))
 
 (use-package haskell-mode
   :defer t
-  :delight "󰲒"
   )
 
 (use-feature java-ts-mode
   :custom
   (java-ts-mode-enable-doxygen t))
 
+(use-feature python
+  :defer t
+  :custom
+  (python-indent-guess-indent-offset-verbose nil)) ;; Remove warning : Can’t guess python-indent-offset
 ;; (use-package python-mode 
 ;;   :init 
 ;;     (add-hook 'python-ts-mode-hook
@@ -2139,7 +2126,6 @@ Use `treemacs' command for old functionality."
   :defer t)
 
 (use-package org-modern
-  ;; :disabled t
   :after (org)
   :custom
   (org-modern-block-fringe nil)
@@ -2153,7 +2139,8 @@ Use `treemacs' command for old functionality."
   (setq org-modern-star 'replace)
   (setq org-modern-block-name
         '((t . t)
-          ("src" "»" "«")
+          ;; ("src" "»" "«")
+          ("src" "" "_")
           ("example" "»–" "–«")
           ("quote" "❝" "❞")
           ("export" "⏩" "⏪")))
@@ -2166,6 +2153,11 @@ Use `treemacs' command for old functionality."
            :repo "progfolio/auto-tangle-mode.el"
            :local-repo "auto-tangle-mode")
   :commands (auto-tangle-mode))
+
+;; (use-feature ob-scala-cli
+;;   :load-path "~/.config/emacs/lisp/"
+;;   :config
+;;   (ob-scala-cli-setup))
 
 (use-feature ob-tangle
   :after (org)
@@ -2239,6 +2231,20 @@ Use `treemacs' command for old functionality."
     :commands (org-babel-execute:jshell)
     :config
     (add-to-list 'org-babel-load-languages '(jshell . t)))
+
+    (use-feature ob-scala-cli
+    :load-path "~/.config/emacs/lisp/"
+    :commands (org-babel-execute:scala-cli)
+    :config
+    (add-to-list 'org-babel-load-languages '(scala-cli . t)))
+    
+  ;; (use-feature ob-scala
+  ;;   :load-path "~/.config/emacs/lisp/"
+  ;;   :commands (org-babel-execute:scala-cli)
+  ;;   :config
+  ;;     (setq org-babel-scala-command "scala-cli")
+  ;;     (setq org-babel-scala-wrapper-method "%s")
+  ;; )
   )
 
 (use-package ob-mermaid
@@ -2395,9 +2401,14 @@ Use `treemacs' command for old functionality."
   :config
     (add-to-list 'org-src-lang-modes '("xml" . sgml))
     (add-to-list 'org-src-lang-modes '("jshell" . java-ts))
+    (add-to-list 'org-src-lang-modes '("scala-cli" . scala))
     (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
     (add-to-list 'org-src-lang-modes '("json" . json-ts))
     (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
+    ;; (add-to-list 'org-src-lang-modes '("sh" . bash-ts))
+    ;; (add-to-list 'org-src-lang-modes '("zsh" . bash-ts))
+    ;; (add-to-list 'org-src-lang-modes '("bash" . bash-ts))
+    ;; (add-to-list 'org-src-lang-modes '("shell" . bash-ts))
     (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
     (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
     (add-to-list 'org-src-lang-modes '("go" . go-ts))
@@ -2417,23 +2428,14 @@ Use `treemacs' command for old functionality."
     (interactive "r")
     (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
 
-(defun +md-to-org-region-python (start end)
-  "Convert region from markdown to org, replacing selection"
-  (interactive "r")
-  (shell-command-on-region 
-   start end 
-      (format "python3 %s" 
-           (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
-   t t))
-
-  ;; (defun +md-to-org-region (start end)
-  ;; "Convert region from markdown to org, replacing selection"
-  ;; (interactive "r")
-  ;; (save-excursion
-  ;;   (delete-trailing-whitespace start end)
-  ;;   (shell-command-on-region start end 
-  ;;     "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " 
-  ;;     ;; t t)))
+  (defun +md-to-org-region-python (start end)
+    "Convert region from markdown to org, replacing selection"
+    (interactive "r")
+    (shell-command-on-region 
+    start end 
+        (format "python3 %s" 
+            (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
+    t t))
 
    (defun +org-align-all-tags ()
     "Wrap org-align-tags to be interactive and apply to all"
@@ -2632,6 +2634,13 @@ Use `treemacs' command for old functionality."
 ;; :custom
 ;; (org-capture-dir (concat (getenv "HOME") "/Documents/todo/"))
 )
+
+(use-package ob-racket
+  :ensure (ob-racket :host github :repo "hasu/emacs-ob-racket" :files ("*.el" "*.rkt"))
+  :after org
+  :config
+  (add-hook 'ob-racket-pre-runtime-library-load-hook
+	      #'ob-racket-raco-make-runtime-library))
 
 (use-package org-fancy-priorities
   :commands (org-fancy-priorities-mode)
@@ -2912,12 +2921,28 @@ Speeds up `org-agenda' remote operations."
   :bind (("C-=" . er/expand-region)))
 
 ;; (use-package yasnippet
+;;   :diminish yas-minor-mode
+;;   :hook (elpaca-after-init-hook . yas-global-mode))
+;; (use-package yasnippet
 ;;   ;; :commands (yas-global-mode)
-;;   :custom
-;;   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets"))
-;;   (yas-global-mode 1)
+;;   :commands (yas-expand
+;;              yas-minor-mode)
+;;   :hook ((prog-mode . yas-minor-mode)
+;;          (org-mode . yas-minor-mode))
+;;   ;; :custom
+;;   ;; (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets"))
+;;   ;; (yas-global-mode 1)
+;;   ;; :config
+;;   ;; (yas-reload-all)
   
 ;;   )
+
+;; (use-package yasnippet
+;;   :hook ((prog-mode . yas-minor-mode)
+;;          (org-mode . yas-minor-mode)))
+
+;; (use-package yasnippet-snippets
+;;   :after (yasnippet))
 
 (use-package tempel
   ;; Require trigger prefix before template name when completing.
@@ -3009,6 +3034,7 @@ Speeds up `org-agenda' remote operations."
      "\\*Messages\\*" "\\*scratch\\*" "\\magit-.*")))
 
 (use-feature erc
+  :commands (erc erc-tls)
   :defines erc-autojoin-channels-alist
   :init (setq erc-interpret-mirc-color t
               erc-lurker-hide-list '("JOIN" "PART" "QUIT")
@@ -3225,6 +3251,7 @@ append it to ENTRY."
       (switch-to-buffer restclient-buffer))))
 
 (use-feature cus-edit
+  :defer t
   :custom
   (custom-file null-device "Don't store customizations"))
 
@@ -3395,13 +3422,13 @@ append it to ENTRY."
     ([remap describe-variable] . helpful-variable)
     ([remap describe-key] . helpful-key))
 
-(use-feature holidays
-  :commands (org-agenda)
-  :custom
-  (holiday-bahai-holidays nil)
-  (holiday-hebrew-holidays nil)
-  (holiday-islamic-holidays nil)
-  (holiday-oriental-holidays nil))
+;; (use-feature holidays
+;;   :commands (org-agenda)
+;;   :custom
+;;   (holiday-bahai-holidays nil)
+;;   (holiday-hebrew-holidays nil)
+;;   (holiday-islamic-holidays nil)
+;;   (holiday-oriental-holidays nil))
 
 (use-package hl-todo
   :hook ((org-mode . hl-todo-mode)
@@ -3562,11 +3589,8 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
-(defun my/notmuch-toggle-trash ()
-(interactive)
-(evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
-
 (use-feature notmuch
+  :load-path ("/usr/share/emacs/site-lisp/notmuch")
   :commands (notmuch)
   :defer t
   :init
@@ -3596,6 +3620,11 @@ append it to ENTRY."
           ( :name "📦 Все письма"
             :query "*"
             :key "a")))
+  :config
+  (defun my/notmuch-toggle-trash ()
+    (interactive)
+    (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
+
   )
 
 (use-feature whitespace
@@ -3626,7 +3655,32 @@ append it to ENTRY."
 (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
 (add-to-list 'auto-mode-alist '("\\.bb?\\'" . clojure-mode))
 
-(require 'extras)
+;; (eval-when-compile
+;;   (require 'extras))
+(use-feature extras
+  :load-path "~/.config/emacs/lisp/"
+  :commands (sudo-edit 
+             my/convert-org-to-docx-with-pandoc 
+             +unfill-region
+             org-mouse-bold-mode-enable
+             org-mouse-bold-mode-disable))
+
+;; (add-hook 'elpaca-after-init-hook
+;;   (lambda ()
+;;     (advice-remove 'require 'my/require-timer)
+;;     (let ((sorted (sort my/require-log
+;;                         (lambda (a b)
+;;                           (> (float-time (cdr a))
+;;                              (float-time (cdr b)))))))
+;;       (with-current-buffer (get-buffer-create "*require-log*")
+;;         (erase-buffer)
+;;         (insert (format "%-40s %s\n" "FEATURE" "TIME(s)"))
+;;         (insert (make-string 50 ?-) "\n")
+;;         (dolist (entry sorted)
+;;           (insert (format "%-40s %.4f\n"
+;;                           (car entry)
+;;                           (float-time (cdr entry)))))
+;;         (display-buffer (current-buffer))))))
 
 (provide 'init)
 ;;; init.el ends here

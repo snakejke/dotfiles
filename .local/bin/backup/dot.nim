@@ -96,7 +96,7 @@ const userConfigs: seq[Entry] = @[
   ("wireplumber/wireplumber.conf.d/80-disable-logind.conf",         locHome, ekFile, 0o644),
 
   # Прочие
-  ("mimeapps.list",                                                 locHome, ekFile, 0o644),
+  # ("mimeapps.list",                                                 locHome, ekFile, 0o644),
   ("fontconfig",                                                    locHome, ekDir, 0o755),
   ("picom",                                                         locHome, ekDir, 0o755),
   ("pipewire",                                                      locHome, ekDir, 0o755),

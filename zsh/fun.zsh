@@ -99,6 +99,7 @@ untar() {
     *.tar.xz|*.txz)   pv -s "$size" "$file" | tar xJf - ;;
     *.tar.zst)        pv -s "$size" "$file" | tar -I zstd -xf - ;;                  
     *.tar)            pv -s "$size" "$file" | tar xf - ;;
+    *.gz)             pv -s "$size" "$file" | gunzip > "$base" ;;                  
     *.zip|*.rar|*.7z)
       mkdir -p "$base"
       7zz x "$file" -o"$base"

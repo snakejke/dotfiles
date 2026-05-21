@@ -75,9 +75,12 @@ export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 export PYTHON_HISTORY="$XDG_STATE_HOME/.python_history"
 export RUFF_CACHE_DIR="$XDG_CACHE_HOME/.ruff_cache"
 #Scala
+path=($XDG_DATA_HOME/coursier/bin $path)
 _sbt_opts=(
   "-Dsbt.global.base=$XDG_DATA_HOME/sbt"
+  "-Divy.home=$XDG_CACHE_HOME/ivy2"
   "-Dsbt.ivy.home=$XDG_CACHE_HOME/ivy2"
+  "-Divy.cache.dir=$XDG_CACHE_HOME/ivy2/cache"
   "-DG8_HOME=$XDG_DATA_HOME/sbt/.g8"
 )
 export SBT_OPTS="${_sbt_opts[*]}"

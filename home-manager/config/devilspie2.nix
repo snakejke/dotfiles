@@ -21,7 +21,7 @@ if app_name == "mpv" then
     set_window_geometry(156, 61, 1564, 878)
 end
 
-if class_name == "emacs" or class_name == "emacs-31_0_50" then
+if class_name == "emacs" or class_name == "emacs-32_0_50" then
     set_window_geometry(149, 93, 1579, 836)
 end
 

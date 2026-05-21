@@ -32,6 +32,7 @@ in
     ./config/desktop-entries.nix
     ./config/podman.nix
     ./config/files.nix
+    ./config/mime.nix
     # ./config/zsh.nix
     # ./config/gpu-apps.nix
   ];
@@ -100,10 +101,10 @@ in
       scrcpy
       #pgloader #bug 04.02.2026
       firefox
-      # discord 
+      # discord
       zed-editor
-      notmuch
-      notmuch.emacs
+      # notmuch
+      # notmuch.emacs
 
       #
       duckdb
@@ -267,14 +268,13 @@ in
     settings = { };
   };
 
-
   nix = {
     package = pkgs.nix;
     settings = {
       # fallback = true;
       # stalled-download-timeout = 10;
       # connect-timeout = 4;
-      
+
       substituters = [
         # "https://cache.nixos.kz"
         # "https://mirror.yandex.ru/nixos"
@@ -292,7 +292,6 @@ in
       ];
     };
   };
-
 
 
   home.sessionVariables = {

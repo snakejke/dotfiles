@@ -5,7 +5,7 @@
 
     discord = {
       name = "Discord";
-      exec = "sh -c \"exec /usr/lib/discord/Discord >/dev/null 2>&1\"";
+      exec = "sh -c \"exec /usr/lib/discord/discord >/dev/null 2>&1\"";
       icon = "discord";
       comment = "All-in-one voice and text chat";
       genericName = "Internet Messenger";
@@ -44,5 +44,27 @@
       categories = [ "Development" ];
     };
 
+    notmuch-emacs = {
+      name = "Notmuch";
+      genericName = "Email Client(Fixed)";
+      comment = "Emacs based email client";
+      exec = "notmuch-emacs-mua-my --hello %u";
+      icon = "emblem-mail";
+      type = "Application";
+      terminal = false;
+      startupNotify = false;
+
+      categories = [
+        "Network"
+        "Email"
+      ];
+      mimeType = [ "x-scheme-handler/mailto" ];
+
+      settings = {
+        "Keywords" = "Mail;E-mail;Email;";
+        "X-Desktop-File-Install-Version" = "0.27";
+        "Path" = "";
+      };
+    };
   };
 }

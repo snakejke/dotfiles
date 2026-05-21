@@ -171,11 +171,22 @@ This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-re
                              (float-time
                               (time-subtract (current-time) before-init-time)))
                      gcs-done)))
-(advice-add 'load :before
-            (lambda (file &rest _)
-              (when (string-match "racket" file)
-                (message "racket loaded from: %s"
-                         (with-output-to-string (backtrace))))))
+#+end_src
+
+#+begin_src emacs-lisp :lexical :tangle no
+;;;
+;; (defvar my/require-log nil)
+
+;; (defun my/wrap-require ()
+;;   (advice-add 'require :around
+;;     (lambda (orig feature &rest args)
+;;       (let ((start (current-time)))
+;;         (prog1 (apply orig feature args)
+;;           (push (cons feature (time-subtract (current-time) start))
+;;                 my/require-log))))
+;;     '((name . my/require-timer))))
+
+;; (my/wrap-require)
 #+end_src
 
 ** Запуск profilling 
@@ -307,11 +318,12 @@ ELP полезен для поиска горячих функций
 
 ;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch"))) 
 
-(let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
-  (mapc (lambda (path)
-          (when (file-directory-p path) 
-            (add-to-list 'load-path path)))
-        additional-paths))
+
+;; (let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
+;;   (mapc (lambda (path)
+;;           (when (file-directory-p path) 
+;;             (add-to-list 'load-path path)))
+;;         additional-paths))
 #+end_src
 
 * literate
@@ -390,43 +402,6 @@ We define a global-leader definer to access major-mode specific bindings:
 And a macro to ease the creation of nested menu bindings:
 
 #+begin_src emacs-lisp :lexical t
-;; (defmacro +general-global-menu! (name prefix-key &rest body)
-;;   "Create a definer named +general-global-NAME wrapping global-definer.
-;;   Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
-;;   (declare (indent 2))
-;;   (let* ((n (concat "+general-global-" name))
-;;          (prefix-map (intern (concat n "-map"))))
-;;     `(progn
-;;        (general-create-definer ,(intern n)
-;;          :wrapping global-definer
-;;          :prefix-map (quote ,prefix-map)
-;;          :prefix ,prefix-key
-;;          :wk-full-keys nil
-;;          "" '(:ignore t :which-key ,name))
-;;        (,(intern n) ,@body))))
-
-
-;; (defmacro +general-global-menu! (name prefix-key &rest body)
-;;   "Create a definer named +general-global-NAME wrapping global-definer.
-;;   Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY.
-;;   Uses which-key-add-key-based-replacements directly (like Doom) to avoid
-;;   general's regex-based replacement which can bleed into unrelated keymaps."
-;;   (declare (indent 2))
-;;   (let* ((n (concat "+general-global-" name))
-;;          (prefix-map (intern (concat n "-map"))))
-;;     `(progn
-;;        (general-create-definer ,(intern n)
-;;          :wrapping global-definer
-;;          :prefix-map (quote ,prefix-map)
-;;          :prefix ,prefix-key
-;;          :wk-full-keys nil
-;;          "" '(:ignore t)   
-;;          )
-;;        (,(intern n) ,@body)
-;;        (with-eval-after-load 'which-key
-;;          (which-key-add-key-based-replacements
-;;            (concat "SPC " ,prefix-key) ,name)))))
-
 (defvar +leader-key "SPC")
 (defvar +leader-alt-key "S-SPC")
 
@@ -577,7 +552,8 @@ And a macro to ease the creation of nested menu bindings:
 *** q quit
 #+begin_src emacs-lisp :lexical t
 (+general-global-menu! "quit" "q"
-  "q" 'save-buffers-kill-emacs
+  "s" 'save-buffers-kill-emacs ;; Total exit: saves everything and kills the Emacs(Emacsclient) process completely
+  "q" 'save-buffers-kill-terminal ;; save all buffers and kill emacs. but emacsclient will keep buffer alive
   "r" 'restart-emacs
   "d" 'delete-frame
   "Q" 'kill-emacs)
@@ -588,6 +564,7 @@ And a macro to ease the creation of nested menu bindings:
    "b" 'consult-line
    "h" 'consult-outline
    "f" 'consult-outline-directory
+   "w" 'my-consult-ripgrep-word
    "p" 'consult-ripgrep)
 #+end_src
 *** x text
@@ -595,7 +572,6 @@ And a macro to ease the creation of nested menu bindings:
 (+general-global-menu! "text" "x"
   "i" 'insert-char
   "I" (general-simulate-key "C-x 8" :which-key "iso"))
-
 #+end_src
 *** t tabs
 #+begin_src emacs-lisp :lexical t
@@ -657,6 +633,7 @@ And a macro to ease the creation of nested menu bindings:
 ** общее
 #+begin_src emacs-lisp :lexical t
 (use-package evil
+  ;; :defer t
   :demand t
   :preface (setq evil-want-keybinding nil) ;; бинды с evil-collection
   :custom
@@ -795,6 +772,9 @@ Shows match counts in mode line.
   (bidi-paragraph-direction 'left-to-right)
   (bidi-display-reordering 'left-to-right)
   (bidi-inhibit-bpa t)
+  ;; Emacs 31+
+  (mode-line-collapse-minor-modes '(not flymake-mode flycheck-mode))
+  (mode-line-collapse-minor-modes-to "  ")
   :init
   (setq locale-coding-system 'utf-8
         coding-system-for-read 'utf-8
@@ -912,6 +892,7 @@ unreadable. Returns the names of envvars that were changed."
 * eshell
 #+begin_src emacs-lisp :lexical t 
 (use-feature eshell
+  :commands (eshell eshell-command)
   :custom
   (eshell-banner-message "")
   :config
@@ -919,7 +900,7 @@ unreadable. Returns the names of envvars that were changed."
   (setq eshell-modules-list
         (append eshell-modules-list
                 '(eshell-smart eshell-elecslash eshell-tramp)))
-  :init
+  
   (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
         eshell-prompt-function
         (lambda nil
@@ -954,7 +935,9 @@ unreadable. Returns the names of envvars that were changed."
           (unless (derived-mode-p 'eshell-mode)
             (eshell-mode))
           buf))))
-  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))) 
+  (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
+  ;;
+  ) 
 
 #+end_src
 
@@ -1389,6 +1372,7 @@ unreadable. Returns the names of envvars that were changed."
             (delete-window window)))))
     (advice-add #'keyboard-quit :before #'popper-close-window-hack)))
 #+end_src
+
 * TODO auto-revert 
 #+begin_src emacs-lisp :lexical t
 (use-feature autorevert
@@ -1512,13 +1496,27 @@ is set if N was explicitly specified."
 [[https://github.com/yqrashawn/yqdotfiles/blob/1634092b80933ecd94018074847e2aaf35279d69/.doom.d/visual.el#L45][yqrashawn]] фикс таймера
 #+begin_src emacs-lisp :lexical t
 (use-package elcord
+  :defer 3
   ;;:commands elcord 
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
   (setq elcord-idle-message "Thinking 🤔")
   (setq elcord-quiet t)
-  (elcord-mode))
+  ;; (elcord-mode))
+
+  (defun my/discord-running-p ()
+    "Возвращает t если процесс Discord запущен."
+    (eq 0 (call-process "pgrep" nil nil nil "-ix" "Discord")))
+
+  (defun my/elcord-sync ()
+    "Включает/выключает elcord в зависимости от того, запущен ли Discord."
+    (if (my/discord-running-p)
+        (unless elcord-mode (elcord-mode 1))
+      (when elcord-mode (elcord-mode -1))))
+
+  (my/elcord-sync)
+  (run-with-timer 30 30 #'my/elcord-sync))
 #+end_src
 
 * telega
@@ -1666,9 +1664,9 @@ for your search query.
   :defer t)
 #+end_src
 
-* delight
+* TODO delight
 #+begin_src emacs-lisp :lexical t
-(use-package delight)
+;; (use-package delight)
 #+end_src
 
 * undo-fu-session
@@ -1809,20 +1807,6 @@ for your search query.
 
 #+end_src
 
-* minions
-Скрывает все моды. 
-#+begin_src emacs-lisp :lexical t
-(use-package minions
-  :custom
-  (minions-prominent-modes '(flymake-mode flycheck-mode))
-  :config
-  (setq minions-mode-line-lighter "  "
-        ;; minions-mode-line-delimiters '("" . "")
-        )
-  ;; (setq minion
-  (minions-mode 1))
-#+end_src
-
 * TODO ibuffer
 * reverse-im 
 Русская раскладка
@@ -1890,6 +1874,14 @@ for your search query.
   :demand t
   :config
 
+  ;; Альтернатива #foo -w  '\bword\b'
+  (defun my-consult-ripgrep-word ()
+    "Поиск целого слова через consult-ripgrep."
+    (interactive)
+    (let ((consult-ripgrep-args (concat consult-ripgrep-args " -w")))
+      (consult-ripgrep)))
+  
+  ;; Поиск по всем заголовка в директории
   (defun consult--outline-directory-candidates (files)
     (let ((candidates nil))
       (dolist (file files)
@@ -2342,6 +2334,7 @@ for your search query.
 ** lsp-metals
 #+begin_src emacs-lisp :lexical t
 (use-package lsp-metals
+  :defer t
   :custom
   ;; You might set metals server options via -J arguments. This might not always work, for instance when
   ;; metals is installed using nix. In this case you can use JAVA_TOOL_OPTIONS environment variable.
@@ -2357,7 +2350,8 @@ for your search query.
   ;; setting `lsp-semantic-tokens-apply-modifiers' to `nil' because metals sends `abstract' modifier
   ;; which is mapped to `keyword' face.
   (lsp-metals-enable-semantic-highlighting t)
-  :hook (scala-mode . lsp))
+  ;; :hook (scala-mode . lsp)
+  )
 #+end_src
 ** lsp-treemacs
 #+begin_src emacs-lisp :lexical t :tangle yes
@@ -2822,16 +2816,17 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 * envrc
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package envrc
-  :config
-  (add-hook 'elpaca-after-init-hook
-            (lambda () (envrc-global-mode 1))))
+  :hook (elpaca-after-init . envrc-global-mode))
+
+  ;; :config
+  ;; (add-hook 'elpaca-after-init-hook
+  ;;           (lambda () (envrc-global-mode 1))))
 #+end_src
 * haskell
 * haskell-mode
 #+begin_src emacs-lisp :lexical t 
 (use-package haskell-mode
   :defer t
-  :delight "󰲒"
   ) 
 #+end_src
 * Java-ts-mode
@@ -2844,6 +2839,10 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 
 * python-ts-mode
 #+begin_src emacs-lisp :lexical t
+(use-feature python
+  :defer t
+  :custom
+  (python-indent-guess-indent-offset-verbose nil)) ;; Remove warning : Can’t guess python-indent-offset
 ;; (use-package python-mode 
 ;;   :init 
 ;;     (add-hook 'python-ts-mode-hook
@@ -2975,6 +2974,8 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 #+end_src
+* ob-scala
+
 * nix
 #+begin_src emacs-lisp :lexical t
 (use-package nix-mode
@@ -3526,9 +3527,10 @@ Use `treemacs' command for old functionality."
   :defer t)
 #+end_src
 * org-modern
-#+begin_src emacs-lisp :lexical t 
+
+    <--- [[https://github.com/karthink/popper][GitHub - karthink/popper: Emacs minor-mode to summon and dismiss buffers easi...]]
+#+begin_src  emacs-lisp :lexical t 
 (use-package org-modern
-  ;; :disabled t
   :after (org)
   :custom
   (org-modern-block-fringe nil)
@@ -3542,7 +3544,8 @@ Use `treemacs' command for old functionality."
   (setq org-modern-star 'replace)
   (setq org-modern-block-name
         '((t . t)
-          ("src" "»" "«")
+          ;; ("src" "»" "«")
+          ("src" "" "_")
           ("example" "»–" "–«")
           ("quote" "❝" "❞")
           ("export" "⏩" "⏪")))
@@ -3558,6 +3561,13 @@ Use `treemacs' command for old functionality."
            :repo "progfolio/auto-tangle-mode.el"
            :local-repo "auto-tangle-mode")
   :commands (auto-tangle-mode))
+#+end_src
+* scala-cli
+#+begin_src emacs-lisp :lexical t
+;; (use-feature ob-scala-cli
+;;   :load-path "~/.config/emacs/lisp/"
+;;   :config
+;;   (ob-scala-cli-setup))
 #+end_src
 
 * TODO org-babel ob-tangle
@@ -3635,6 +3645,20 @@ Use `treemacs' command for old functionality."
     :commands (org-babel-execute:jshell)
     :config
     (add-to-list 'org-babel-load-languages '(jshell . t)))
+
+    (use-feature ob-scala-cli
+    :load-path "~/.config/emacs/lisp/"
+    :commands (org-babel-execute:scala-cli)
+    :config
+    (add-to-list 'org-babel-load-languages '(scala-cli . t)))
+    
+  ;; (use-feature ob-scala
+  ;;   :load-path "~/.config/emacs/lisp/"
+  ;;   :commands (org-babel-execute:scala-cli)
+  ;;   :config
+  ;;     (setq org-babel-scala-command "scala-cli")
+  ;;     (setq org-babel-scala-wrapper-method "%s")
+  ;; )
   )
 #+end_src
 
@@ -3810,9 +3834,14 @@ Use `treemacs' command for old functionality."
   :config
     (add-to-list 'org-src-lang-modes '("xml" . sgml))
     (add-to-list 'org-src-lang-modes '("jshell" . java-ts))
+    (add-to-list 'org-src-lang-modes '("scala-cli" . scala))
     (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
     (add-to-list 'org-src-lang-modes '("json" . json-ts))
     (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
+    ;; (add-to-list 'org-src-lang-modes '("sh" . bash-ts))
+    ;; (add-to-list 'org-src-lang-modes '("zsh" . bash-ts))
+    ;; (add-to-list 'org-src-lang-modes '("bash" . bash-ts))
+    ;; (add-to-list 'org-src-lang-modes '("shell" . bash-ts))
     (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
     (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
     (add-to-list 'org-src-lang-modes '("go" . go-ts))
@@ -3832,23 +3861,14 @@ Use `treemacs' command for old functionality."
     (interactive "r")
     (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
 
-(defun +md-to-org-region-python (start end)
-  "Convert region from markdown to org, replacing selection"
-  (interactive "r")
-  (shell-command-on-region 
-   start end 
-      (format "python3 %s" 
-           (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
-   t t))
-
-  ;; (defun +md-to-org-region (start end)
-  ;; "Convert region from markdown to org, replacing selection"
-  ;; (interactive "r")
-  ;; (save-excursion
-  ;;   (delete-trailing-whitespace start end)
-  ;;   (shell-command-on-region start end 
-  ;;     "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " 
-  ;;     ;; t t)))
+  (defun +md-to-org-region-python (start end)
+    "Convert region from markdown to org, replacing selection"
+    (interactive "r")
+    (shell-command-on-region 
+    start end 
+        (format "python3 %s" 
+            (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
+    t t))
 
    (defun +org-align-all-tags ()
     "Wrap org-align-tags to be interactive and apply to all"
@@ -4272,6 +4292,15 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
   ;;           (string-trim (buffer-string)))))
   )
 #+end_src
+* ob-racket
+#+begin_src emacs-lisp :lexical t
+(use-package ob-racket
+  :ensure (ob-racket :host github :repo "hasu/emacs-ob-racket" :files ("*.el" "*.rkt"))
+  :after org
+  :config
+  (add-hook 'ob-racket-pre-runtime-library-load-hook
+	      #'ob-racket-raco-make-runtime-library))
+#+end_src
 * org-clean-refile 
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-package org-clean-refile
@@ -4627,14 +4656,32 @@ https://github.com/org-mime/org-mime
 #+end_src
 * +yasnippets+ ( tempel )
 #+begin_src emacs-lisp :lexical t
+
+;; (use-package yasnippet
+;;   :diminish yas-minor-mode
+;;   :hook (elpaca-after-init-hook . yas-global-mode))
 ;; (use-package yasnippet
 ;;   ;; :commands (yas-global-mode)
-;;   :custom
-;;   (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets"))
-;;   (yas-global-mode 1)
+;;   :commands (yas-expand
+;;              yas-minor-mode)
+;;   :hook ((prog-mode . yas-minor-mode)
+;;          (org-mode . yas-minor-mode))
+;;   ;; :custom
+;;   ;; (yas-snippet-dirs '("~/.config/emacs/elpaca/repos/snippets"))
+;;   ;; (yas-global-mode 1)
+;;   ;; :config
+;;   ;; (yas-reload-all)
   
 ;;   )
+
+;; (use-package yasnippet
+;;   :hook ((prog-mode . yas-minor-mode)
+;;          (org-mode . yas-minor-mode)))
+
+;; (use-package yasnippet-snippets
+;;   :after (yasnippet))
 #+end_src
+
 * tempel
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package tempel
@@ -4762,12 +4809,14 @@ https://github.com/ternjs/tern
 * erc
 #+begin_src emacs-lisp :lexical t
 (use-feature erc
+  :commands (erc erc-tls)
   :defines erc-autojoin-channels-alist
   :init (setq erc-interpret-mirc-color t
               erc-lurker-hide-list '("JOIN" "PART" "QUIT")
               erc-autojoin-channels-alist '(("freenode.net" "#emacs"))))
 
 #+end_src
+
 (use-package erc
   :ensure nil
   :defines erc-autojoin-channels-alist
@@ -5111,6 +5160,7 @@ modern replacement rainbow-mode
 * custom-set-variables
 #+begin_src emacs-lisp :lexical t
 (use-feature cus-edit
+  :defer t
   :custom
   (custom-file null-device "Don't store customizations"))
 #+end_src
@@ -5319,13 +5369,13 @@ https://github.com/rnkn/fountain-mode
 
 * holidays
 #+begin_src emacs-lisp :lexical t
-(use-feature holidays
-  :commands (org-agenda)
-  :custom
-  (holiday-bahai-holidays nil)
-  (holiday-hebrew-holidays nil)
-  (holiday-islamic-holidays nil)
-  (holiday-oriental-holidays nil))
+;; (use-feature holidays
+;;   :commands (org-agenda)
+;;   :custom
+;;   (holiday-bahai-holidays nil)
+;;   (holiday-hebrew-holidays nil)
+;;   (holiday-islamic-holidays nil)
+;;   (holiday-oriental-holidays nil))
 #+end_src
 
 * hl-todo
@@ -5558,12 +5608,8 @@ https://github.com/joddie/macrostep
 #+end_src
 * notmuch
 #+begin_src emacs-lisp :lexical t
-  (defun my/notmuch-toggle-trash ()
-  (interactive)
-  (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
-#+end_src
-#+begin_src emacs-lisp :lexical t
 (use-feature notmuch
+  :load-path ("/usr/share/emacs/site-lisp/notmuch")
   :commands (notmuch)
   :defer t
   :init
@@ -5593,6 +5639,11 @@ https://github.com/joddie/macrostep
           ( :name "📦 Все письма"
             :query "*"
             :key "a")))
+  :config
+  (defun my/notmuch-toggle-trash ()
+    (interactive)
+    (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
+
   )
 #+end_src
 
@@ -5658,7 +5709,15 @@ https://github.com/joddie/macrostep
 #+end_src
 * extras
 #+begin_src emacs-lisp :lexical t
-(require 'extras)
+;; (eval-when-compile
+;;   (require 'extras))
+(use-feature extras
+  :load-path "~/.config/emacs/lisp/"
+  :commands (sudo-edit 
+             my/convert-org-to-docx-with-pandoc 
+             +unfill-region
+             org-mouse-bold-mode-enable
+             org-mouse-bold-mode-disable))
 #+end_src
 * edraw
 #+begin_src emacs-lisp :tangle no
@@ -5669,6 +5728,24 @@ https://github.com/joddie/macrostep
 * (provide 'init')
 
 #+begin_src emacs-lisp :lexical t
+;; (add-hook 'elpaca-after-init-hook
+;;   (lambda ()
+;;     (advice-remove 'require 'my/require-timer)
+;;     (let ((sorted (sort my/require-log
+;;                         (lambda (a b)
+;;                           (> (float-time (cdr a))
+;;                              (float-time (cdr b)))))))
+;;       (with-current-buffer (get-buffer-create "*require-log*")
+;;         (erase-buffer)
+;;         (insert (format "%-40s %s\n" "FEATURE" "TIME(s)"))
+;;         (insert (make-string 50 ?-) "\n")
+;;         (dolist (entry sorted)
+;;           (insert (format "%-40s %.4f\n"
+;;                           (car entry)
+;;                           (float-time (cdr entry)))))
+;;         (display-buffer (current-buffer))))))
+
 (provide 'init)
 ;;; init.el ends here
+
 #+end_src
