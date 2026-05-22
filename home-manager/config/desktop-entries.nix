@@ -34,6 +34,15 @@
       type = "Application";
       mimeType = [ "x-scheme-handler/tg" ];
     };
+    
+    notmuch-handler = {
+      name = "Notmuch Emacs Handler";
+      exec = "notmuch-emacs-mua-my --hello %u";
+      terminal = false;
+      type = "Application";
+      mimeType = [ "x-scheme-handler/notmuch" ];
+    };
+
 
     visualvm = {
       name = "VisualVM";

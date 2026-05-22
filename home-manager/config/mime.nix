@@ -115,6 +115,7 @@
       "text/x-python3" = [ "emacsclient.desktop" ];
       "text/x-script.python" = [ "emacsclient.desktop" ];
       "text/x-shellscript" = [ "emacsclient.desktop" ];
+      "message/rfc822" = [ "emacsclient.desktop" ];
       "video/mp4" = [
         "mpv.desktop"
         "vlc.desktop"
@@ -124,6 +125,7 @@
         "vlc.desktop"
         "org.xfce.Parole.desktop"
       ];
+      "x-scheme-handler/notmuch" = ["notmuch-handler.desktop"];
       "x-scheme-handler/about" = [ "google-chrome.desktop" ];
       "x-scheme-handler/eclipse+command" = [ "_usr_lib_dbeaver_.desktop" ];
       "x-scheme-handler/eclipse+mpc" = [ "_usr_lib_eclipse_.desktop" ];

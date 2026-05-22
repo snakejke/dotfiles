@@ -5,38 +5,38 @@
     
     enableDefaultConfig = false;
     
-    matchBlocks = {
+    settings = {
       "github-gmail" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = "~/.ssh/id_ed25519_gmail";
-        identitiesOnly = true;
+        HostName = "github.com";
+        User = "git";
+        IdentityFile = "~/.ssh/id_ed25519_gmail";
+        IdentitiesOnly = true;
       };
       
       "github.com" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = "~/.ssh/id_ed25519";
+        HostName = "github.com";
+        User = "git";
+        IdentityFile = "~/.ssh/id_ed25519";
       };
 
       "android" = {
-        hostname = "192.168.0.14";
-        user = "u0_a680";
-        port = 8022;
+        HostName = "192.168.0.14";
+        User = "u0_a680";
+        Port = 8022;
       };
       
       "*" = {
-        identityFile = "~/.ssh/id_ed25519_gmail";
-        forwardAgent = false;
-        addKeysToAgent = "yes";
-        compression = false;
-        serverAliveInterval = 0;
-        serverAliveCountMax = 3;
-        hashKnownHosts = false;
-        userKnownHostsFile = "~/.ssh/known_hosts";
-        controlMaster = "no";
-        controlPath = "~/.ssh/master-%r@%n:%p";
-        controlPersist = "no";
+        IdentityFile = "~/.ssh/id_ed25519_gmail";
+        ForwardAgent = false;
+        AddKeysToAgent = "yes";
+        Compression = false;
+        ServerAliveInterval = 0;
+        ServerAliveCountMax = 3;
+        HashKnownHosts = false;
+        UserKnownHostsFile = "~/.ssh/known_hosts";
+        ControlMaster = "no";
+        ControlPath = "~/.ssh/master-%r@%n:%p";
+        ControlPersist = "no";
       };
     };
   };

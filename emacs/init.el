@@ -78,12 +78,19 @@
     (normal-top-level-add-to-load-path '("."))
     (normal-top-level-add-subdirs-to-load-path)))
 
-;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch"))) 
+
+(let ((dirs (list (expand-file-name "var" user-emacs-directory)
+                  (expand-file-name "etc" user-emacs-directory))))
+  (dolist (dir dirs)
+    (unless (file-exists-p dir)
+      (make-directory dir t))))
+
+;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch")))
 
 
-;; (let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
+;; (let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp")))
 ;;   (mapc (lambda (path)
-;;           (when (file-directory-p path) 
+;;           (when (file-directory-p path)
 ;;             (add-to-list 'load-path path)))
 ;;         additional-paths))
 
@@ -184,6 +191,7 @@
   "e"  'project-eshell-popup
   )
 
+
 (+general-global-menu! "buffer" "b"
   "d"  'kill-current-buffer
   "o" '((lambda () (interactive) (switch-to-buffer nil))
@@ -269,12 +277,12 @@
   "d" 'delete-frame
   "Q" 'kill-emacs)
 
-(+general-global-menu! "search" "s"
-  "b" 'consult-line
-  "h" 'consult-outline
-  "f" 'consult-outline-directory
-  "w" 'my-consult-ripgrep-word
-  "p" 'consult-ripgrep)
+ (+general-global-menu! "search" "s"
+   "b" 'consult-line
+   "h" 'consult-outline
+   "f" 'consult-outline-directory
+   "w" 'my-consult-ripgrep-word
+   "p" 'consult-ripgrep)
 
 (+general-global-menu! "text" "x"
   "i" 'insert-char
@@ -337,13 +345,13 @@
   (evil-symbol-word-search t "search by symbol with * and #.")
   (evil-shift-width 2 "Same behavior for vim's '<' and '>' commands")
   (evil-want-C-i-jump nil) ;; fix табов с org src ??
-  (evil-complete-all-buffers nil) 
+  (evil-complete-all-buffers nil)
   (evil-want-integration t)
   (evil-search-module 'evil-search "use vim-like search instead of 'isearch")
   (evil-undo-system 'undo-redo)
   (evil-want-minibuffer nil) ;; x2 ESC в минибуфере.
-  (evil-move-beyond-eol t) ;; с nil курсор цепляется при скролле изображений 
-  (evil-move-cursor-back nil) ;; не делать отступ назад при esc 
+  (evil-move-beyond-eol t) ;; с nil курсор цепляется при скролле изображений
+  (evil-move-cursor-back nil) ;; не делать отступ назад при esc
   :config
   (+general-global-window
     "H" 'evil-window-move-far-left
@@ -360,7 +368,7 @@
     (define-key evil-visual-state-map (kbd "<") 'djoyner/evil-shift-left-visual)
     (define-key evil-visual-state-map [tab] 'djoyner/evil-shift-right-visual)
     (define-key evil-visual-state-map (kbd "<backtab>") 'djoyner/evil-shift-left-visual)
-  
+
   (defun djoyner/evil-shift-left-visual (beg end)
     (interactive "r")
     (evil-shift-left beg end)
@@ -377,10 +385,24 @@
 )
 
 (use-package evil-collection
-  ;; :ensure (:remotes ("origin"
-  ;;                     ("fork" :repo "progfolio/evil-collection")))
   :after (evil)
-  :config (evil-collection-init)
+  :config
+  (evil-collection-init)
+
+  (defmacro my/evil-collection-override (collection-feature mode-map &rest bindings)
+  "BINDINGS are (states key function) where states can be a list or single symbol."
+  `(with-eval-after-load ',collection-feature
+     (add-hook ',(intern (concat (symbol-name mode-map) "-hook"))
+       (lambda ()
+         ,@(mapcan (lambda (b)
+             (let ((states (if (listp (nth 0 b)) (nth 0 b) (list (nth 0 b))))
+                   (key    (nth 1 b))
+                   (fn     (nth 2 b)))
+               (mapcar (lambda (state)
+                   `(evil-local-set-key ',state (kbd ,key) ,fn))
+                 states)))
+           bindings))
+       90)))
   :init
   (setq evil-collection-setup-minibuffer nil) ;; связано с (evil-want-minibuffer nil)
   :custom
@@ -416,7 +438,7 @@
   (enable-recursive-minibuffers t "Allow minibuffer commands in minibuffer")
   (frame-title-format '(buffer-file-name "%f" ("%b"))
                       "Make frame title current file's name.")
-  (frame-resize-pixelwise t) ;; fvwm3 
+  (frame-resize-pixelwise t) ;; fvwm3
 
   (find-library-include-other-files nil)
   (indent-tabs-mode nil "Use spaces, not tabs")
@@ -427,19 +449,19 @@
   (tab-stop-list (number-sequence 2 120 2))
   (tab-width 2 "Shorter tab widths")
   (column-numbes-mode t);;
-  (truncate-lines t) ;; убрать перенос " ↪ " 
+  (truncate-lines t) ;; убрать перенос " ↪ "
   (line-numbers-mode t) ;; строки и колоки(882,44)
   (column-number-mode t)
-  (create-lockfiles nil) ;; TODO 
+  (create-lockfiles nil) ;; TODO
   (use-short-answers t) ;; yes-no to y-n
-  (resize-mini-windows nil) 
+  (resize-mini-windows nil)
   (completion-styles '(flex basic partial-completion emacs22))
   ;; c corfu. если не будет работать. положить в init
   (completion-cycle-threshold 3)
   (tab-always-indent 'complete)
   ;;
   (inhibit-compacting-font-caches t)
-  ;; PERF: 6% CPU 
+  ;; PERF: 6% CPU
   (bidi-paragraph-direction 'left-to-right)
   (bidi-display-reordering 'left-to-right)
   (bidi-inhibit-bpa t)
@@ -455,21 +477,12 @@
         selection-coding-system 'utf-8
         buffer-file-coding-system 'utf-8
         prefer-coding-system 'utf-8)
-  ;; don't want ESC as a modifier. 
+  ;; don't want ESC as a modifier.
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ;; переделать
-  (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
-  
+               )
 
-  ;; (setq display-buffer-alist
-  ;;       `((,(rx bos (or "*Apropos*" "*Help*" "*helpful" "*info*" "*Summary*") (0+ not-newline))
-  ;;          (display-buffer-reuse-mode-window display-buffer-below-selected)
-  ;;          (window-height . 0.33)
-  ;;          (mode apropos-mode help-mode helpful-mode Info-mode Man-mode))))
-  
-  )
-
-;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  ;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
 (use-package which-key
   :demand t
@@ -539,7 +552,7 @@ unreadable. Returns the names of envvars that were changed."
   :defer t
   :hook (prog-mode . electric-pair-mode)
   :config
-  (setq electric-pair-pairs 
+  (setq electric-pair-pairs
             (append electric-pair-pairs '(( "[^ ]<" . ">")))))
 
 (use-feature eshell
@@ -551,7 +564,7 @@ unreadable. Returns the names of envvars that were changed."
   (setq eshell-modules-list
         (append eshell-modules-list
                 '(eshell-smart eshell-elecslash eshell-tramp)))
-  
+
   (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
         eshell-prompt-function
         (lambda nil
@@ -562,7 +575,7 @@ unreadable. Returns the names of envvars that were changed."
 	         "]"
 	         (if (= (user-uid) 0) "# " "$ "))))
 
-  ;;TODO 
+  ;;TODO
   (defun project-eshell-popup (&optional arg)
           "Start Eshell in a pop-up window in the current project's root directory.
       If a buffer already exists for running Eshell in the project's root,
@@ -590,18 +603,19 @@ unreadable. Returns the names of envvars that were changed."
   ;;
   )
 
+
 (use-package modus-themes
   ;; :ensure (modus-themes :ref "4.8.1")
-  :config 
+  :config
   (setq modus-themes-custom-auto-reload nil
       modus-themes-bold-constructs nil
-      modus-themes-mixed-fonts t 
+      modus-themes-mixed-fonts t
       modus-themes-italic-constructs t
       modus-themes-prompts '(bold intense)
       modus-themes-completions '((t . (extrabold)))
       modus-themes-headings
       '((0 . (variable-pitch 1))
-        (t . (variable-pitch 1)) 
+        (t . (variable-pitch 1))
 
     ))
     ;;fonts
@@ -616,14 +630,14 @@ unreadable. Returns the names of envvars that were changed."
           (border-mode-line-inactive unspecified)
           ))
 
-    ;;Dark 
+    ;;Dark
     (setq modus-vivendi-palette-overrides
         '((bg-main  "#1e1f22");;idea
           (fg-main "#bcbec4")
           (constant "#E8BA36")
           ;; (constant "#bcbec4")
           (fnname "#57aaf7")
-          (keyword "#fa8072") ;; light salmon 
+          (keyword "#fa8072") ;; light salmon
           (string "#6AAB73")
           (type "#BCBEC4")
           (variable "#bcbec4")
@@ -705,8 +719,9 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature treesit
   :custom
   (treesit-font-lock-level 2)
+  ;; (treesit-enabled-modes t)
   :config
-  ;; https://www.reddit.com/r/emacs/comments/1j53j8v/comment/mge63rp/
+;;   ;; https://www.reddit.com/r/emacs/comments/1j53j8v/comment/mge63rp/
   (add-to-list 'treesit-language-source-alist
              '(typst "https://github.com/uben0/tree-sitter-typst"))
 
@@ -749,15 +764,15 @@ unreadable. Returns the names of envvars that were changed."
   (dired-recursive-deletes 'always)
   (dired-recursive-copies 'always)
   (dired-hide-details-hide-information-lines nil)
-  (dired-hide-details-hide-symlink-targets nil) 
-  (dired-omit-mode t nil) 
+  (dired-hide-details-hide-symlink-targets nil)
+  (dired-omit-mode t nil)
   (dired-omit-verbose nil)
   (dired-guess-shell-alist-user
       '(("\\.py\\'" "python3")))
   ;; :hook (dired-mode-hook . dired-hide-details-mode)
   :config
   ;;(setq dired-omit-files (rx (seq bol ".")))
-  (let ((args (list "-ahl" "-v" "--group-directories-first")))
+  (let ((args (list "-ahlv" "--group-directories-first")))
     (when (featurep :system 'bsd)
       (if-let* (gls (executable-find "gls"))
           (setq insert-directory-program gls)
@@ -794,11 +809,12 @@ unreadable. Returns the names of envvars that were changed."
   :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
   :init
   (setq scroll-conservatively 101 ; important!
-        scroll-margin 0) 
+        scroll-margin 0)
   :config
   (ultra-scroll-mode 1))
 
 (use-feature simple
+  ;; :hook ((prog-mode text-mode conf-mode) . delete-trailing-whitespace-mode)
   :general
   (+general-global-toggle
     "f" 'auto-fill-mode)
@@ -841,7 +857,7 @@ unreadable. Returns the names of envvars that were changed."
   :defer 2
   :custom
   (auto-revert-verbose nil)
-  (global-auto-revert-non-file-buffers t) ;; dired 
+  (global-auto-revert-non-file-buffers t) ;; dired
   ;; (auto-revert-interval 0.01 "Instantaneously revert")
   (auto-revert-interval 2 "Instantaneously revert")
   :config
@@ -901,12 +917,15 @@ unreadable. Returns the names of envvars that were changed."
   (ankiorg-media-directory
    "/home/snake/.local/share/Anki2/snake/collection.media/"))
 
+
 (use-package smart-backspace
   :bind ("<C-M-backspace>" . smart-backspace))
+
 
 (use-package sqlite3
   :ensure (sqlite3 :host github :repo "pekingduck/emacs-sqlite3-api")
   :defer t)
+
 
 (use-package leetcode
   :ensure (leetcode :host github :repo "kaiwk/leetcode.el" :files ("leetcode.el"))
@@ -916,9 +935,10 @@ unreadable. Returns the names of envvars that were changed."
   (leetcode-directory "/tmp/")
   (leetcode-prefer-language "java"))
 
+
 (use-package elcord
   :defer 3
-  ;;:commands elcord 
+  ;;:commands elcord
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
@@ -959,7 +979,7 @@ unreadable. Returns the names of envvars that were changed."
   :custom
   (compilation-scroll-output 'first-error)
   (compilation-always-kill t)
-  (compilation-ask-about-save nil);;autosave + compile 
+  (compilation-ask-about-save nil);;autosave + compile
   :config
 
   (defun +compilation-colorize ()
@@ -979,13 +999,12 @@ unreadable. Returns the names of envvars that were changed."
         ediff-split-window-function 'split-window-horizontally
         ediff-merge-split-window-function 'split-window-horizontally))
 
+
 (use-package anzu
   :defer 10
   :config (global-anzu-mode))
 
 (use-feature files
-  ;;:hook
-  ;;(before-save . delete-trailing-whitespace)
   :config
   ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
   (defun rename-file-and-buffer (new-name)
@@ -1002,16 +1021,24 @@ unreadable. Returns the names of envvars that were changed."
             (rename-buffer new-name)
             (set-visited-file-name new-name)
             (set-buffer-modified-p nil))))))
+
+  (add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
+  (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
+  (add-to-list 'auto-mode-alist '("\\.bb?\\'" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
+
   :custom
+  (auto-save-visited-mode 1)
+  (auto-save-list-file-prefix nil) ; not create directory emacs/auto-save-list
   (auto-save-default nil) ;; disable auto save files
-  (make-backup-files) ;; TODO 
+  (make-backup-files) ;; TODO
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (require-final-newline t "Automatically add newline at end of file")
   (backup-by-copying t)
   (backup-directory-alist `((".*" . ,(expand-file-name
                                       (concat user-emacs-directory "backups"))))
                           "Keep backups in their own directory")
-  (auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosaves/") t))) 
+  (auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosaves/") t)))
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
@@ -1019,30 +1046,27 @@ unreadable. Returns the names of envvars that were changed."
   (safe-local-variable-values
    '((eval load-file "./init-dev.el")
      (org-clean-refile-inherit-tags))
-   "Store safe local variables here instead of in emacs-custom.el"))
-
-(use-feature files
-  :custom 
-  (auto-save-visited-mode 1)
-  :init 
+   "Store safe local variables here instead of in emacs-custom.el")
+  :init
   (add-function :after after-focus-change-function (lambda () (save-some-buffers t)))
-  (setq auto-save-visited-predicate
-        (lambda ()
-          (not (and (boundp 'major-mode)
-                   (stringp (symbol-name major-mode))
-                   (string-match-p "^notmuch-" (symbol-name major-mode)))))))
+  ;; (setq auto-save-visited-predicate
+  ;;       (lambda ()
+  ;;         (not (and (boundp 'major-mode)
+  ;;                  (stringp (symbol-name major-mode))
+  ;;                  (string-match-p "^notmuch-" (symbol-name major-mode))))))
+  )
 
 ;; Temp files (save-place, recenf, undo-tree)
-(defconst my-temp (expand-file-name "my-temp" user-emacs-directory))
-(unless (file-exists-p my-temp)
-  (make-directory my-temp))
-(setq save-place-file (expand-file-name "saveplace" my-temp))
-(save-place-mode 1)
+(use-feature saveplace
+  :config
+  (setq save-place-file (expand-file-name "var/save-place.el" user-emacs-directory))
+  (save-place-mode 1))
 
 (use-package undo-fu
   :defer t)
 
 ;; (use-package delight)
+
 
 (use-package undo-fu-session
   :defer t
@@ -1050,6 +1074,7 @@ unreadable. Returns the names of envvars that were changed."
   (undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
   :config
   (global-undo-fu-session-mode 1))
+
 
 (use-package vundo
   :bind (("C-x u" . vundo))
@@ -1067,7 +1092,7 @@ unreadable. Returns the names of envvars that were changed."
   "Bold face for evil states")
 
 (defface evil-normal-face
-  '((t (:inherit evil-state-face 
+  '((t (:inherit evil-state-face
         :background "#ff5f5f"
         :foreground "white")))
   "Face for evil normal state")
@@ -1106,7 +1131,7 @@ unreadable. Returns the names of envvars that were changed."
   '((t (:inherit (region evil-state-face))))
   "Face for evil visual state")
 
-(setq-default my-evil-modeline-string 
+(setq-default my-evil-modeline-string
               (propertize " NORMAL " 'face 'evil-normal-face))
 
 (defun my-evil-update-modeline ()
@@ -1128,15 +1153,15 @@ unreadable. Returns the names of envvars that were changed."
                 evil-emacs-state-entry-hook))
   (add-hook hook #'my-evil-update-modeline))
 
-(setq-default mode-line-format 
+(setq-default mode-line-format
               '((:eval my-evil-modeline-string)  ; ← Обёрнут в (:eval ...)
-                "%e" 
+                "%e"
                 mode-line-front-space
                 ;; (:propertize
                 ;;  (""
-                ;;   mode-line-mule-info 
-                ;;   mode-line-client 
-                ;;   mode-line-modified 
+                ;;   mode-line-mule-info
+                ;;   mode-line-client
+                ;;   mode-line-modified
                 ;;   mode-line-remote
                 ;;   " ")
                 ;;  display (min-width (5.0)))
@@ -1168,6 +1193,7 @@ unreadable. Returns the names of envvars that were changed."
       (message "Modeline updated %d times in %.3f seconds (%.4f per update)"
                iterations elapsed (/ elapsed iterations)))))
 
+
 (use-package reverse-im
   :defer 5
   ;;:after (general evil)
@@ -1182,6 +1208,7 @@ unreadable. Returns the names of envvars that were changed."
   ;; (logview-views-file (concat minemacs-local-dir "logview-views.el"))
   ;; (logview-cache-filename (concat minemacs-cache-dir "logview-cache.el")))
   )
+
 
 (use-package vertico
   :demand t
@@ -1223,7 +1250,7 @@ unreadable. Returns the names of envvars that were changed."
     (interactive)
     (let ((consult-ripgrep-args (concat consult-ripgrep-args " -w")))
       (consult-ripgrep)))
-  
+
   ;; Поиск по всем заголовка в директории
   (defun consult--outline-directory-candidates (files)
     (let ((candidates nil))
@@ -1280,10 +1307,10 @@ unreadable. Returns the names of envvars that were changed."
        :history '(:input consult--line-history)
        :add-history (thing-at-point 'symbol)
        :state (consult--location-state candidates))))
-  
 
 
-  
+
+
   (consult-customize
    consult-recent-file
    consult-source-recent-file
@@ -1296,9 +1323,9 @@ unreadable. Returns the names of envvars that were changed."
   (+general-global-buffer
     "b" 'consult-buffer)
   :init
-  
+
   (setq
-   xref-show-xrefs-function #'consult-xref 
+   xref-show-xrefs-function #'consult-xref
    xref-show-definitions-function #'consult-xref)
 
   )
@@ -1364,12 +1391,12 @@ unreadable. Returns the names of envvars that were changed."
   (corfu-cycle t)
   (corfu-auto t)
   (corfu-auto-delay 0.1) ;; 0.2 def
-  (corfu-auto-prefix 2) 
+  (corfu-auto-prefix 2)
   ;;(corfu-seperator ?-)
   (corfu-seperator ?\s)
   :config
   (global-corfu-mode)
-  ;; 
+  ;;
   (with-eval-after-load 'evil
     (setq evil-complete-next-func (lambda (_) (completion-at-point))))
   )
@@ -1430,20 +1457,20 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature executable
   :hook (after-save . executable-make-buffer-file-executable-if-script-p))
 
-(use-package apheleia
-  :defer t
-  :config
-  (setf (alist-get 'google-java-format apheleia-formatters)
-        '("google-java-format" "-a" "-"))
-  (setf (alist-get 'rebar3 apheleia-formatters)
-      '("rebar3" "fmt" "-"))
-  (setf (alist-get 'nph apheleia-formatters)
-       '("nph" "-"))
-  (setf (alist-get 'nim-mode apheleia-mode-alist)
-        'nph)
-  (setf (alist-get 'erlang-mode apheleia-mode-alist)
-        'rebar3)       
-  )
+  (use-package apheleia
+    :defer t
+    :config
+    (setf (alist-get 'google-java-format apheleia-formatters)
+          '("google-java-format" "-a" "-"))
+    (setf (alist-get 'rebar3 apheleia-formatters)
+        '("rebar3" "fmt" "-"))
+    (setf (alist-get 'nph apheleia-formatters)
+         '("nph" "-"))
+    (setf (alist-get 'nim-mode apheleia-mode-alist)
+          'nph)
+    (setf (alist-get 'erlang-mode apheleia-mode-alist)
+          'rebar3)
+    )
 
 (use-package lsp-mode
   :hook (
@@ -1456,7 +1483,7 @@ unreadable. Returns the names of envvars that were changed."
   ;; . lsp-deferred
   ;;:commands lsp
   :custom
-  (lsp-completion-provider :none) 
+  (lsp-completion-provider :none)
   (lsp-completion-show-kind nil)
   (lsp-completion-show-detail nil)
   (lsp-semgrep-languages nil)
@@ -1479,9 +1506,9 @@ unreadable. Returns the names of envvars that were changed."
   ;; (setq lsp-disabled-clients '(pyls pylsp))
   ;; (setq lsp-log-io t)
   (setq lsp-restart 'auto-restart)
-  ;;TODO: 
+  ;;TODO:
   ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
-  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
+  ;; lsp-warn-no-matched-clients t) ;; и это у него включено
   ;; (setq lsp-enable-on-type-formatting nil)
   ;; (setq lsp-signature-auto-activate nil)
   ;; (setq lsp-signature-render-documentation nil)
@@ -1495,7 +1522,7 @@ unreadable. Returns the names of envvars that were changed."
   ;; (setq lsp-enable-snippet nil)
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
   (setq lsp-idle-delay 0.5)
-  
+
   ;; Enable LSP automatically for Erlang files
   ;; (add-hook 'erlang-mode-hook #'lsp)
 
@@ -1504,7 +1531,7 @@ unreadable. Returns the names of envvars that were changed."
                     :major-modes '(erlang-mode)
                     :priority 0
                     :server-id 'erlang-language-platform))
-  
+
   ;;emacs-lsp-booster
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
   "Try to parse bytecode instead of json."
@@ -1600,7 +1627,7 @@ unreadable. Returns the names of envvars that were changed."
 
 (use-package lsp-haskell
   :after lsp
-  
+
   :config
   ;; (add-hook 'haskell-mode-hook #'lsp)
   ;; (add-hook 'haskell-literate-mode-hook #'lsp)
@@ -1639,24 +1666,25 @@ unreadable. Returns the names of envvars that were changed."
   :custom
   (java-ts-mode-enable-doxygen t))
 
+
 (use-feature python
   :defer t
   :custom
   (python-indent-guess-indent-offset-verbose nil)) ;; Remove warning : Can’t guess python-indent-offset
-;; (use-package python-mode 
-;;   :init 
+;; (use-package python-mode
+;;   :init
 ;;     (add-hook 'python-ts-mode-hook
 ;;             (lambda ()
 ;;               (set (make-local-variable 'compile-command)
 ;;                    (concat "python3 " (buffer-name))))))
 
-(use-package groovy-mode 
+(use-package groovy-mode
 :mode (("build\\.gradle" . groovy-mode)
        ("Jenkinsfile" . groovy-mode))
 :config
 (+eglot-register '(groovy-mode) "groovy-language-server"))
 
-(use-package kotlin-ts-mode 
+(use-package kotlin-ts-mode
   :ensure (kotlin-ts-mode :host gitlab :repo "bricka/emacs-kotlin-ts-mode")
   :mode "\\.kts?m?\\'")
 
@@ -1700,6 +1728,7 @@ unreadable. Returns the names of envvars that were changed."
  ;;                    :major-modes '(erlang-mode)
  ;;                    :priority 0
  ;;                    :server-id 'erlang-language-platform))
+
 
 (use-package nim-mode
   :defer t
@@ -1757,23 +1786,17 @@ unreadable. Returns the names of envvars that were changed."
   :defer t
   :mode "\\.nix\\'")
 
-(use-package justl
- :defer t)
+ (use-package justl
+  :defer t)
 
-(use-package just-mode
- :defer t)
+ (use-package just-mode
+  :defer t)
 
 (use-package racket-mode
   :hook (racket-mode . racket-xp-mode)
   :general
   (general-define-key :states '(normal) :keymaps 'racket-mode-map
-                      (kbd "E") 'racket-eval-last-sexp)
-
-  :config
-  (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
-  )
-
-(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
+                      (kbd "E") 'racket-eval-last-sexp))
 
 (use-package geiser
   :defer t)
@@ -1836,7 +1859,7 @@ unreadable. Returns the names of envvars that were changed."
   :config
   (setq sly-mrepl-history-file-name (concat user-emacs-directory "sly-mrepl-history"))
 
-  
+
   (dolist (impl '("lisp"   ; Default Lisp implementation on the system
                   "clisp"  ; GNU CLISP
                   "abcl"   ; Armed Bear Common Lisp
@@ -1871,7 +1894,7 @@ unreadable. Returns the names of envvars that were changed."
       "Returns non-nil if BUF is temporary."
       (equal (substring (buffer-name buf) 0 1) " "))
 
- ;;;   
+ ;;;
     (progn
       (defun +common-lisp-init-sly-h nil
         "Attempt to auto-start sly when opening a lisp buffer."
@@ -1887,9 +1910,9 @@ unreadable. Returns the names of envvars that were changed."
         (dolist (func (list (function +common-lisp-init-sly-h)))
           (add-hook hook func nil nil))))
 
-  
+
   :init
-  
+
   (progn
     (progn
       (with-eval-after-load 'emacs
@@ -1911,6 +1934,7 @@ unreadable. Returns the names of envvars that were changed."
 
   )
 
+
 (use-package sly-asdf
   :defer t
   :init
@@ -1920,6 +1944,7 @@ unreadable. Returns the names of envvars that were changed."
 ;;   :after (sly)
 ;;   (require 'sly-quicklisp-autoloads)
 ;;   )
+
 
 ;;(use-package sly-macrostep )
 
@@ -1952,7 +1977,7 @@ unreadable. Returns the names of envvars that were changed."
 (use-package ejc-sql
   :defer t
   :commands ejc-sql-mode ejc-connect
-  :config 
+  :config
   ;(+eglot-register '(sql-mode) "sqls")
   (setq ejc-result-table-impl 'ejc-result-mode)
   (defun k/sql-mode-hook () (ejc-sql-mode t))
@@ -1974,13 +1999,15 @@ unreadable. Returns the names of envvars that were changed."
    :connection-uri "jdbc:mariadb://localhost:3306/sqlstepik"
    :user "root"
    :password "root"
-   
+
    )
 )
 
-;; (use-feature sql
-;;    :config
-;;    (+eglot-register '(sql-mode) "sqls"))
+
+  ;; (use-feature sql
+  ;;    :config
+  ;;    (+eglot-register '(sql-mode) "sqls"))
+
 
 (use-package flycheck
   :commands (flycheck-mode)
@@ -2011,7 +2038,7 @@ unreadable. Returns the names of envvars that were changed."
   :config
   (setq flymake-suppress-zero-counters nil)
 
-  
+
   (add-to-list 'display-buffer-alist
                '("\\`\\*Flymake diagnostics.*?\\*\\'"
                  display-buffer-in-side-window  (window-parameters (window-height 0.25)) (side . bottom)))
@@ -2027,6 +2054,8 @@ unreadable. Returns the names of envvars that were changed."
   :ensure (fvwm-mode :host github :repo "theBlackDragon/fvwm-mode")
   :defer t
   :commands fvwm-mode )
+
+
 
 (use-feature ispell
   :config
@@ -2094,20 +2123,20 @@ Use `treemacs' command for old functionality."
   :custom
   (yaml-indent-offset 2)
   (yaml-backspace-function 'backward-delete-char-untabify)
-  
+
   :config
   (defun my-yaml-ts-mode-setup ()
     "Setup proper indentation and keys for yaml-ts-mode."
     (require 'yaml-mode)
     (setq-local indent-line-function 'yaml-indent-line)
-    
+
     (local-set-key (kbd "RET") 'newline-and-indent)
     (local-set-key (kbd "DEL") 'yaml-electric-backspace)
     (local-set-key (kbd "|") 'yaml-electric-bar-and-angle)
     (local-set-key (kbd ">") 'yaml-electric-bar-and-angle)
     (local-set-key (kbd "-") 'yaml-electric-dash-and-dot)
     (local-set-key (kbd ".") 'yaml-electric-dash-and-dot))
-  
+
   :hook (yaml-ts-mode . my-yaml-ts-mode-setup))
 
 (use-package indent-bars
@@ -2132,10 +2161,21 @@ Use `treemacs' command for old functionality."
   (org-modern-progress nil) ;;  ?
   (org-modern-table nil) ;; поломано
   (org-modern-horizontal-rule (make-string 36 ?─)) ;; "───────────"
-  (org-modern-priority nil) ;; не нашел годного
+  (org-modern-priority t)
   (org-modern-replace-stars "◉○✸✿✤✜◆▶")
   (org-modern-checkbox nil)
+  (org-modern-priority
+      '((?A . #("❗" 0 1 (face (:foreground "orange" :weight bold :inverse-video t))))
+        (?B . #("⬆"  0 1 (face (:foreground "yellow" :weight bold :inverse-video t))))
+        (?C . #("⬇"  0 1 (face (:foreground "green"  :weight bold :inverse-video t))))
+        (?D . #("⚑"  0 1 (face (:foreground "red"    :weight bold :height 1.2 ))))))
+
   :config
+  ;; (setq org-modern-priority
+  ;;     '((?A . #("❗" 0 1 (face (:foreground "orange" :weight bold :inverse-video t))))
+  ;;       (?B . #("⬆"  0 1 (face (:foreground "yellow" :weight bold :inverse-video t))))
+  ;;       (?C . #("⬇"  0 1 (face (:foreground "green"  :weight bold :inverse-video t))))
+  ;;       (?D . #("⚑"  0 1 (face (:foreground "red"    :weight bold :height 1.2 ))))))
   (setq org-modern-star 'replace)
   (setq org-modern-block-name
         '((t . t)
@@ -2146,6 +2186,7 @@ Use `treemacs' command for old functionality."
           ("export" "⏩" "⏪")))
   (global-org-modern-mode)
   (remove-hook 'org-agenda-finalize-hook 'org-modern-agenda))
+
 
 (use-package auto-tangle-mode
   :ensure (auto-tangle-mode
@@ -2171,7 +2212,7 @@ Use `treemacs' command for old functionality."
     "bT"  'org-babel-tangle-file
     "be"  '(:ignore t :which-key "execute")
     "beb" 'org-babel-execute-buffer
-    "bb"  'org-babel-tangle-block 
+    "bb"  'org-babel-tangle-block
     "bes" 'org-babel-execute-subtree)
   :config
   (defun org-babel-tangle-block()
@@ -2201,7 +2242,7 @@ Use `treemacs' command for old functionality."
      'org-babel-load-languages
      (append org-babel-load-languages
              '((sqlite . t)))))
-  
+
   (use-feature ob-sql
     :commands (org-babel-execute:sql)
     :config
@@ -2237,7 +2278,7 @@ Use `treemacs' command for old functionality."
     :commands (org-babel-execute:scala-cli)
     :config
     (add-to-list 'org-babel-load-languages '(scala-cli . t)))
-    
+
   ;; (use-feature ob-scala
   ;;   :load-path "~/.config/emacs/lisp/"
   ;;   :commands (org-babel-execute:scala-cli)
@@ -2274,10 +2315,12 @@ Use `treemacs' command for old functionality."
   ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1))
 
+
 (use-package org
   :ensure (:autoloads "org-loaddefs.el")
   :hook ((org-mode . visual-line-mode)
-         (org-mode . variable-pitch-mode))
+         (org-mode . variable-pitch-mode)
+         )
   :defer t
   :general
   (general-define-key :states '(normal) :keymaps 'org-mode-map
@@ -2300,26 +2343,11 @@ Use `treemacs' command for old functionality."
     "o"   '(:ignore t :which-key "org")
     "oc"  'org-capture
     ;; "oC"  '+org-capture-again
-    "oi"  'org-insert-link
-    "oj"  'org-chronicle
-    "ok"  '(:ignore t :which-key "clock")
-    "okg" 'org-clock-goto
-    "oki" 'org-clock-in-last
-    "okj" 'org-clock-jump-to-current-clock
-    "oko" 'org-clock-out
-    "okr" 'org-resolve-clocks
     "ol"  'org-store-link
     "om"  'org-tags-view
     ;;"os"  'org-search-view
     "oT"  'org-todo-list
     "ot"  '(:ignore t :which-key "timer")
-    "ott" 'org-timer
-    "otS" 'org-timer-stop
-    "otC" 'org-timer-change-times-in-region
-    "otc" 'org-timer-set-timer
-    "ots" 'org-timer-start
-    "oti" 'org-timer-item
-    "otp" 'org-timer-pause-or-continue
     "otr" 'org-timer-show-remaining-time)
 
   (global-leader
@@ -2331,63 +2359,6 @@ Use `treemacs' command for old functionality."
     "<"  'org-date-from-calendar
     ">"  'org-goto-calendar
 
-    "C"  '(:ignore t :which-key "clock")
-    "Cc" 'org-clock-cancel
-    "Ci" 'org-clock-in
-    "Co" 'org-clock-out
-    "Cr" 'org-clock-report
-    "CR" 'org-resolve-clocks
-
-    "d"  '(:ignore t :which-key "dates")
-    "dd" 'org-deadline
-    "df" '((lambda () (interactive) (+org-fix-close-times))
-           :which-key "org-fix-close-time")
-    "ds" 'org-schedule
-    "di" 'org-time-stamp-inactive
-    "dt" 'org-time-stamp
-
-    "e"   '(:ignore t :which-key "export")
-    "ee"  'org-export-dispatch
-
-    "h"   '(:ignore t :which-key "heading")
-    "hf"  'org-forward-heading-same-level
-    "hb"  'org-backward-heading-same-level
-
-    "i"  '(:ignore t :which-key "insert")
-    "id" 'org-insert-drawer
-    "ie" 'org-set-effort
-
-    "l" '(:ignore t :which-key "links")
-    "lc" 'org-cliplink
-    "ll" 'org-insert-link
-
-    "n"  '(:ignore t :which-key "narrow")
-    "nb" 'org-narrow-to-block
-    "ne" 'org-narrow-to-element
-    "ns" 'org-narrow-to-subtree
-    "nt" 'org-toggle-narrow-to-subtree
-    "nw" 'widen
-
-    "s"  '(:ignore t :which-key "trees/subtrees")
-    "sA" 'org-archive-subtree
-    "sa" 'org-toggle-archive-tag
-
-    "t"   '(:ignore t :which-key "tables")
-    "ta"  'org-table-align
-    "tb"  'org-table-blank-field
-    "tc"  'org-table-convert
-
-    "td"  '(:ignore t :which-key "delete")
-    "tdc" 'org-table-delete-column
-
-    "ti"  '(:ignore t :which-key "insert")
-    "tic" 'org-table-insert-column
-
-    "tt"  '(:ignore t :which-key "toggle")
-    "ttf" 'org-table-toggle-formula-debugger
-    "tto" 'org-table-toggle-coordinate-overlays
-    "tw"  'org-table-wrap-region
-
     "T"  '(:ignore t :which-key "toggle")
     "Tc"  'org-toggle-checkbox
     "Tx"  'org-latex-preview
@@ -2398,17 +2369,13 @@ Use `treemacs' command for old functionality."
     "*"   'org-ctrl-c-star
     "-"   'org-ctrl-c-minus
     "A"   'org-attach)
-  :config
+    :config
     (add-to-list 'org-src-lang-modes '("xml" . sgml))
     (add-to-list 'org-src-lang-modes '("jshell" . java-ts))
     (add-to-list 'org-src-lang-modes '("scala-cli" . scala))
     (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
     (add-to-list 'org-src-lang-modes '("json" . json-ts))
     (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
-    ;; (add-to-list 'org-src-lang-modes '("sh" . bash-ts))
-    ;; (add-to-list 'org-src-lang-modes '("zsh" . bash-ts))
-    ;; (add-to-list 'org-src-lang-modes '("bash" . bash-ts))
-    ;; (add-to-list 'org-src-lang-modes '("shell" . bash-ts))
     (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
     (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
     (add-to-list 'org-src-lang-modes '("go" . go-ts))
@@ -2417,41 +2384,37 @@ Use `treemacs' command for old functionality."
     (add-to-list 'org-src-lang-modes '("html" . html-ts))
     (add-to-list 'org-src-lang-modes '("css" . css-ts))
     (add-to-list 'org-src-lang-modes '("gherkin" . feature))
-  
-    (setq org-tags-column -120) ;; так лучше 
+
+    (setq org-tags-column -120) ;; так лучше
     (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
     (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ?
     (setq org-bookmark-names-plist nil)  ;;org-capture. don't automatically set bookmarks
 
-  (defun +md-to-org-region (start end)
-    "Convert region from markdown to org, replacing selection"
-    (interactive "r")
-    (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
 
-  (defun +md-to-org-region-python (start end)
-    "Convert region from markdown to org, replacing selection"
-    (interactive "r")
-    (shell-command-on-region 
-    start end 
-        (format "python3 %s" 
-            (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
-    t t))
+    (defun +md-to-org-region-python (start end)
+      "Convert region from markdown to org, replacing selection"
+      (interactive "r")
+      (shell-command-on-region
+       start end
+       (format "python3 %s"
+               (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
+       t t))
 
-   (defun +org-align-all-tags ()
-    "Wrap org-align-tags to be interactive and apply to all"
-    (interactive)
-    (org-align-tags t))
+    (defun +org-align-all-tags ()
+      "Wrap org-align-tags to be interactive and apply to all"
+      (interactive)
+      (org-align-tags t))
 
-  (defun +org-sparse-tree (&optional arg type)
-    (interactive)
-    (funcall #'org-sparse-tree arg type)
-    (org-remove-occur-highlights))
+    (defun +org-sparse-tree (&optional arg type)
+      (interactive)
+      (funcall #'org-sparse-tree arg type)
+      (org-remove-occur-highlights))
 
-  (defun +insert-heading-advice (&rest _args)
-    "Enter insert mode after org-insert-heading. Useful so I can tab to control level of inserted heading."
-    (when evil-mode (evil-insert 1)))
+    (defun +insert-heading-advice (&rest _args)
+      "Enter insert mode after org-insert-heading. Useful so I can tab to control level of inserted heading."
+      (when evil-mode (evil-insert 1)))
 
-  (advice-add #'org-insert-heading :after #'+insert-heading-advice)
+    (advice-add #'org-insert-heading :after #'+insert-heading-advice)
 
   (defun +org-update-cookies ()
     (interactive)
@@ -2462,13 +2425,16 @@ Use `treemacs' command for old functionality."
                ("_" (underline :foreground "#c1d0a4")
                )))
 
+  ;; DWIM открытие ссылок
+  (advice-add 'org-open-at-point :around
+            (defun org-open-at-point-dwim (orig &optional arg)
+              "Если под курсором URL — открыть его, иначе обычное поведение."
+              (if (org-in-regexp org-link-any-re)
+                  (org-open-at-point-global arg)
+                (funcall orig arg))))
   :custom
-  ;;default:
-  ;;(org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail)
-  ;;org-toc is interesting, but I'm not sure if I need it.
-
   (org-modules '(org-habit))
-  ;; 
+  ;;
   (org-todo-keywords
    ;; '((sequence  "TODO(t)" "STARTED(s!)" "NEXT(n!)" "BLOCKED(b@/!)" "|" "DONE(d)")
    ;;   (sequence  "IDEA(i)" "|" "CANCELED(c@/!)" "DELEGATED(D@/!)")
@@ -2485,24 +2451,8 @@ Use `treemacs' command for old functionality."
      ("DEPRECATED" . (:foreground "yellow-faint" :weight bold))
      ))
   ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
-  ;; (org-ellipsis " ▾")
   (org-ellipsis " ▿")
   (org-priority-lowest ?D)
-  ;; (org-priority-faces
-  ;;  ;; '((?A . nerd-icons-red)
-  ;;  ;;   (?B . warning)
-  ;;  ;;   (?C . success)))
-  ;;      '((?A . nerd-icons-red)
-  ;;       (?B . nerd-icons-orange)
-  ;;       (?C . nerd-icons-yellow)
-  ;;       (?D . nerd-icons-green)
-  ;;       (?E . nerd-icons-blue)))
-  (setq org-priority-faces
-  `((?A . (:foreground ,(nerd-icons-mdicon "nf-md-alert")))
-    (?B . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_up")))
-    (?C . (:foreground ,(nerd-icons-mdicon "nf-md-minus")))
-    (?D . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_down")))
-    (?E . (:foreground ,(nerd-icons-mdicon "nf-md-information")))))
   (org-fontify-done-headline t)
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
@@ -2537,7 +2487,7 @@ Use `treemacs' command for old functionality."
             (insert-file-contents preamble-file)
             (buffer-string))
         "")))
-  
+
   (setq org-export-use-babel nil)
   (setq org-publish-project-alist
       `(
@@ -2554,7 +2504,7 @@ Use `treemacs' command for old functionality."
          :section-numbers nil
          :html-head "<link rel=\"stylesheet\" href=\"static/css/main.css\" type=\"text/css\"/>
 <link rel=\"stylesheet\" href=\"static/css/spa.css\" type=\"text/css\"/>")
-        
+
         ("images"
          :base-directory "~/OrgFiles/Java_Вопросы/Reworked_Questions/Attachments/"
          :recursive t
@@ -2642,12 +2592,12 @@ Use `treemacs' command for old functionality."
   (add-hook 'ob-racket-pre-runtime-library-load-hook
 	      #'ob-racket-raco-make-runtime-library))
 
-(use-package org-fancy-priorities
-  :commands (org-fancy-priorities-mode)
-  :hook (org-mode . org-fancy-priorities-mode)
-  :config
-  (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
-  )
+;; (use-package org-fancy-priorities
+;;   :commands (org-fancy-priorities-mode)
+;;   :hook (org-mode . org-fancy-priorities-mode)
+;;   :config
+;;   (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
+;;   )
 
 (use-feature org-habit
   :after (org)
@@ -2784,7 +2734,7 @@ Speeds up `org-agenda' remote operations."
   (org-download-image-org-width 600)
   :config
   (setq org-download-annotate-function (lambda (_link) ""))
-  
+
   (defun my/org-download-get-assets-dir ()
     "Возвращает директорию для вложений, основанную на имени файла."
     (when buffer-file-name
@@ -2792,7 +2742,7 @@ Speeds up `org-agenda' remote operations."
              (file-name-base (file-name-base buffer-file-name))
              (assets-dir (expand-file-name ".assets" file-dir)))
         (expand-file-name file-name-base assets-dir))))
-  
+
   (defun my/org-download--get-parent-heading (level)
     "Находит заголовок-родитель уровня LEVEL."
     (save-excursion
@@ -2803,7 +2753,7 @@ Speeds up `org-agenda' remote operations."
         (when (= (org-outline-level) level)
           (setq heading (org-get-heading t t t t)))
         heading)))
-  
+
   (defun my/org-download--cleanup-string (s)
     "Очищает строку S, делая ее пригодной для имени файла."
     (when s
@@ -2812,7 +2762,7 @@ Speeds up `org-agenda' remote operations."
         (setq cleaned (replace-regexp-in-string "_+" "_" cleaned))
         ;; Убираем _ в начале и конце
         (replace-regexp-in-string "^_+\\|_+$" "" cleaned))))
-  
+
   (defun my/truncate-to-bytes (s max-bytes)
     "Обрезает строку S так, чтобы она не превышала MAX-BYTES в UTF-8.
      Обрезает по границе символов и убирает trailing underscore."
@@ -2828,7 +2778,7 @@ Speeds up `org-agenda' remote operations."
               (throw 'done result)))))
       ;; Убираем trailing underscore
       (string-trim-right result "_")))
-  
+
   (defun my/org-download-format-filename (original-filename)
     "Генерирует имя файла: Level1_Level2_Timestamp.ext
      Заголовки обрезаются до 55 байт с учетом лимитов Anki."
@@ -2843,20 +2793,21 @@ Speeds up `org-agenda' remote operations."
            ;; 120 (Anki) - 15 (timestamp) - 1 (sep) - 4 (ext) - 41 (hash) - 4 (reserve) = 55
            (safe-title (my/truncate-to-bytes title-part 55)))
       (concat safe-title "_" timestamp extension)))
-  
+
   (setq org-download-file-format-function #'my/org-download-format-filename)
-  
+
   (defun my/org-download-set-directory-before-download (&rest _)
     "Устанавливает org-download-image-dir перед вызовом скачивания."
     (setq-local org-download-image-dir (my/org-download-get-assets-dir)))
-  
+
   (defun my-avoid-org-id-get-create (orig-fun &rest args)
     "Around advice to prevent org-id-get-create in org-download-clipboard."
     (cl-letf (((symbol-function 'org-id-get-create) (lambda () nil)))
       (apply orig-fun args)))
-  
+
   (advice-add #'org-download-image :before #'my/org-download-set-directory-before-download)
   (advice-add 'org-download-clipboard :around #'my-avoid-org-id-get-create))
+
 
 (use-package org-appear
   :hook ((org-mode . org-appear-mode)
@@ -2869,15 +2820,20 @@ Speeds up `org-agenda' remote operations."
   ;; needs to be run after other hooks have acted.
   (run-at-time nil nil #'org-appear--set-elements))
 
+
 (use-feature text-mode
   :hook (text-mode . visual-line-mode))
 
 (use-package mcp-server
   :ensure (mcp-server :host github :repo "rhblind/emacs-mcp-server"
-             :files ("*.el" "mcp-wrapper.py" "mcp-wrapper.sh"))
-  :disabled t
+             :files ("*.el" ("tools/" "tools/*.el") "mcp-wrapper.py" "mcp-wrapper.sh"))
+  ;; :disabled t
   :config
-  (add-hook 'emacs-startup-hook #'mcp-server-start-unix))
+  (setq mcp-server-security-allowed-dangerous-functions
+      '(find-file, with-current-buffer, insert-file-contents, dired))
+  (setq mcp-server-emacs-tools-enabled 'all)
+  ;; (add-hook 'emacs-startup-hook #'mcp-server-start-unix)
+  )
 
 (use-feature ox-latex
   :after org-mode
@@ -2920,6 +2876,8 @@ Speeds up `org-agenda' remote operations."
   :commands (er/expand-region)
   :bind (("C-=" . er/expand-region)))
 
+
+
 ;; (use-package yasnippet
 ;;   :diminish yas-minor-mode
 ;;   :hook (elpaca-after-init-hook . yas-global-mode))
@@ -2934,7 +2892,7 @@ Speeds up `org-agenda' remote operations."
 ;;   ;; (yas-global-mode 1)
 ;;   ;; :config
 ;;   ;; (yas-reload-all)
-  
+
 ;;   )
 
 ;; (use-package yasnippet
@@ -2960,7 +2918,7 @@ Speeds up `org-agenda' remote operations."
               (lambda (&rest _)
                 (when (bound-and-true-p evil-mode)
                   (evil-insert-state))))
-  
+
   (setq tempel-path "~/.config/emacs/templates/*.eld")
   (defun +tempel-setup-capf-h ()
     (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
@@ -2975,10 +2933,10 @@ Speeds up `org-agenda' remote operations."
     ;; Initialize lsp-snippet -> tempel in eglot
     (lsp-snippet-tempel-eglot-init)))
 
-(use-package doom-snippets
-:ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
-;;:load-path "~/.config/vanilla/snippets"
-:after yasnippet)
+  (use-package doom-snippets
+  :ensure (doom-snippets :host github :repo "doomemacs/snippets" :files ("*.el" "*"))
+  ;;:load-path "~/.config/vanilla/snippets"
+  :after yasnippet)
 
 (use-feature tramp
   :defer t
@@ -2988,14 +2946,14 @@ Speeds up `org-agenda' remote operations."
   (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
     ;; (defvar my-android-host "192.168.0.14"
     ;; "IP address or hostname of Android device.")
-  
+
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "android") "remote-shell" "sh"))
-  
+
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "android")
                      "tmpdir" "/data/data/com.termux/files/home/tmp"))
-  
+
   (connection-local-set-profile-variables
    'tramp-connection-local-termux-profile
    `((tramp-remote-path
@@ -3003,10 +2961,11 @@ Speeds up `org-agenda' remote operations."
           (lambda (x)
             (if (stringp x) (concat "/data/data/com.termux/files" x) x))
           (copy-tree tramp-remote-path)))))
-  
+
   (connection-local-set-profiles
    '(:application tramp :machine "android")
    'tramp-connection-local-termux-profile))
+
 
 (use-feature vc-hooks
   :custom
@@ -3039,6 +2998,7 @@ Speeds up `org-agenda' remote operations."
   :init (setq erc-interpret-mirc-color t
               erc-lurker-hide-list '("JOIN" "PART" "QUIT")
               erc-autojoin-channels-alist '(("freenode.net" "#emacs"))))
+
 
 (use-package package-lint
   :defer t
@@ -3104,6 +3064,7 @@ Speeds up `org-agenda' remote operations."
 
   (add-hook 'pass-view-mode-hook #'pass-view--prepare-otp))
 
+
 (use-feature auth-source-pass
   :preface
   (defvar auth-source-pass--cache (make-hash-table :test #'equal))
@@ -3141,7 +3102,7 @@ Speeds up `org-agenda' remote operations."
              password-store-copy
              password-store-get)
   :custom
-  (password-store-password-length 14) ;; или 24 
+  (password-store-password-length 14) ;; или 24
   :functions (password-store--run)
   :config
   (defun password-store--run-edit (entry)
@@ -3162,6 +3123,7 @@ Speeds up `org-agenda' remote operations."
                      (format "echo -e '%s\nlogin: %s' | %s insert -m -f %s"
                              password login password-store-executable
                              (shell-quote-argument entry)))))))
+
 
 (use-package password-store-otp
   :ensure (password-store-otp :version (lambda (_) "0.1.5"))
@@ -3382,10 +3344,11 @@ append it to ENTRY."
   :defer t
   :init (setq epa-file-cache-passphrase-for-symmetric-encryption t))
 
+
 (use-feature find-func
   :defer t
   :config (setq find-function-C-source-directory
-                (expand-file-name "~/repos/emacs/src/")))
+                (expand-file-name "~/.local/src_builds/emacs/src")))
 
 (use-feature display-fill-column-indicator
   :custom
@@ -3404,10 +3367,6 @@ append it to ENTRY."
 
 (use-package fontify-face
   :commands (fontify-face-mode))
-
-(use-package fountain-mode
-  :ensure (fountain-mode :host github :repo "rnkn/fountain-mode")
-  :mode "\\.fountain\\'")
 
 (use-feature help
   :defer 1
@@ -3514,9 +3473,9 @@ append it to ENTRY."
   :ensure (llama :host github :repo "tarsius/llama" )
   :defer t)
 
-(use-package transient :defer t
-  :ensure(transient :host github :repo "magit/transient")
-  :defer t)
+(use-package transient
+  :defer t
+  :ensure(transient :host github :repo "magit/transient"))
 
 (use-package forge
   ;; :ensure (:files (:defaults "docs/*"))
@@ -3535,6 +3494,7 @@ append it to ENTRY."
 (use-package with-editor
   :ensure (with-editor :host github :repo  "magit/with-editor")
   :defer t)
+
 
 (use-package ghub
   :ensure (ghub :host github :repo  "magit/ghub")
@@ -3589,24 +3549,38 @@ append it to ENTRY."
   :commands
   (nov-mode))
 
+  ;; (with-eval-after-load 'evil-collection-notmuch
+  ;; (evil-define-key* '(normal visual) notmuch-search-mode-map
+  ;;   (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
+
+
 (use-feature notmuch
   :load-path ("/usr/share/emacs/site-lisp/notmuch")
   :commands (notmuch)
   :defer t
+  ;; :hook (notmuch-search-mode . (lambda ()
+  ;;   (evil-local-set-key 'normal (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+  ;;   (evil-local-set-key 'visual (kbd "RET") #'my/notmuch-search-maybe-resume-draft)))
   :init
   (setq notmuch-search-oldest-first nil
         message-send-mail-function 'message-send-mail-with-sendmail
-        notmuch-always-prompt-for-sender t 
+        notmuch-always-prompt-for-sender t
         message-kill-buffer-on-exit t
-        notmuch-hello-logo nil 
+        notmuch-hello-logo nil
         notmuch-hello-url nil
         notmuch-show-relative-dates t
         notmuch-show-empty-saved-searches t
         message-directory "~/Mail"
         message-sendmail-envelope-from 'header
         mail-envelope-from 'header
-        notmuch-show-all-tags-list t 
-        mail-specify-envelope-from t)
+        notmuch-show-all-tags-list t
+        mail-specify-envelope-from t
+        ;; '(nil . t) means any charset is allowed without re-encoding.
+        ;; The cdr must be the symbol t (not a list containing t) because
+        ;; mm-body-encoding checks (eq t (cdr message-posting-charset));
+        ;; '(nil t) gives cdr=(t) which fails that test and causes utf-8
+        ;; bodies to be base64-encoded instead of kept as 8bit.
+        message-posting-charset '(nil . t))
   (setq notmuch-saved-searches
         `(( :name "📥 Входящие"
             :query "tag:inbox and tag:unread"
@@ -3621,11 +3595,116 @@ append it to ENTRY."
             :query "*"
             :key "a")))
   :config
+  (my/evil-collection-override evil-collection-notmuch notmuch-search-mode
+  ((normal visual) "RET" #'my/notmuch-search-maybe-resume-draft))
+
+  ;; (with-eval-after-load 'evil-collection-notmuch
+  ;; (add-hook 'notmuch-search-mode-hook
+  ;;   (lambda ()
+  ;;     (evil-local-set-key 'normal (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+  ;;     (evil-local-set-key 'visual (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
+  ;;   90))
+;; (message "notmuch :config runs at: %s" (current-time-string))
+;; (with-eval-after-load 'evil-collection-notmuch
+;;   (message "evil-collection-notmuch loaded at: %s" (current-time-string))
+;;   (evil-define-key* '(normal visual) notmuch-search-mode-map
+;;     (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+;;   (message "RET binding in auxiliary keymap after evil-define-key*: %s"
+;;     (lookup-key (evil-get-auxiliary-keymap notmuch-search-mode-map 'normal t)
+;;                 (kbd "RET"))))
+
+  
+   ;; (with-eval-after-load 'evil-collection-notmuch
+   ;;  (evil-define-key* '(normal visual) notmuch-search-mode-map
+   ;;    (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
+  ;; (evil-define-key* '(normal visual) notmuch-search-mode-map
+  ;; (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+
+  ;; (evil-define-key '(normal visual) notmuch-search-mode-map
+  ;;   (kbd "RET") #'my/notmuch-search-maybe-resume-draft
+  ;;   (kbd "t")   #'my/notmuch-toggle-trash)
+  
+  (defun my/notmuch-message-recovery-file-p (file)
+    "Return non-nil when FILE is a Message auto-save draft file."
+    (and (stringp file)
+         (string-match-p
+          "\\`\\(?:\\*message\\*\\|message\\)-[0-9]\\{8\\}-[0-9]\\{6\\}\\'"
+          (file-name-nondirectory file))))
+
+  (defun my/notmuch-delete-message-recovery-file (file)
+    "Delete FILE when it is a Message auto-save draft file."
+    (when (and (my/notmuch-message-recovery-file-p file)
+               (file-exists-p file))
+      (delete-file file)))
+
+  (defun my/notmuch-message-save-buffer ()
+    "Save a Notmuch compose buffer through `notmuch-draft-save'."
+    (when (derived-mode-p 'notmuch-message-mode)
+      (notmuch-draft-save)
+      t))
+
+  (defun my/notmuch-draft-save-around (orig-fun &rest args)
+    "Run ORIG-FUN and remove the Message recovery file after a good save."
+    (setq-local message-encoded-mail-cache nil)
+    (let ((old-file buffer-file-name))
+      (cl-letf (((symbol-function 'mail-encode-encoded-word-buffer) #'ignore))
+        ;; Skip RFC-2047 header encoding: headers are stored as raw UTF-8.
+        ;; notmuch-draft-resume re-decodes them via my/notmuch-draft-resume-fix-headers.
+        (prog1 (apply orig-fun args)
+          (my/notmuch-delete-message-recovery-file old-file)))))
+
+  (defun my/notmuch-draft-resume-fix-headers ()
+    "Decode raw UTF-8 bytes in headers left by no-conversion read."
+    (save-restriction
+      (message-narrow-to-headers)
+      (decode-coding-region (point-min) (point-max) 'utf-8)))
+
+  (advice-add 'notmuch-draft-resume :after
+              (lambda (&rest _) (my/notmuch-draft-resume-fix-headers)))
+
+  (advice-add 'notmuch-draft-save :around #'my/notmuch-draft-save-around)
+
+  (defun my/notmuch-message-install-save-handler ()
+    "Make generic Emacs save commands store Notmuch drafts correctly."
+    (add-hook 'write-contents-functions #'my/notmuch-message-save-buffer nil t))
+
+  (add-hook 'notmuch-message-mode-hook #'my/notmuch-message-install-save-handler)
+
+  (defun my/notmuch-search-resume-draft ()
+    "Resume editing the draft at point in notmuch-search."
+    (interactive)
+    (let ((thread-id (notmuch-search-find-thread-id)))
+      (if (null thread-id)
+          (message "No thread at point")
+        (let ((msg-id (car (notmuch--process-lines
+                            notmuch-command "search"
+                            "--output=messages" "--exclude=false"
+                            thread-id))))
+          (if msg-id
+              (notmuch-draft-resume msg-id)
+            (message "No message found in thread"))))))
+
+  (defun my/notmuch-search-maybe-resume-draft ()
+    "Open draft for editing if current search is the drafts folder, else show normally."
+    (interactive)
+    (if (and notmuch-search-query-string
+             (string-match-p "tag:draft" notmuch-search-query-string))
+        (my/notmuch-search-resume-draft)
+      (notmuch-search-show-thread)))
+
+  ;; (define-key notmuch-search-mode-map (kbd "RET")
+  ;;             #'my/notmuch-search-maybe-resume-draft)
+  ;; (with-eval-after-load 'evil
+  ;;   (evil-define-key '(normal visual) notmuch-search-mode-map (kbd "RET")
+  ;;     #'my/notmuch-search-maybe-resume-draft))
+  
   (defun my/notmuch-toggle-trash ()
     (interactive)
-    (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
+    (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore)))
 
-  )
+;; (use-feature message
+;;   :config
+;;   (setq message-posting-charset '(nil . t)))
 
 (use-feature whitespace
   :custom
@@ -3639,6 +3718,7 @@ append it to ENTRY."
   ;; (whitespace-style '(empty face lines-tail tab-mark tabs trailing))
   )
 
+
 (use-feature xref
 ;    :bind
 ;   ;; Mimic VSCode
@@ -3651,16 +3731,14 @@ append it to ENTRY."
   :custom
   (disabled-command-function nil "Enable all commands"))
 
-(add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
-(add-to-list 'auto-mode-alist '("\\.bb?\\'" . clojure-mode))
+
 
 ;; (eval-when-compile
 ;;   (require 'extras))
 (use-feature extras
   :load-path "~/.config/emacs/lisp/"
-  :commands (sudo-edit 
-             my/convert-org-to-docx-with-pandoc 
+  :commands (sudo-edit
+             my/convert-org-to-docx-with-pandoc
              +unfill-region
              org-mouse-bold-mode-enable
              org-mouse-bold-mode-disable))
@@ -3684,3 +3762,4 @@ append it to ENTRY."
 
 (provide 'init)
 ;;; init.el ends here
+

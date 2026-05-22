@@ -23,7 +23,7 @@
 ;; (debug-on-entry 'emacs-repository-branch-git)
 ;; (debug-on-entry 'emacs-repository-version-git)
 #+end_src
-** Debugging 
+** Debugging
 Running this form will launch the debugger after loading a package.
 This is useful for finding out when a dependency is requiring a package (perhaps earlier than you want).
 Use by tangling this block and launching Emacs with =emacs --debug-init=.
@@ -52,7 +52,7 @@ Adding a variable watcher can be a useful way to track down initialization and m
 #+end_src
 
 ** Оптимизация file-name-handler-alist
-Пропуск  регулярных выражений в  =file-name-handler-alist= .  
+Пропуск  регулярных выражений в  =file-name-handler-alist= .
 #+begin_src emacs-lisp :lexical t
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
@@ -66,7 +66,7 @@ Adding a variable watcher can be a useful way to track down initialization and m
 
 ** Настройка Garbage Collection
 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 1)
 
@@ -77,7 +77,7 @@ Adding a variable watcher can be a useful way to track down initialization and m
    (lambda () (unless (frame-focus-state) (garbage-collect)))))
 #+end_src
 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (defun +reset-init-values ()
   (run-with-idle-timer
    1 nil
@@ -93,9 +93,9 @@ Adding a variable watcher can be a useful way to track down initialization and m
   (add-hook 'elpaca-after-init-hook '+reset-init-values))
 #+end_src
 
-** TODO Преднастройка ui и некоторый тюнинг. 
+** TODO Преднастройка ui и некоторый тюнинг.
 *** TODO Это должно быть тут ?
-Увеличивает время запуска. Здесь не надо указывать. 
+Увеличивает время запуска. Здесь не надо указывать.
 #+begin_src emacs-lisp :lexical t
 ;; (setq read-process-output-max (* 64 1024))  ; 64kb
 #+end_src
@@ -111,7 +111,7 @@ Adding a variable watcher can be a useful way to track down initialization and m
 (setq server-client-instructions nil)
 #+end_src
 *** Не менять размер фрейма в зависимости от шрифтов
-+к времени запуска если nil 
++к времени запуска если nil
 #+begin_src emacs-lisp :lexical t
 (setq frame-inhibit-implied-resize t)
 #+end_src
@@ -130,7 +130,7 @@ This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-re
 (setq desktop-restore-forces-onscreen nil)
 #+end_src
 
-*** Шрифты 
+*** Шрифты
 
 #+begin_src emacs-lisp :lexical t
 ;;(push '(font . "PT Serif") default-frame-alist)
@@ -161,7 +161,7 @@ This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-re
 #+begin_src emacs-lisp :lexical t
 ;; -*- lexical-binding: t; -*-
 #+end_src
-* Профилирование 
+* Профилирование
 ** Проверки времени запуска
 #+begin_src emacs-lisp :lexical t
 (add-hook 'elpaca-after-init-hook
@@ -189,12 +189,12 @@ This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-re
 ;; (my/wrap-require)
 #+end_src
 
-** Запуск profilling 
+** Запуск profilling
 #+begin_src emacs-lisp :lexical t :tangle no
 (profiler-start 'cpu+mem)
 (add-hook 'elpaca-after-init-hook (lambda () (profiler-stop) (profiler-report)))
 #+end_src
-** Поиск "горячих" функций 
+** Поиск "горячих" функций
 ELP полезен для поиска горячих функций
 #+begin_src emacs-lisp :var file="elpaca" :lexical t :tangle no
 (require 'elp)
@@ -207,7 +207,7 @@ ELP полезен для поиска горячих функций
 #+begin_src emacs-lisp :lexical t
 (setq initial-buffer-choice t) ;;*scratch*
 #+end_src
-* Пример хранения тем в отдельной директории. 
+* Пример хранения тем в отдельной директории.
 =~/.emacs.d=
 #+begin_src emacs-lisp :lexical t :tangle no
 (setq custom-theme-directory "~/.emacs.d/themes/")
@@ -267,7 +267,7 @@ ELP полезен для поиска горячих функций
 #+end_src
 
 ** keychain (?)
-[[https://www.funtoo.org/Keychain][Keychain]] 
+[[https://www.funtoo.org/Keychain][Keychain]]
 #+begin_src emacs-lisp :lexical t :tangle no
 ;; We need this loaded for SSH protocol
 (elpaca-queue
@@ -296,7 +296,7 @@ ELP полезен для поиска горячих функций
 #+begin_src emacs-lisp :lexical t
 (elpaca-wait)
 #+end_src
-** настрока debug 
+** настрока debug
 #+begin_src emacs-lisp :lexical t
 (if debug-on-error
     (setq use-package-verbose t
@@ -305,23 +305,29 @@ ELP полезен для поиска горячих функций
   (setq use-package-verbose nil
         use-package-expand-minimally t))
 #+end_src
-** Директории с личным пакетами 
+** Директории с личным пакетами
 #+begin_src emacs-lisp :lexical t
 (let ((default-directory "~/.config/emacs/lisp"))
   (when (file-exists-p default-directory)
     (normal-top-level-add-to-load-path '("."))
     (normal-top-level-add-subdirs-to-load-path)))
 #+end_src
-Под notmuch 
-на Void Linux  ~/usr/share/emacs/site-lisp/notmuch~ 
+Под notmuch
+на Void Linux  ~/usr/share/emacs/site-lisp/notmuch~
 #+begin_src emacs-lisp :lexical t
 
-;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch"))) 
+(let ((dirs (list (expand-file-name "var" user-emacs-directory)
+                  (expand-file-name "etc" user-emacs-directory))))
+  (dolist (dir dirs)
+    (unless (file-exists-p dir)
+      (make-directory dir t))))
+
+;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch")))
 
 
-;; (let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp"))) 
+;; (let ((additional-paths '("~/.local/state/nix/profile/share/emacs/site-lisp")))
 ;;   (mapc (lambda (path)
-;;           (when (file-directory-p path) 
+;;           (when (file-directory-p path)
 ;;             (add-to-list 'load-path path)))
 ;;         additional-paths))
 #+end_src
@@ -343,7 +349,7 @@ ELP полезен для поиска горячих функций
 #+begin_src emacs-lisp :lexical t :tangle no
 (load-file "~/Documents/emacs-secrets.el")
 #+end_src
-* General.el 
+* General.el
 #+begin_src emacs-lisp :lexical t
 (use-package general
   :ensure (:wait t)
@@ -558,7 +564,7 @@ And a macro to ease the creation of nested menu bindings:
   "d" 'delete-frame
   "Q" 'kill-emacs)
 #+end_src
-*** s search 
+*** s search
 #+begin_src emacs-lisp :lexical t
  (+general-global-menu! "search" "s"
    "b" 'consult-line
@@ -641,13 +647,13 @@ And a macro to ease the creation of nested menu bindings:
   (evil-symbol-word-search t "search by symbol with * and #.")
   (evil-shift-width 2 "Same behavior for vim's '<' and '>' commands")
   (evil-want-C-i-jump nil) ;; fix табов с org src ??
-  (evil-complete-all-buffers nil) 
+  (evil-complete-all-buffers nil)
   (evil-want-integration t)
   (evil-search-module 'evil-search "use vim-like search instead of 'isearch")
   (evil-undo-system 'undo-redo)
   (evil-want-minibuffer nil) ;; x2 ESC в минибуфере.
-  (evil-move-beyond-eol t) ;; с nil курсор цепляется при скролле изображений 
-  (evil-move-cursor-back nil) ;; не делать отступ назад при esc 
+  (evil-move-beyond-eol t) ;; с nil курсор цепляется при скролле изображений
+  (evil-move-cursor-back nil) ;; не делать отступ назад при esc
   :config
   (+general-global-window
     "H" 'evil-window-move-far-left
@@ -664,7 +670,7 @@ And a macro to ease the creation of nested menu bindings:
     (define-key evil-visual-state-map (kbd "<") 'djoyner/evil-shift-left-visual)
     (define-key evil-visual-state-map [tab] 'djoyner/evil-shift-right-visual)
     (define-key evil-visual-state-map (kbd "<backtab>") 'djoyner/evil-shift-left-visual)
-  
+
   (defun djoyner/evil-shift-left-visual (beg end)
     (interactive "r")
     (evil-shift-left beg end)
@@ -682,13 +688,27 @@ And a macro to ease the creation of nested menu bindings:
 #+end_src
 
 ** evil-collection
-Коллекция evil биндов из репы progfolio. Поменять ? 
-#+begin_src emacs-lisp :lexical t 
+Коллекция evil биндов из репы progfolio. Поменять ?
+#+begin_src emacs-lisp :lexical t
 (use-package evil-collection
-  ;; :ensure (:remotes ("origin"
-  ;;                     ("fork" :repo "progfolio/evil-collection")))
   :after (evil)
-  :config (evil-collection-init)
+  :config
+  (evil-collection-init)
+
+  (defmacro my/evil-collection-override (collection-feature mode-map &rest bindings)
+  "BINDINGS are (states key function) where states can be a list or single symbol."
+  `(with-eval-after-load ',collection-feature
+     (add-hook ',(intern (concat (symbol-name mode-map) "-hook"))
+       (lambda ()
+         ,@(mapcan (lambda (b)
+             (let ((states (if (listp (nth 0 b)) (nth 0 b) (list (nth 0 b))))
+                   (key    (nth 1 b))
+                   (fn     (nth 2 b)))
+               (mapcar (lambda (state)
+                   `(evil-local-set-key ',state (kbd ,key) ,fn))
+                 states)))
+           bindings))
+       90)))
   :init
   (setq evil-collection-setup-minibuffer nil) ;; связано с (evil-want-minibuffer nil)
   :custom
@@ -717,7 +737,7 @@ Shows match counts in mode line.
 #+end_src
 
 ** evil-nerd-commenter
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package evil-nerd-commenter
   :after (evil)
   :commands (evilnc-comment-operator
@@ -745,7 +765,7 @@ Shows match counts in mode line.
   (enable-recursive-minibuffers t "Allow minibuffer commands in minibuffer")
   (frame-title-format '(buffer-file-name "%f" ("%b"))
                       "Make frame title current file's name.")
-  (frame-resize-pixelwise t) ;; fvwm3 
+  (frame-resize-pixelwise t) ;; fvwm3
 
   (find-library-include-other-files nil)
   (indent-tabs-mode nil "Use spaces, not tabs")
@@ -756,19 +776,19 @@ Shows match counts in mode line.
   (tab-stop-list (number-sequence 2 120 2))
   (tab-width 2 "Shorter tab widths")
   (column-numbes-mode t);;
-  (truncate-lines t) ;; убрать перенос " ↪ " 
+  (truncate-lines t) ;; убрать перенос " ↪ "
   (line-numbers-mode t) ;; строки и колоки(882,44)
   (column-number-mode t)
-  (create-lockfiles nil) ;; TODO 
+  (create-lockfiles nil) ;; TODO
   (use-short-answers t) ;; yes-no to y-n
-  (resize-mini-windows nil) 
+  (resize-mini-windows nil)
   (completion-styles '(flex basic partial-completion emacs22))
   ;; c corfu. если не будет работать. положить в init
   (completion-cycle-threshold 3)
   (tab-always-indent 'complete)
   ;;
   (inhibit-compacting-font-caches t)
-  ;; PERF: 6% CPU 
+  ;; PERF: 6% CPU
   (bidi-paragraph-direction 'left-to-right)
   (bidi-display-reordering 'left-to-right)
   (bidi-inhibit-bpa t)
@@ -784,18 +804,9 @@ Shows match counts in mode line.
         selection-coding-system 'utf-8
         buffer-file-coding-system 'utf-8
         prefer-coding-system 'utf-8)
-  ;; don't want ESC as a modifier. 
+  ;; don't want ESC as a modifier.
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ;; переделать
-  (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
-  
-
-  ;; (setq display-buffer-alist
-  ;;       `((,(rx bos (or "*Apropos*" "*Help*" "*helpful" "*info*" "*Summary*") (0+ not-newline))
-  ;;          (display-buffer-reuse-mode-window display-buffer-below-selected)
-  ;;          (window-height . 0.33)
-  ;;          (mode apropos-mode help-mode helpful-mode Info-mode Man-mode))))
-  
-  )
+               )
 #+end_src
 * display-line-numbers
 #+begin_src emacs-lisp :lexical t
@@ -885,12 +896,12 @@ unreadable. Returns the names of envvars that were changed."
   :defer t
   :hook (prog-mode . electric-pair-mode)
   :config
-  (setq electric-pair-pairs 
+  (setq electric-pair-pairs
             (append electric-pair-pairs '(( "[^ ]<" . ">")))))
 #+end_src
 
 * eshell
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-feature eshell
   :commands (eshell eshell-command)
   :custom
@@ -900,7 +911,7 @@ unreadable. Returns the names of envvars that were changed."
   (setq eshell-modules-list
         (append eshell-modules-list
                 '(eshell-smart eshell-elecslash eshell-tramp)))
-  
+
   (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
         eshell-prompt-function
         (lambda nil
@@ -911,7 +922,7 @@ unreadable. Returns the names of envvars that were changed."
 	         "]"
 	         (if (= (user-uid) 0) "# " "$ "))))
 
-  ;;TODO 
+  ;;TODO
   (defun project-eshell-popup (&optional arg)
           "Start Eshell in a pop-up window in the current project's root directory.
       If a buffer already exists for running Eshell in the project's root,
@@ -937,7 +948,7 @@ unreadable. Returns the names of envvars that were changed."
           buf))))
   (add-hook 'eshell-mode-hook (lambda () (setenv "TERM" "xterm-256color")))
   ;;
-  ) 
+  )
 
 #+end_src
 
@@ -958,16 +969,16 @@ unreadable. Returns the names of envvars that were changed."
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package modus-themes
   ;; :ensure (modus-themes :ref "4.8.1")
-  :config 
+  :config
   (setq modus-themes-custom-auto-reload nil
       modus-themes-bold-constructs nil
-      modus-themes-mixed-fonts t 
+      modus-themes-mixed-fonts t
       modus-themes-italic-constructs t
       modus-themes-prompts '(bold intense)
       modus-themes-completions '((t . (extrabold)))
       modus-themes-headings
       '((0 . (variable-pitch 1))
-        (t . (variable-pitch 1)) 
+        (t . (variable-pitch 1))
 
     ))
     ;;fonts
@@ -982,14 +993,14 @@ unreadable. Returns the names of envvars that were changed."
           (border-mode-line-inactive unspecified)
           ))
 
-    ;;Dark 
+    ;;Dark
     (setq modus-vivendi-palette-overrides
         '((bg-main  "#1e1f22");;idea
           (fg-main "#bcbec4")
           (constant "#E8BA36")
           ;; (constant "#bcbec4")
           (fnname "#57aaf7")
-          (keyword "#fa8072") ;; light salmon 
+          (keyword "#fa8072") ;; light salmon
           (string "#6AAB73")
           (type "#BCBEC4")
           (variable "#bcbec4")
@@ -1073,7 +1084,7 @@ unreadable. Returns the names of envvars that were changed."
     (message "Faces: %s" faces)))
 #+end_src
 
-
+[[https://www.google.com/][Google]]
 *New user option 'treesit-enabled-modes'.*
 [[https://github.com/emacs-mirror/emacs/blob/07adb8b59dee772b56612b90acd19e1a5a456628/etc/NEWS#L769][emacs/etc/NEWS at 07adb8b59dee772b56612b90acd19e1a5a456628 · emacs-mirror/ema...]]
 
@@ -1081,8 +1092,9 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature treesit
   :custom
   (treesit-font-lock-level 2)
+  ;; (treesit-enabled-modes t)
   :config
-  ;; https://www.reddit.com/r/emacs/comments/1j53j8v/comment/mge63rp/
+;;   ;; https://www.reddit.com/r/emacs/comments/1j53j8v/comment/mge63rp/
   (add-to-list 'treesit-language-source-alist
              '(typst "https://github.com/uben0/tree-sitter-typst"))
 
@@ -1128,15 +1140,15 @@ unreadable. Returns the names of envvars that were changed."
   (dired-recursive-deletes 'always)
   (dired-recursive-copies 'always)
   (dired-hide-details-hide-information-lines nil)
-  (dired-hide-details-hide-symlink-targets nil) 
-  (dired-omit-mode t nil) 
+  (dired-hide-details-hide-symlink-targets nil)
+  (dired-omit-mode t nil)
   (dired-omit-verbose nil)
   (dired-guess-shell-alist-user
       '(("\\.py\\'" "python3")))
   ;; :hook (dired-mode-hook . dired-hide-details-mode)
   :config
   ;;(setq dired-omit-files (rx (seq bol ".")))
-  (let ((args (list "-ahl" "-v" "--group-directories-first")))
+  (let ((args (list "-ahlv" "--group-directories-first")))
     (when (featurep :system 'bsd)
       (if-let* (gls (executable-find "gls"))
           (setq insert-directory-program gls)
@@ -1169,13 +1181,13 @@ unreadable. Returns the names of envvars that were changed."
   :defer t)
 #+end_src
 ** dired-x
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-feature dired-x
  :after dired
  :hook (dired-mode . dired-omit-mode))
 #+end_src
-* no littering
-#+begin_src emacs-lisp :lexical t :tangle no 
+* TODO no littering
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package no-littering
   :defer t
   :config
@@ -1202,7 +1214,7 @@ unreadable. Returns the names of envvars that were changed."
 [[https://github.com/Lovesan/.emacs.d/blob/master/lisp/lvsn-commons.el]] потом попробовать.
 [[https://github.com/MatthewZMD/.emacs.d/blob/7c0269d77ba4b99186143ebdd9afff04ce69580b/elisp/init-scroll.el#L42]]
 
-#+begin_src emacs-lisp :lexical t :tangle no 
+#+begin_src emacs-lisp :lexical t :tangle no
 (when (display-graphic-p)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . hscroll))
         mouse-wheel-scroll-amount-horizontal 1
@@ -1216,18 +1228,19 @@ unreadable. Returns the names of envvars that were changed."
 #+end_src
 * ultra-scroll
 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package ultra-scroll
   :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
   :init
   (setq scroll-conservatively 101 ; important!
-        scroll-margin 0) 
+        scroll-margin 0)
   :config
   (ultra-scroll-mode 1))
 #+end_src
 * auto-fill-mode
 #+begin_src emacs-lisp :lexical t
 (use-feature simple
+  ;; :hook ((prog-mode text-mode conf-mode) . delete-trailing-whitespace-mode)
   :general
   (+general-global-toggle
     "f" 'auto-fill-mode)
@@ -1373,13 +1386,13 @@ unreadable. Returns the names of envvars that were changed."
     (advice-add #'keyboard-quit :before #'popper-close-window-hack)))
 #+end_src
 
-* TODO auto-revert 
+* TODO auto-revert
 #+begin_src emacs-lisp :lexical t
 (use-feature autorevert
   :defer 2
   :custom
   (auto-revert-verbose nil)
-  (global-auto-revert-non-file-buffers t) ;; dired 
+  (global-auto-revert-non-file-buffers t) ;; dired
   ;; (auto-revert-interval 0.01 "Instantaneously revert")
   (auto-revert-interval 2 "Instantaneously revert")
   :config
@@ -1497,7 +1510,7 @@ is set if N was explicitly specified."
 #+begin_src emacs-lisp :lexical t
 (use-package elcord
   :defer 3
-  ;;:commands elcord 
+  ;;:commands elcord
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
@@ -1553,7 +1566,7 @@ https://github.com/jorgenschaefer/emacs-buttercup
   :custom
   (compilation-scroll-output 'first-error)
   (compilation-always-kill t)
-  (compilation-ask-about-save nil);;autosave + compile 
+  (compilation-ask-about-save nil);;autosave + compile
   :config
 
   (defun +compilation-colorize ()
@@ -1576,9 +1589,9 @@ https://github.com/jorgenschaefer/emacs-buttercup
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
         ediff-split-window-function 'split-window-horizontally
         ediff-merge-split-window-function 'split-window-horizontally))
-  
+
 #+end_src
-* anzu 
+* anzu
 #+begin_quote
 anzu.el provides a minor mode which displays 'current match/total
 matches' in the mode-line in various search modes.  This makes it
@@ -1592,11 +1605,11 @@ for your search query.
   :config (global-anzu-mode))
 #+end_src
 
-* TODO Бекапы и Автосейвы 
+* TODO Бекапы и Автосейвы
+[[https://github.com/zendo/nsworld/blob/fc5b7bf36df24e97eab45f27bcd18b20d05191bd/dotfiles/emacs/elisp/ee-backup.el#L26][nsworld/dotfiles/emacs/elisp/ee-backup.el at fc5b7bf36df24e97eab45f27bcd18b20...]]
+
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-feature files
-  ;;:hook
-  ;;(before-save . delete-trailing-whitespace)
   :config
   ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
   (defun rename-file-and-buffer (new-name)
@@ -1613,16 +1626,24 @@ for your search query.
             (rename-buffer new-name)
             (set-visited-file-name new-name)
             (set-buffer-modified-p nil))))))
+
+  (add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
+  (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
+  (add-to-list 'auto-mode-alist '("\\.bb?\\'" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
+
   :custom
+  (auto-save-visited-mode 1)
+  (auto-save-list-file-prefix nil) ; not create directory emacs/auto-save-list
   (auto-save-default nil) ;; disable auto save files
-  (make-backup-files) ;; TODO 
+  (make-backup-files) ;; TODO
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (require-final-newline t "Automatically add newline at end of file")
   (backup-by-copying t)
   (backup-directory-alist `((".*" . ,(expand-file-name
                                       (concat user-emacs-directory "backups"))))
                           "Keep backups in their own directory")
-  (auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosaves/") t))) 
+  (auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "autosaves/") t)))
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
@@ -1630,32 +1651,24 @@ for your search query.
   (safe-local-variable-values
    '((eval load-file "./init-dev.el")
      (org-clean-refile-inherit-tags))
-   "Store safe local variables here instead of in emacs-custom.el"))
-#+end_src
-
-* autosave. 
-[[https://github.com/zendo/nsworld/blob/fc5b7bf36df24e97eab45f27bcd18b20d05191bd/dotfiles/emacs/elisp/ee-backup.el#L26][nsworld/dotfiles/emacs/elisp/ee-backup.el at fc5b7bf36df24e97eab45f27bcd18b20...]]
-#+begin_src emacs-lisp :lexical t
-(use-feature files
-  :custom 
-  (auto-save-visited-mode 1)
-  :init 
+   "Store safe local variables here instead of in emacs-custom.el")
+  :init
   (add-function :after after-focus-change-function (lambda () (save-some-buffers t)))
-  (setq auto-save-visited-predicate
-        (lambda ()
-          (not (and (boundp 'major-mode)
-                   (stringp (symbol-name major-mode))
-                   (string-match-p "^notmuch-" (symbol-name major-mode)))))))
+  ;; (setq auto-save-visited-predicate
+  ;;       (lambda ()
+  ;;         (not (and (boundp 'major-mode)
+  ;;                  (stringp (symbol-name major-mode))
+  ;;                  (string-match-p "^notmuch-" (symbol-name major-mode))))))
+  )
 #+end_src
 
 * save-place
 #+begin_src emacs-lisp :lexical t
 ;; Temp files (save-place, recenf, undo-tree)
-(defconst my-temp (expand-file-name "my-temp" user-emacs-directory))
-(unless (file-exists-p my-temp)
-  (make-directory my-temp))
-(setq save-place-file (expand-file-name "saveplace" my-temp))
-(save-place-mode 1)
+(use-feature saveplace
+  :config
+  (setq save-place-file (expand-file-name "var/save-place.el" user-emacs-directory))
+  (save-place-mode 1))
 #+end_src
 
 * undo-fu
@@ -1680,7 +1693,7 @@ for your search query.
   (global-undo-fu-session-mode 1))
 
 #+end_src
-  
+
 * undo-tree C-x u
 #+begin_src emacs-lisp :lexical t
 (use-package vundo
@@ -1689,7 +1702,7 @@ for your search query.
   (setq vundo-glyph-alist vundo-unicode-symbols)
   (setq vundo-roll-back-on-quit nil))
   #+end_src
-* savehist истории минибуфера 
+* savehist истории минибуфера
 #+begin_src emacs-lisp :lexical t
 (use-feature savehist
   :defer 1
@@ -1704,7 +1717,7 @@ for your search query.
   "Bold face for evil states")
 
 (defface evil-normal-face
-  '((t (:inherit evil-state-face 
+  '((t (:inherit evil-state-face
         :background "#ff5f5f"
         :foreground "white")))
   "Face for evil normal state")
@@ -1743,7 +1756,7 @@ for your search query.
   '((t (:inherit (region evil-state-face))))
   "Face for evil visual state")
 
-(setq-default my-evil-modeline-string 
+(setq-default my-evil-modeline-string
               (propertize " NORMAL " 'face 'evil-normal-face))
 
 (defun my-evil-update-modeline ()
@@ -1765,15 +1778,15 @@ for your search query.
                 evil-emacs-state-entry-hook))
   (add-hook hook #'my-evil-update-modeline))
 
-(setq-default mode-line-format 
+(setq-default mode-line-format
               '((:eval my-evil-modeline-string)  ; ← Обёрнут в (:eval ...)
-                "%e" 
+                "%e"
                 mode-line-front-space
                 ;; (:propertize
                 ;;  (""
-                ;;   mode-line-mule-info 
-                ;;   mode-line-client 
-                ;;   mode-line-modified 
+                ;;   mode-line-mule-info
+                ;;   mode-line-client
+                ;;   mode-line-modified
                 ;;   mode-line-remote
                 ;;   " ")
                 ;;  display (min-width (5.0)))
@@ -1808,7 +1821,7 @@ for your search query.
 #+end_src
 
 * TODO ibuffer
-* reverse-im 
+* reverse-im
 Русская раскладка
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package reverse-im
@@ -1820,7 +1833,7 @@ for your search query.
   (reverse-im-mode t))
 #+end_src
 * TODO logview
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package logview
   :defer t
   ;:custom
@@ -1842,7 +1855,7 @@ for your search query.
   (define-key vertico-map (kbd "C-h") #'+minibuffer-up-dir)
 )
 #+end_src
-* orderless 
+* orderless
 #+begin_src emacs-lisp :lexical t
 (use-package orderless
   :defer 1
@@ -1880,7 +1893,7 @@ for your search query.
     (interactive)
     (let ((consult-ripgrep-args (concat consult-ripgrep-args " -w")))
       (consult-ripgrep)))
-  
+
   ;; Поиск по всем заголовка в директории
   (defun consult--outline-directory-candidates (files)
     (let ((candidates nil))
@@ -1937,10 +1950,10 @@ for your search query.
        :history '(:input consult--line-history)
        :add-history (thing-at-point 'symbol)
        :state (consult--location-state candidates))))
-  
 
 
-  
+
+
   (consult-customize
    consult-recent-file
    consult-source-recent-file
@@ -1953,9 +1966,9 @@ for your search query.
   (+general-global-buffer
     "b" 'consult-buffer)
   :init
-  
+
   (setq
-   xref-show-xrefs-function #'consult-xref 
+   xref-show-xrefs-function #'consult-xref
    xref-show-definitions-function #'consult-xref)
 
   )
@@ -1982,12 +1995,12 @@ for your search query.
   )
 #+end_src
 * TODO consult-eglot
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package consult-eglot
   :defer t)
 #+end_src
 * consult-eglot-embark
-это расширение из consult-eglot 
+это расширение из consult-eglot
 #+begin_src emacs-lisp :lexical t
 #+end_src
 * emojify
@@ -2002,7 +2015,6 @@ for your search query.
   :general
   (general-nmap "C-l" 'embark-act))
 #+end_src
-
 * embark-consult
 #+begin_src emacs-lisp :lexical t
 (use-package embark-consult
@@ -2037,7 +2049,7 @@ for your search query.
 #+end_src
 
 * corfu
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package corfu
   :ensure (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
   :defer 5
@@ -2045,12 +2057,12 @@ for your search query.
   (corfu-cycle t)
   (corfu-auto t)
   (corfu-auto-delay 0.1) ;; 0.2 def
-  (corfu-auto-prefix 2) 
+  (corfu-auto-prefix 2)
   ;;(corfu-seperator ?-)
   (corfu-seperator ?\s)
   :config
   (global-corfu-mode)
-  ;; 
+  ;;
   (with-eval-after-load 'evil
     (setq evil-complete-next-func (lambda (_) (completion-at-point))))
   )
@@ -2090,7 +2102,7 @@ for your search query.
 
 * cape
 [[https://kristofferbalintona.me/posts/202203130102/][Cape | Kristoffer Balintona]]
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package cape
   :custom
   (cape-dabbrev-buffer-function 'current-buffer)
@@ -2130,7 +2142,7 @@ for your search query.
 #+end_src
 
 * kind icon замена company-box-icons
-#+begin_src emacs-lisp :lexical t :tangle no 
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package kind-icon
   :after corfu
   :custom
@@ -2171,7 +2183,7 @@ for your search query.
 #+end_src
 
 * TODO hydra
-(use-package hydra) 
+(use-package hydra)
 * quickrun
 #+begin_src emacs-lisp :lexical t
 (use-package quickrun
@@ -2197,7 +2209,7 @@ for your search query.
     (setf (alist-get 'nim-mode apheleia-mode-alist)
           'nph)
     (setf (alist-get 'erlang-mode apheleia-mode-alist)
-          'rebar3)       
+          'rebar3)
     )
 #+end_src
 * TODO Emacs-lsp
@@ -2214,7 +2226,7 @@ for your search query.
   ;; . lsp-deferred
   ;;:commands lsp
   :custom
-  (lsp-completion-provider :none) 
+  (lsp-completion-provider :none)
   (lsp-completion-show-kind nil)
   (lsp-completion-show-detail nil)
   (lsp-semgrep-languages nil)
@@ -2237,9 +2249,9 @@ for your search query.
   ;; (setq lsp-disabled-clients '(pyls pylsp))
   ;; (setq lsp-log-io t)
   (setq lsp-restart 'auto-restart)
-  ;;TODO: 
+  ;;TODO:
   ;; (setq lsp-enable-symbol-highlighting nil) ;; у него тут t
-  ;; lsp-warn-no-matched-clients t) ;; и это у него включено 
+  ;; lsp-warn-no-matched-clients t) ;; и это у него включено
   ;; (setq lsp-enable-on-type-formatting nil)
   ;; (setq lsp-signature-auto-activate nil)
   ;; (setq lsp-signature-render-documentation nil)
@@ -2253,7 +2265,7 @@ for your search query.
   ;; (setq lsp-enable-snippet nil)
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
   (setq lsp-idle-delay 0.5)
-  
+
   ;; Enable LSP automatically for Erlang files
   ;; (add-hook 'erlang-mode-hook #'lsp)
 
@@ -2262,7 +2274,7 @@ for your search query.
                     :major-modes '(erlang-mode)
                     :priority 0
                     :server-id 'erlang-language-platform))
-  
+
   ;;emacs-lsp-booster
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
   "Try to parse bytecode instead of json."
@@ -2318,7 +2330,7 @@ for your search query.
 ;;   )
 #+end_src
 ** lsp-java
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package lsp-java
   :after lsp
   :hook ((java-mode java-ts-mode) . (lambda () (require 'lsp-java)))
@@ -2375,7 +2387,7 @@ for your search query.
 #+begin_src emacs-lisp :lexical t
 (use-package lsp-haskell
   :after lsp
-  
+
   :config
   ;; (add-hook 'haskell-mode-hook #'lsp)
   ;; (add-hook 'haskell-literate-mode-hook #'lsp)
@@ -2406,7 +2418,7 @@ for your search query.
       ))
 #+end_src
 * eglot
-** general 
+** general
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-feature eglot
   ;; :hook
@@ -2423,7 +2435,7 @@ for your search query.
   (eglot-stay-out-of '())
   (eglot-extend-to-xref t)
   (eglot-send-changes-idle-time 0.5)
-                     
+
   :config
   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider
                                             :foldingRangeProvider))
@@ -2448,7 +2460,7 @@ for your search query.
 #+end_src
 
 ** eglot-java
-#+begin_src emacs-lisp :lexical t :tangle no 
+#+begin_src emacs-lisp :lexical t :tangle no
 (use-package eglot-java
   :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
   ;; :custom
@@ -2668,9 +2680,9 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
   (cl-defmethod eglot-execute (server action &context (major-mode java-ts-mode))
     (+java/eglot-execute server action)))
 
-  
 
-  
+
+
 #+end_src
 
 ** extra 2
@@ -2808,7 +2820,7 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 	:config	(eglot-booster-mode))
 #+end_src
 * eglot-hierarchy
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package eglot-hierarchy
   :ensure (eglot-hierarchy :host github :repo "dolmens/eglot-hierarchy")
   :defer t)
@@ -2824,10 +2836,10 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 #+end_src
 * haskell
 * haskell-mode
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package haskell-mode
   :defer t
-  ) 
+  )
 #+end_src
 * Java-ts-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
@@ -2843,8 +2855,8 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
   :defer t
   :custom
   (python-indent-guess-indent-offset-verbose nil)) ;; Remove warning : Can’t guess python-indent-offset
-;; (use-package python-mode 
-;;   :init 
+;; (use-package python-mode
+;;   :init
 ;;     (add-hook 'python-ts-mode-hook
 ;;             (lambda ()
 ;;               (set (make-local-variable 'compile-command)
@@ -2853,7 +2865,7 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 
 * groovy-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
-(use-package groovy-mode 
+(use-package groovy-mode
 :mode (("build\\.gradle" . groovy-mode)
        ("Jenkinsfile" . groovy-mode))
 :config
@@ -2861,7 +2873,7 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 #+end_src
 * kotlin-ts-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
-(use-package kotlin-ts-mode 
+(use-package kotlin-ts-mode
   :ensure (kotlin-ts-mode :host gitlab :repo "bricka/emacs-kotlin-ts-mode")
   :mode "\\.kts?m?\\'")
 #+end_src
@@ -2872,7 +2884,7 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
            ("\\.exs\\'" . elixir-ts-mode)
            ("\\mix.lock\\'" . elixir-ts-mode)))
 #+end_src
-* erlang mode 
+* erlang mode
 #+begin_src emacs-lisp :lexical t
 (use-package erlang
   :defer t
@@ -2923,8 +2935,8 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 #+begin_src emacs-lisp :lexical t
 (use-package rustic
   :ensure (rustic :host github :repo "emacs-rustic/rustic")
-  :defer t) 
-#+end_src                  
+  :defer t)
+#+end_src
 * ruby
 * clojure
 * scala
@@ -2999,13 +3011,7 @@ HTDP + SICP
   :hook (racket-mode . racket-xp-mode)
   :general
   (general-define-key :states '(normal) :keymaps 'racket-mode-map
-                      (kbd "E") 'racket-eval-last-sexp)
-
-  :config
-  (add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
-  )
-
-(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
+                      (kbd "E") 'racket-eval-last-sexp))
 #+end_src
 
 #+begin_src emacs-lisp :lexical t
@@ -3035,7 +3041,7 @@ HTDP + SICP
 #+end_src
 
 * TODO ansible
-* TODO web-mode JS TS HTML 
+* TODO web-mode JS TS HTML
 [[https://github.com/seagle0128/.emacs.d/blob/9722d41abee93f8f6a28b36c3f7cb8795ada6a5a/lisp/init-web.el#L118][.emacs.d/lisp/init-web.el at 9722d41abee93f8f6a28b36c3f7cb8795ada6a5a · seagl...]]
 #+begin_src emacs-lisp :lexical t
 (use-package web-mode
@@ -3056,7 +3062,7 @@ HTDP + SICP
   (dap-mode t))
 #+end_src
 * move-text
-Двигаем текст между строк. 
+Двигаем текст между строк.
 #+begin_src emacs-lisp :lexical t
 (use-package move-text
   :bind (("M-p" . move-text-up)
@@ -3091,7 +3097,7 @@ HTDP + SICP
 #+end_src
 
 * nxml-mode
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 ;; (use-feature nxml-mode
 ;;   :mode "\\.xml\\'"
 ;;   :config
@@ -3109,7 +3115,7 @@ HTDP + SICP
   :config
   (setq sly-mrepl-history-file-name (concat user-emacs-directory "sly-mrepl-history"))
 
-  
+
   (dolist (impl '("lisp"   ; Default Lisp implementation on the system
                   "clisp"  ; GNU CLISP
                   "abcl"   ; Armed Bear Common Lisp
@@ -3144,7 +3150,7 @@ HTDP + SICP
       "Returns non-nil if BUF is temporary."
       (equal (substring (buffer-name buf) 0 1) " "))
 
- ;;;   
+ ;;;
     (progn
       (defun +common-lisp-init-sly-h nil
         "Attempt to auto-start sly when opening a lisp buffer."
@@ -3160,9 +3166,9 @@ HTDP + SICP
         (dolist (func (list (function +common-lisp-init-sly-h)))
           (add-hook hook func nil nil))))
 
-  
+
   :init
-  
+
   (progn
     (progn
       (with-eval-after-load 'emacs
@@ -3192,7 +3198,7 @@ HTDP + SICP
   :init
   (add-to-list 'sly-contribs 'sly-asdf 'append))
 #+end_src
-Нужен пакет quicklisp котрого нет в void 
+Нужен пакет quicklisp котрого нет в void
 #+begin_src emacs-lisp :lexical t
 ;; (use-package sly-quicklisp
 ;;   :after (sly)
@@ -3249,13 +3255,13 @@ HTDP + SICP
   :defer t)
 #+end_src
 
-* ejc-sql 
-Работает. 
+* ejc-sql
+Работает.
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package ejc-sql
   :defer t
   :commands ejc-sql-mode ejc-connect
-  :config 
+  :config
   ;(+eglot-register '(sql-mode) "sqls")
   (setq ejc-result-table-impl 'ejc-result-mode)
   (defun k/sql-mode-hook () (ejc-sql-mode t))
@@ -3277,7 +3283,7 @@ HTDP + SICP
    :connection-uri "jdbc:mariadb://localhost:3306/sqlstepik"
    :user "root"
    :password "root"
-   
+
    )
 )
 
@@ -3294,7 +3300,7 @@ Eglot + sqls ?
 
 * flycheck
 ** flycheck
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package flycheck
   :commands (flycheck-mode)
   :custom (flycheck-emacs-lisp-load-path 'inherit "necessary with alternatives to package.el"))
@@ -3332,7 +3338,7 @@ Eglot + sqls ?
   :config
   (setq flymake-suppress-zero-counters nil)
 
-  
+
   (add-to-list 'display-buffer-alist
                '("\\`\\*Flymake diagnostics.*?\\*\\'"
                  display-buffer-in-side-window  (window-parameters (window-height 0.25)) (side . bottom)))
@@ -3381,10 +3387,10 @@ https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
   :defer t
   :commands fvwm-mode )
 
-  
+
 #+end_src
 * TODO ispell
-Для cape-dict 
+Для cape-dict
 #+begin_src emacs-lisp :lexical t
 (use-feature ispell
   :config
@@ -3489,20 +3495,20 @@ Use `treemacs' command for old functionality."
   :custom
   (yaml-indent-offset 2)
   (yaml-backspace-function 'backward-delete-char-untabify)
-  
+
   :config
   (defun my-yaml-ts-mode-setup ()
     "Setup proper indentation and keys for yaml-ts-mode."
     (require 'yaml-mode)
     (setq-local indent-line-function 'yaml-indent-line)
-    
+
     (local-set-key (kbd "RET") 'newline-and-indent)
     (local-set-key (kbd "DEL") 'yaml-electric-backspace)
     (local-set-key (kbd "|") 'yaml-electric-bar-and-angle)
     (local-set-key (kbd ">") 'yaml-electric-bar-and-angle)
     (local-set-key (kbd "-") 'yaml-electric-dash-and-dot)
     (local-set-key (kbd ".") 'yaml-electric-dash-and-dot))
-  
+
   :hook (yaml-ts-mode . my-yaml-ts-mode-setup))
 #+end_src
 
@@ -3520,16 +3526,17 @@ Use `treemacs' command for old functionality."
   (indent-bars-highlight-current-depth nil)
   (indent-bars-display-on-blank-lines nil))
 #+end_src
-  
+
 * org-cliplink
 #+begin_src emacs-lisp :lexical t
 (use-package org-cliplink
   :defer t)
 #+end_src
-* org-modern
+* [#D] org-modern
 
+("⚑" "⬆" "■")
     <--- [[https://github.com/karthink/popper][GitHub - karthink/popper: Emacs minor-mode to summon and dismiss buffers easi...]]
-#+begin_src  emacs-lisp :lexical t 
+#+begin_src  emacs-lisp :lexical t
 (use-package org-modern
   :after (org)
   :custom
@@ -3537,9 +3544,14 @@ Use `treemacs' command for old functionality."
   (org-modern-progress nil) ;;  ?
   (org-modern-table nil) ;; поломано
   (org-modern-horizontal-rule (make-string 36 ?─)) ;; "───────────"
-  (org-modern-priority nil) ;; не нашел годного
+  (org-modern-priority t)
   (org-modern-replace-stars "◉○✸✿✤✜◆▶")
   (org-modern-checkbox nil)
+  (org-modern-priority
+      '((?A . #("❗" 0 1 (face (:foreground "orange" :weight bold :inverse-video t))))
+        (?B . #("⬆"  0 1 (face (:foreground "yellow" :weight bold :inverse-video t))))
+        (?C . #("⬇"  0 1 (face (:foreground "green"  :weight bold :inverse-video t))))
+        (?D . #("⚑"  0 1 (face (:foreground "red"    :weight bold :height 1.2 ))))))
   :config
   (setq org-modern-star 'replace)
   (setq org-modern-block-name
@@ -3551,7 +3563,6 @@ Use `treemacs' command for old functionality."
           ("export" "⏩" "⏪")))
   (global-org-modern-mode)
   (remove-hook 'org-agenda-finalize-hook 'org-modern-agenda))
-
 #+end_src
 * auto-tangle-mode
 #+begin_src emacs-lisp :lexical t
@@ -3585,7 +3596,7 @@ Use `treemacs' command for old functionality."
     "bT"  'org-babel-tangle-file
     "be"  '(:ignore t :which-key "execute")
     "beb" 'org-babel-execute-buffer
-    "bb"  'org-babel-tangle-block 
+    "bb"  'org-babel-tangle-block
     "bes" 'org-babel-execute-subtree)
   :config
   (defun org-babel-tangle-block()
@@ -3615,7 +3626,7 @@ Use `treemacs' command for old functionality."
      'org-babel-load-languages
      (append org-babel-load-languages
              '((sqlite . t)))))
-  
+
   (use-feature ob-sql
     :commands (org-babel-execute:sql)
     :config
@@ -3651,7 +3662,7 @@ Use `treemacs' command for old functionality."
     :commands (org-babel-execute:scala-cli)
     :config
     (add-to-list 'org-babel-load-languages '(scala-cli . t)))
-    
+
   ;; (use-feature ob-scala
   ;;   :load-path "~/.config/emacs/lisp/"
   ;;   :commands (org-babel-execute:scala-cli)
@@ -3710,7 +3721,8 @@ Use `treemacs' command for old functionality."
 (use-package org
   :ensure (:autoloads "org-loaddefs.el")
   :hook ((org-mode . visual-line-mode)
-         (org-mode . variable-pitch-mode))
+         (org-mode . variable-pitch-mode)
+         )
   :defer t
   :general
   (general-define-key :states '(normal) :keymaps 'org-mode-map
@@ -3733,26 +3745,11 @@ Use `treemacs' command for old functionality."
     "o"   '(:ignore t :which-key "org")
     "oc"  'org-capture
     ;; "oC"  '+org-capture-again
-    "oi"  'org-insert-link
-    "oj"  'org-chronicle
-    "ok"  '(:ignore t :which-key "clock")
-    "okg" 'org-clock-goto
-    "oki" 'org-clock-in-last
-    "okj" 'org-clock-jump-to-current-clock
-    "oko" 'org-clock-out
-    "okr" 'org-resolve-clocks
     "ol"  'org-store-link
     "om"  'org-tags-view
     ;;"os"  'org-search-view
     "oT"  'org-todo-list
     "ot"  '(:ignore t :which-key "timer")
-    "ott" 'org-timer
-    "otS" 'org-timer-stop
-    "otC" 'org-timer-change-times-in-region
-    "otc" 'org-timer-set-timer
-    "ots" 'org-timer-start
-    "oti" 'org-timer-item
-    "otp" 'org-timer-pause-or-continue
     "otr" 'org-timer-show-remaining-time)
 
   (global-leader
@@ -3764,63 +3761,6 @@ Use `treemacs' command for old functionality."
     "<"  'org-date-from-calendar
     ">"  'org-goto-calendar
 
-    "C"  '(:ignore t :which-key "clock")
-    "Cc" 'org-clock-cancel
-    "Ci" 'org-clock-in
-    "Co" 'org-clock-out
-    "Cr" 'org-clock-report
-    "CR" 'org-resolve-clocks
-
-    "d"  '(:ignore t :which-key "dates")
-    "dd" 'org-deadline
-    "df" '((lambda () (interactive) (+org-fix-close-times))
-           :which-key "org-fix-close-time")
-    "ds" 'org-schedule
-    "di" 'org-time-stamp-inactive
-    "dt" 'org-time-stamp
-
-    "e"   '(:ignore t :which-key "export")
-    "ee"  'org-export-dispatch
-
-    "h"   '(:ignore t :which-key "heading")
-    "hf"  'org-forward-heading-same-level
-    "hb"  'org-backward-heading-same-level
-
-    "i"  '(:ignore t :which-key "insert")
-    "id" 'org-insert-drawer
-    "ie" 'org-set-effort
-
-    "l" '(:ignore t :which-key "links")
-    "lc" 'org-cliplink
-    "ll" 'org-insert-link
-
-    "n"  '(:ignore t :which-key "narrow")
-    "nb" 'org-narrow-to-block
-    "ne" 'org-narrow-to-element
-    "ns" 'org-narrow-to-subtree
-    "nt" 'org-toggle-narrow-to-subtree
-    "nw" 'widen
-
-    "s"  '(:ignore t :which-key "trees/subtrees")
-    "sA" 'org-archive-subtree
-    "sa" 'org-toggle-archive-tag
-
-    "t"   '(:ignore t :which-key "tables")
-    "ta"  'org-table-align
-    "tb"  'org-table-blank-field
-    "tc"  'org-table-convert
-
-    "td"  '(:ignore t :which-key "delete")
-    "tdc" 'org-table-delete-column
-
-    "ti"  '(:ignore t :which-key "insert")
-    "tic" 'org-table-insert-column
-
-    "tt"  '(:ignore t :which-key "toggle")
-    "ttf" 'org-table-toggle-formula-debugger
-    "tto" 'org-table-toggle-coordinate-overlays
-    "tw"  'org-table-wrap-region
-
     "T"  '(:ignore t :which-key "toggle")
     "Tc"  'org-toggle-checkbox
     "Tx"  'org-latex-preview
@@ -3831,17 +3771,13 @@ Use `treemacs' command for old functionality."
     "*"   'org-ctrl-c-star
     "-"   'org-ctrl-c-minus
     "A"   'org-attach)
-  :config
+    :config
     (add-to-list 'org-src-lang-modes '("xml" . sgml))
     (add-to-list 'org-src-lang-modes '("jshell" . java-ts))
     (add-to-list 'org-src-lang-modes '("scala-cli" . scala))
     (add-to-list 'org-src-lang-modes '("ebnf" . ebnf))
     (add-to-list 'org-src-lang-modes '("json" . json-ts))
     (add-to-list 'org-src-lang-modes '("yaml" . yaml-ts))
-    ;; (add-to-list 'org-src-lang-modes '("sh" . bash-ts))
-    ;; (add-to-list 'org-src-lang-modes '("zsh" . bash-ts))
-    ;; (add-to-list 'org-src-lang-modes '("bash" . bash-ts))
-    ;; (add-to-list 'org-src-lang-modes '("shell" . bash-ts))
     (add-to-list 'org-src-lang-modes '("dockerfile" . dockerfile-ts))
     (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
     (add-to-list 'org-src-lang-modes '("go" . go-ts))
@@ -3850,41 +3786,37 @@ Use `treemacs' command for old functionality."
     (add-to-list 'org-src-lang-modes '("html" . html-ts))
     (add-to-list 'org-src-lang-modes '("css" . css-ts))
     (add-to-list 'org-src-lang-modes '("gherkin" . feature))
-  
-    (setq org-tags-column -120) ;; так лучше 
+
+    (setq org-tags-column -120) ;; так лучше
     (setq org-link-frame-setup '((file . find-file))) ;; в org-ref это по дефолту
     (setq org-fontify-quote-and-verse-blocks t) ;; шрифт в comment и quote блоках. Почему в custom не работает ?
     (setq org-bookmark-names-plist nil)  ;;org-capture. don't automatically set bookmarks
 
-  (defun +md-to-org-region (start end)
-    "Convert region from markdown to org, replacing selection"
-    (interactive "r")
-    (shell-command-on-region start end "pandoc --wrap=none -f markdown -t org --lua-filter=/home/snake/custom-header.lua " t t))
 
-  (defun +md-to-org-region-python (start end)
-    "Convert region from markdown to org, replacing selection"
-    (interactive "r")
-    (shell-command-on-region 
-    start end 
-        (format "python3 %s" 
-            (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
-    t t))
+    (defun +md-to-org-region-python (start end)
+      "Convert region from markdown to org, replacing selection"
+      (interactive "r")
+      (shell-command-on-region
+       start end
+       (format "python3 %s"
+               (expand-file-name "lisp/md_to_org_debug.py" user-emacs-directory))
+       t t))
 
-   (defun +org-align-all-tags ()
-    "Wrap org-align-tags to be interactive and apply to all"
-    (interactive)
-    (org-align-tags t))
+    (defun +org-align-all-tags ()
+      "Wrap org-align-tags to be interactive and apply to all"
+      (interactive)
+      (org-align-tags t))
 
-  (defun +org-sparse-tree (&optional arg type)
-    (interactive)
-    (funcall #'org-sparse-tree arg type)
-    (org-remove-occur-highlights))
+    (defun +org-sparse-tree (&optional arg type)
+      (interactive)
+      (funcall #'org-sparse-tree arg type)
+      (org-remove-occur-highlights))
 
-  (defun +insert-heading-advice (&rest _args)
-    "Enter insert mode after org-insert-heading. Useful so I can tab to control level of inserted heading."
-    (when evil-mode (evil-insert 1)))
+    (defun +insert-heading-advice (&rest _args)
+      "Enter insert mode after org-insert-heading. Useful so I can tab to control level of inserted heading."
+      (when evil-mode (evil-insert 1)))
 
-  (advice-add #'org-insert-heading :after #'+insert-heading-advice)
+    (advice-add #'org-insert-heading :after #'+insert-heading-advice)
 
   (defun +org-update-cookies ()
     (interactive)
@@ -3895,13 +3827,16 @@ Use `treemacs' command for old functionality."
                ("_" (underline :foreground "#c1d0a4")
                )))
 
+  ;; DWIM открытие ссылок
+  (advice-add 'org-open-at-point :around
+            (defun org-open-at-point-dwim (orig &optional arg)
+              "Если под курсором URL — открыть его, иначе обычное поведение."
+              (if (org-in-regexp org-link-any-re)
+                  (org-open-at-point-global arg)
+                (funcall orig arg))))
   :custom
-  ;;default:
-  ;;(org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail)
-  ;;org-toc is interesting, but I'm not sure if I need it.
-
   (org-modules '(org-habit))
-  ;; 
+  ;;
   (org-todo-keywords
    ;; '((sequence  "TODO(t)" "STARTED(s!)" "NEXT(n!)" "BLOCKED(b@/!)" "|" "DONE(d)")
    ;;   (sequence  "IDEA(i)" "|" "CANCELED(c@/!)" "DELEGATED(D@/!)")
@@ -3918,30 +3853,15 @@ Use `treemacs' command for old functionality."
      ("DEPRECATED" . (:foreground "yellow-faint" :weight bold))
      ))
   ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
-  ;; (org-ellipsis " ▾")
   (org-ellipsis " ▿")
   (org-priority-lowest ?D)
-  ;; (org-priority-faces
-  ;;  ;; '((?A . nerd-icons-red)
-  ;;  ;;   (?B . warning)
-  ;;  ;;   (?C . success)))
-  ;;      '((?A . nerd-icons-red)
-  ;;       (?B . nerd-icons-orange)
-  ;;       (?C . nerd-icons-yellow)
-  ;;       (?D . nerd-icons-green)
-  ;;       (?E . nerd-icons-blue)))
-  (setq org-priority-faces
-  `((?A . (:foreground ,(nerd-icons-mdicon "nf-md-alert")))
-    (?B . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_up")))
-    (?C . (:foreground ,(nerd-icons-mdicon "nf-md-minus")))
-    (?D . (:foreground ,(nerd-icons-mdicon "nf-md-arrow_down")))
-    (?E . (:foreground ,(nerd-icons-mdicon "nf-md-information")))))
   (org-fontify-done-headline t)
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
 #+end_src
 
-* ox-gfm
+
+* TODO [#B] ox-gfm
 #+begin_src emacs-lisp :lexical t
 (use-package ox-gfm :defer t)
 #+end_src
@@ -3983,7 +3903,7 @@ https://github.com/marsmining/ox-twbs
             (insert-file-contents preamble-file)
             (buffer-string))
         "")))
-  
+
   (setq org-export-use-babel nil)
   (setq org-publish-project-alist
       `(
@@ -4000,7 +3920,7 @@ https://github.com/marsmining/ox-twbs
          :section-numbers nil
          :html-head "<link rel=\"stylesheet\" href=\"static/css/main.css\" type=\"text/css\"/>
 <link rel=\"stylesheet\" href=\"static/css/spa.css\" type=\"text/css\"/>")
-        
+
         ("images"
          :base-directory "~/OrgFiles/Java_Вопросы/Reworked_Questions/Attachments/"
          :recursive t
@@ -4027,7 +3947,7 @@ https://github.com/rnkn/olivetti
 (use-package olivetti
   :commands (olivetti-mode))
 #+end_src
-* org-agenda 
+* org-agenda
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-feature org-agenda
   :after   (general evil)
@@ -4269,7 +4189,7 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
 #+end_src
 * TODO duck-db
 #+begin_src emacs-lisp :lexical t :tangle no
-(use-package ob-duckdb 
+(use-package ob-duckdb
   :after org
   :custom
   ;; Limit output to prevent Emacs freezing on large results
@@ -4301,7 +4221,7 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
   (add-hook 'ob-racket-pre-runtime-library-load-hook
 	      #'ob-racket-raco-make-runtime-library))
 #+end_src
-* org-clean-refile 
+* org-clean-refile
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-package org-clean-refile
   :elpaca (org-clean-refile :host github :repo "progfolio/org-clean-refile" :protocol ssh)
@@ -4312,15 +4232,15 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
     :keymaps 'org-mode-map
     "sr" 'org-clean-refile))
 #+end_src
-* [#B] org-fancy-priorities
+* [#C] org-fancy-priorities
 
 #+begin_src emacs-lisp :lexical t
-(use-package org-fancy-priorities
-  :commands (org-fancy-priorities-mode)
-  :hook (org-mode . org-fancy-priorities-mode)
-  :config
-  (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
-  )
+;; (use-package org-fancy-priorities
+;;   :commands (org-fancy-priorities-mode)
+;;   :hook (org-mode . org-fancy-priorities-mode)
+;;   :config
+;;   (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
+;;   )
 #+end_src
 * org-habit
 #+begin_src emacs-lisp :lexical t
@@ -4414,7 +4334,7 @@ Stolen from: [[https://emacs.stackexchange.com/questions/22128/how-to-org-refile
       org-refile-targets `((org-agenda-files  :maxlevel . ,+org-max-refile-level)
                            (+org-files-list :maxlevel . ,+org-max-refile-level)))
 #+end_src
-* Org mode settings 
+* [#D] Org mode settings
 #+begin_src emacs-lisp :lexical t
 (setq org-agenda-files '("~/OrgFiles/TODO.org")
       org-directory "~/OrgFiles"
@@ -4478,7 +4398,7 @@ https://github.com/org-mime/org-mime
  :after (org))
 #+end_src
 
-* TODO [#C] org-download
+* TODO [#B] org-download
 
 #+begin_src emacs-lisp :lexical t
 (use-package org-download
@@ -4489,7 +4409,7 @@ https://github.com/org-mime/org-mime
   (org-download-image-org-width 600)
   :config
   (setq org-download-annotate-function (lambda (_link) ""))
-  
+
   (defun my/org-download-get-assets-dir ()
     "Возвращает директорию для вложений, основанную на имени файла."
     (when buffer-file-name
@@ -4497,7 +4417,7 @@ https://github.com/org-mime/org-mime
              (file-name-base (file-name-base buffer-file-name))
              (assets-dir (expand-file-name ".assets" file-dir)))
         (expand-file-name file-name-base assets-dir))))
-  
+
   (defun my/org-download--get-parent-heading (level)
     "Находит заголовок-родитель уровня LEVEL."
     (save-excursion
@@ -4508,7 +4428,7 @@ https://github.com/org-mime/org-mime
         (when (= (org-outline-level) level)
           (setq heading (org-get-heading t t t t)))
         heading)))
-  
+
   (defun my/org-download--cleanup-string (s)
     "Очищает строку S, делая ее пригодной для имени файла."
     (when s
@@ -4517,7 +4437,7 @@ https://github.com/org-mime/org-mime
         (setq cleaned (replace-regexp-in-string "_+" "_" cleaned))
         ;; Убираем _ в начале и конце
         (replace-regexp-in-string "^_+\\|_+$" "" cleaned))))
-  
+
   (defun my/truncate-to-bytes (s max-bytes)
     "Обрезает строку S так, чтобы она не превышала MAX-BYTES в UTF-8.
      Обрезает по границе символов и убирает trailing underscore."
@@ -4533,7 +4453,7 @@ https://github.com/org-mime/org-mime
               (throw 'done result)))))
       ;; Убираем trailing underscore
       (string-trim-right result "_")))
-  
+
   (defun my/org-download-format-filename (original-filename)
     "Генерирует имя файла: Level1_Level2_Timestamp.ext
      Заголовки обрезаются до 55 байт с учетом лимитов Anki."
@@ -4548,18 +4468,18 @@ https://github.com/org-mime/org-mime
            ;; 120 (Anki) - 15 (timestamp) - 1 (sep) - 4 (ext) - 41 (hash) - 4 (reserve) = 55
            (safe-title (my/truncate-to-bytes title-part 55)))
       (concat safe-title "_" timestamp extension)))
-  
+
   (setq org-download-file-format-function #'my/org-download-format-filename)
-  
+
   (defun my/org-download-set-directory-before-download (&rest _)
     "Устанавливает org-download-image-dir перед вызовом скачивания."
     (setq-local org-download-image-dir (my/org-download-get-assets-dir)))
-  
+
   (defun my-avoid-org-id-get-create (orig-fun &rest args)
     "Around advice to prevent org-id-get-create in org-download-clipboard."
     (cl-letf (((symbol-function 'org-id-get-create) (lambda () nil)))
       (apply orig-fun args)))
-  
+
   (advice-add #'org-download-image :before #'my/org-download-set-directory-before-download)
   (advice-add 'org-download-clipboard :around #'my-avoid-org-id-get-create))
 
@@ -4591,10 +4511,14 @@ https://github.com/org-mime/org-mime
 #+begin_src emacs-lisp :lexical t
 (use-package mcp-server
   :ensure (mcp-server :host github :repo "rhblind/emacs-mcp-server"
-             :files ("*.el" "mcp-wrapper.py" "mcp-wrapper.sh"))
-  :disabled t
+             :files ("*.el" ("tools/" "tools/*.el") "mcp-wrapper.py" "mcp-wrapper.sh"))
+  ;; :disabled t
   :config
-  (add-hook 'emacs-startup-hook #'mcp-server-start-unix))
+  (setq mcp-server-security-allowed-dangerous-functions
+      '(find-file, with-current-buffer, insert-file-contents, dired))
+  (setq mcp-server-emacs-tools-enabled 'all)
+  ;; (add-hook 'emacs-startup-hook #'mcp-server-start-unix)
+  )
 #+end_src
 
 * latex
@@ -4671,7 +4595,7 @@ https://github.com/org-mime/org-mime
 ;;   ;; (yas-global-mode 1)
 ;;   ;; :config
 ;;   ;; (yas-reload-all)
-  
+
 ;;   )
 
 ;; (use-package yasnippet
@@ -4700,7 +4624,7 @@ https://github.com/org-mime/org-mime
               (lambda (&rest _)
                 (when (bound-and-true-p evil-mode)
                   (evil-insert-state))))
-  
+
   (setq tempel-path "~/.config/emacs/templates/*.eld")
   (defun +tempel-setup-capf-h ()
     (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
@@ -4734,14 +4658,14 @@ https://github.com/org-mime/org-mime
   (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
     ;; (defvar my-android-host "192.168.0.14"
     ;; "IP address or hostname of Android device.")
-  
+
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "android") "remote-shell" "sh"))
-  
+
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "android")
                      "tmpdir" "/data/data/com.termux/files/home/tmp"))
-  
+
   (connection-local-set-profile-variables
    'tramp-connection-local-termux-profile
    `((tramp-remote-path
@@ -4749,7 +4673,7 @@ https://github.com/org-mime/org-mime
           (lambda (x)
             (if (stringp x) (concat "/data/data/com.termux/files" x) x))
           (copy-tree tramp-remote-path)))))
-  
+
   (connection-local-set-profiles
    '(:application tramp :machine "android")
    'tramp-connection-local-termux-profile))
@@ -4771,7 +4695,7 @@ You probably want this 99% of the time and it will skip an annoying prompt.
   (+general-global-application "D" 'dictionary-search)
   (+general-global-text "d" 'dictionary-search))
 #+end_src
-* tern (build fails) 
+* tern (build fails)
 #+begin_quote
 Tern is a stand-alone, editor-independent JavaScript analyzer that can be used to improve the JavaScript integration of existing editors.
 
@@ -4783,7 +4707,7 @@ https://github.com/ternjs/tern
   :commands (tern-mode)
   :hook (js2-mode . tern-mode))
 #+end_src
-* window 
+* window
 #+begin_src emacs-lisp :lexical t
 (use-feature window
   :bind (("C-x 2" . vsplit-last-buffer)
@@ -4978,7 +4902,7 @@ https://github.com/ternjs/tern
              password-store-copy
              password-store-get)
   :custom
-  (password-store-password-length 14) ;; или 24 
+  (password-store-password-length 14) ;; или 24
   :functions (password-store--run)
   :config
   (defun password-store--run-edit (entry)
@@ -5029,7 +4953,7 @@ append it to ENTRY."
         (delete-file qr-image-filename)))))
 #+end_src
 
-* colorful-mode
+* [#C] colorful-mode
 modern replacement rainbow-mode
 #+begin_src emacs-lisp :lexical t
 ;; (use-package rainbow-mode
@@ -5060,7 +4984,7 @@ modern replacement rainbow-mode
   (reb-re-syntax 'rx)
   :commands (re-builder))
 #+end_src
-* recentf 
+* recentf
 #+begin_src emacs-lisp :lexical t
 (use-feature recentf
   :defer 1
@@ -5150,7 +5074,7 @@ modern replacement rainbow-mode
       (switch-to-buffer restclient-buffer))))
 #+end_src
 * ob-http
-* TODO shr-color 
+* TODO shr-color
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-feature shr-color
   :custom
@@ -5289,7 +5213,7 @@ modern replacement rainbow-mode
     "es" 'eval-last-sexp
     "i"  'elisp-index-search))
 #+end_src
-* epa/g-config 
+* epa/g-config
 #+begin_src emacs-lisp :lexical t
 (use-feature epg-config
   :defer t
@@ -5302,15 +5226,26 @@ modern replacement rainbow-mode
   :init (setq epa-file-cache-passphrase-for-symmetric-encryption t))
 
 #+end_src
-* find-func 
+* find-func
+
+#+begin_quote
+Когда стандартное поведение lisp-функции непонятно или кажется багнутым. Например:
+- M-x find-function RET switch-to-buffer — хочешь понять, почему он не принимает C-u как pop-to-buffer
+- M-. на read-from-minibuffer — лезет в minibuf.c, смотришь как устроен ввод
+- split-window / delete-other-windows — непонятно почему rebalance работает неожиданно
+- call-interactively — хочешь понять как Emacs разбирает interactive specs
+- Любая функция из C иконкой ⓒ в C-h f — signal, car, mapcar, accept-process-output
+Короче, когда lisp-реализация ссылается на C-примитив ((defalias 'car #'..., subr) или функция написана целиком на C (фреймовые/буферные/процессные/оконные менеджеры). Это не повседневщина, но при отладке или глубоком изучении — спасает.
+#+end_quote
+
 #+begin_src emacs-lisp :lexical t
 (use-feature find-func
   :defer t
   :config (setq find-function-C-source-directory
-                (expand-file-name "~/repos/emacs/src/")))
+                (expand-file-name "~/.local/src_builds/emacs/src")))
 #+end_src
 
-* fill - column-indicator 
+* fill - column-indicator
 #+begin_src emacs-lisp :lexical t
 (use-feature display-fill-column-indicator
   :custom
@@ -5327,7 +5262,7 @@ modern replacement rainbow-mode
     "FF" 'display-fill-column-indicator-mode
     "FG" 'global-display-fill-column-indicator-mode))
 #+end_src
-* fontify-face 
+* fontify-face
 #+begin_quote
 Fontify symbols representing faces with that face.
 
@@ -5337,17 +5272,6 @@ https://github.com/Fuco1/fontify-face
 #+begin_src emacs-lisp :lexical t
 (use-package fontify-face
   :commands (fontify-face-mode))
-#+end_src
-* fountain-mode
-#+begin_quote
-Fountain Mode is a screenwriting program for GNU Emacs using the Fountain plain text markup format.
-
-https://github.com/rnkn/fountain-mode
-#+end_quote
-#+begin_src emacs-lisp :lexical t
-(use-package fountain-mode
-  :ensure (fountain-mode :host github :repo "rnkn/fountain-mode")
-  :mode "\\.fountain\\'")
 #+end_src
 * help
 #+begin_src emacs-lisp :lexical t
@@ -5426,7 +5350,7 @@ This is necessary for exporting Org files to HTML.
 #+end_src
 * fontset
 fix emoji without  VARIATION SELECTOR-16
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-feature fontset
   :config
   (set-fontset-font t 'unicode "Noto Color Emoji" nil 'prepend)
@@ -5500,11 +5424,11 @@ https://github.com/mooz/js2-mode
 #+end_src
 * transient
 #+begin_src emacs-lisp :lexical t
-(use-package transient :defer t
-  :ensure(transient :host github :repo "magit/transient")
-  :defer t)
+(use-package transient
+  :defer t
+  :ensure(transient :host github :repo "magit/transient"))
 #+end_src
-* forge 
+* forge
 #+begin_src emacs-lisp :lexical t
 (use-package forge
   ;; :ensure (:files (:defaults "docs/*"))
@@ -5519,14 +5443,14 @@ https://github.com/mooz/js2-mode
 #+end_src
 * compat
 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 ;; (use-package compat
 ;;   :ensure (compat :host github :repo  "emacs-compat/compat"))
 #+end_src
 
 * with-editor
 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package with-editor
   :ensure (with-editor :host github :repo  "magit/with-editor")
   :defer t)
@@ -5535,18 +5459,13 @@ https://github.com/mooz/js2-mode
 
 * ghub
 
-#+begin_src emacs-lisp :lexical t 
+#+begin_src emacs-lisp :lexical t
 (use-package ghub
   :ensure (ghub :host github :repo  "magit/ghub")
   :defer t)
 #+end_src
 
 * macrostep
-#+begin_quote
-macrostep is an Emacs minor mode for interactively stepping through the expansion of macros in Emacs Lisp source code.
-
-https://github.com/joddie/macrostep
-#+end_quote
 
 #+begin_src emacs-lisp :lexical t
 (use-package macrostep
@@ -5577,7 +5496,7 @@ https://github.com/joddie/macrostep
     (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
   )
 #+end_src
-* minibuffer 
+* minibuffer
 #+begin_src emacs-lisp :lexical t
 (use-feature minibuffer
   :custom (read-file-name-completion-ignore-case t)
@@ -5594,8 +5513,7 @@ https://github.com/joddie/macrostep
               (kbd "C-h") #'+minibuffer-up-dir)
   (minibuffer-depth-indicate-mode))
 #+end_src
-* miscellany 
-* nov 
+* nov
 #+begin_src emacs-lisp :lexical t
 (use-package nov
   :ensure (nov :depth nil)
@@ -5607,25 +5525,44 @@ https://github.com/joddie/macrostep
   (nov-mode))
 #+end_src
 * notmuch
+  (general-define-key :states '(normal insert) :keymaps 'org-mode-map
+                      (kbd "M-l") 'org-metaright
+                      (kbd "M-h") 'org-metaleft
+                      (kbd "M-k") 'org-metaup
+#+begin_src emacs-lisp :lexical t
+  ;; (with-eval-after-load 'evil-collection-notmuch
+  ;; (evil-define-key* '(normal visual) notmuch-search-mode-map
+  ;;   (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
+
+#+end_src
 #+begin_src emacs-lisp :lexical t
 (use-feature notmuch
   :load-path ("/usr/share/emacs/site-lisp/notmuch")
   :commands (notmuch)
   :defer t
+  ;; :hook (notmuch-search-mode . (lambda ()
+  ;;   (evil-local-set-key 'normal (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+  ;;   (evil-local-set-key 'visual (kbd "RET") #'my/notmuch-search-maybe-resume-draft)))
   :init
   (setq notmuch-search-oldest-first nil
         message-send-mail-function 'message-send-mail-with-sendmail
-        notmuch-always-prompt-for-sender t 
+        notmuch-always-prompt-for-sender t
         message-kill-buffer-on-exit t
-        notmuch-hello-logo nil 
+        notmuch-hello-logo nil
         notmuch-hello-url nil
         notmuch-show-relative-dates t
         notmuch-show-empty-saved-searches t
         message-directory "~/Mail"
         message-sendmail-envelope-from 'header
         mail-envelope-from 'header
-        notmuch-show-all-tags-list t 
-        mail-specify-envelope-from t)
+        notmuch-show-all-tags-list t
+        mail-specify-envelope-from t
+        ;; '(nil . t) means any charset is allowed without re-encoding.
+        ;; The cdr must be the symbol t (not a list containing t) because
+        ;; mm-body-encoding checks (eq t (cdr message-posting-charset));
+        ;; '(nil t) gives cdr=(t) which fails that test and causes utf-8
+        ;; bodies to be base64-encoded instead of kept as 8bit.
+        message-posting-charset '(nil . t))
   (setq notmuch-saved-searches
         `(( :name "📥 Входящие"
             :query "tag:inbox and tag:unread"
@@ -5640,19 +5577,125 @@ https://github.com/joddie/macrostep
             :query "*"
             :key "a")))
   :config
+  (my/evil-collection-override evil-collection-notmuch notmuch-search-mode
+  ((normal visual) "RET" #'my/notmuch-search-maybe-resume-draft))
+
+  ;; (with-eval-after-load 'evil-collection-notmuch
+  ;; (add-hook 'notmuch-search-mode-hook
+  ;;   (lambda ()
+  ;;     (evil-local-set-key 'normal (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+  ;;     (evil-local-set-key 'visual (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
+  ;;   90))
+;; (message "notmuch :config runs at: %s" (current-time-string))
+;; (with-eval-after-load 'evil-collection-notmuch
+;;   (message "evil-collection-notmuch loaded at: %s" (current-time-string))
+;;   (evil-define-key* '(normal visual) notmuch-search-mode-map
+;;     (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+;;   (message "RET binding in auxiliary keymap after evil-define-key*: %s"
+;;     (lookup-key (evil-get-auxiliary-keymap notmuch-search-mode-map 'normal t)
+;;                 (kbd "RET"))))
+
+  
+   ;; (with-eval-after-load 'evil-collection-notmuch
+   ;;  (evil-define-key* '(normal visual) notmuch-search-mode-map
+   ;;    (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
+  ;; (evil-define-key* '(normal visual) notmuch-search-mode-map
+  ;; (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
+
+  ;; (evil-define-key '(normal visual) notmuch-search-mode-map
+  ;;   (kbd "RET") #'my/notmuch-search-maybe-resume-draft
+  ;;   (kbd "t")   #'my/notmuch-toggle-trash)
+  
+  (defun my/notmuch-message-recovery-file-p (file)
+    "Return non-nil when FILE is a Message auto-save draft file."
+    (and (stringp file)
+         (string-match-p
+          "\\`\\(?:\\*message\\*\\|message\\)-[0-9]\\{8\\}-[0-9]\\{6\\}\\'"
+          (file-name-nondirectory file))))
+
+  (defun my/notmuch-delete-message-recovery-file (file)
+    "Delete FILE when it is a Message auto-save draft file."
+    (when (and (my/notmuch-message-recovery-file-p file)
+               (file-exists-p file))
+      (delete-file file)))
+
+  (defun my/notmuch-message-save-buffer ()
+    "Save a Notmuch compose buffer through `notmuch-draft-save'."
+    (when (derived-mode-p 'notmuch-message-mode)
+      (notmuch-draft-save)
+      t))
+
+  (defun my/notmuch-draft-save-around (orig-fun &rest args)
+    "Run ORIG-FUN and remove the Message recovery file after a good save."
+    (setq-local message-encoded-mail-cache nil)
+    (let ((old-file buffer-file-name))
+      (cl-letf (((symbol-function 'mail-encode-encoded-word-buffer) #'ignore))
+        ;; Skip RFC-2047 header encoding: headers are stored as raw UTF-8.
+        ;; notmuch-draft-resume re-decodes them via my/notmuch-draft-resume-fix-headers.
+        (prog1 (apply orig-fun args)
+          (my/notmuch-delete-message-recovery-file old-file)))))
+
+  (defun my/notmuch-draft-resume-fix-headers ()
+    "Decode raw UTF-8 bytes in headers left by no-conversion read."
+    (save-restriction
+      (message-narrow-to-headers)
+      (decode-coding-region (point-min) (point-max) 'utf-8)))
+
+  (advice-add 'notmuch-draft-resume :after
+              (lambda (&rest _) (my/notmuch-draft-resume-fix-headers)))
+
+  (advice-add 'notmuch-draft-save :around #'my/notmuch-draft-save-around)
+
+  (defun my/notmuch-message-install-save-handler ()
+    "Make generic Emacs save commands store Notmuch drafts correctly."
+    (add-hook 'write-contents-functions #'my/notmuch-message-save-buffer nil t))
+
+  (add-hook 'notmuch-message-mode-hook #'my/notmuch-message-install-save-handler)
+
+  (defun my/notmuch-search-resume-draft ()
+    "Resume editing the draft at point in notmuch-search."
+    (interactive)
+    (let ((thread-id (notmuch-search-find-thread-id)))
+      (if (null thread-id)
+          (message "No thread at point")
+        (let ((msg-id (car (notmuch--process-lines
+                            notmuch-command "search"
+                            "--output=messages" "--exclude=false"
+                            thread-id))))
+          (if msg-id
+              (notmuch-draft-resume msg-id)
+            (message "No message found in thread"))))))
+
+  (defun my/notmuch-search-maybe-resume-draft ()
+    "Open draft for editing if current search is the drafts folder, else show normally."
+    (interactive)
+    (if (and notmuch-search-query-string
+             (string-match-p "tag:draft" notmuch-search-query-string))
+        (my/notmuch-search-resume-draft)
+      (notmuch-search-show-thread)))
+
+  ;; (define-key notmuch-search-mode-map (kbd "RET")
+  ;;             #'my/notmuch-search-maybe-resume-draft)
+  ;; (with-eval-after-load 'evil
+  ;;   (evil-define-key '(normal visual) notmuch-search-mode-map (kbd "RET")
+  ;;     #'my/notmuch-search-maybe-resume-draft))
+  
   (defun my/notmuch-toggle-trash ()
     (interactive)
-    (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore))
-
-  )
+    (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore)))
 #+end_src
 
-;; 📨 
+;; 📨
     ;; (general-define-key
   ;;  :keymaps 'notmuch-search-mode-map
 ;;    :states '(normal)
 ;;    "d" #'my/notmuch-toggle-trash)
-
+* messages.el
+#+begin_src emacs-lisp :lexical t
+;; (use-feature message
+;;   :config
+;;   (setq message-posting-charset '(nil . t)))
+#+end_src
 * wgrep
 #+begin_src emacs-lisp :lexical t :tangle no
 (use-package wgrep
@@ -5674,14 +5717,7 @@ https://github.com/joddie/macrostep
   (whitespace-line-column nil)
   ;; (whitespace-style '(empty face lines-tail tab-mark tabs trailing))
   )
-  
-#+end_src
-* ws-butler
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package ws-butler
-  :ensure (ws-butler :host github :repo "hlissner/ws-butler")
-  :hook ((text-mode . ws-butler-mode)
-         (prog-mode . ws-butler-mode)))
+
 #+end_src
 * TODO xref
 [[https://github.com/jiegec/emacs.d/blob/35af3f66947e5cfa6879b46d65de1f229802d845/lisp/init-utils.el#L37][emacs.d/lisp/init-utils.el at 35af3f66947e5cfa6879b46d65de1f229802d845 · jieg...]]
@@ -5701,10 +5737,7 @@ https://github.com/joddie/macrostep
   (disabled-command-function nil "Enable all commands"))
 #+end_src
 * zsh aliases highlight
-#+begin_src emacs-lisp :lexical t 
-(add-to-list 'auto-mode-alist '("/aliases\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.scm?\\'" . racket-mode))
-(add-to-list 'auto-mode-alist '("\\.bb?\\'" . clojure-mode))
+#+begin_src emacs-lisp :lexical t
 
 #+end_src
 * extras
@@ -5713,15 +5746,15 @@ https://github.com/joddie/macrostep
 ;;   (require 'extras))
 (use-feature extras
   :load-path "~/.config/emacs/lisp/"
-  :commands (sudo-edit 
-             my/convert-org-to-docx-with-pandoc 
+  :commands (sudo-edit
+             my/convert-org-to-docx-with-pandoc
              +unfill-region
              org-mouse-bold-mode-enable
              org-mouse-bold-mode-disable))
 #+end_src
 * edraw
 #+begin_src emacs-lisp :tangle no
-(use-package edraw 
+(use-package edraw
   :ensure (:host github :repo "misohena/el-easydraw")
   :after org)
 #+end_src

@@ -84,6 +84,12 @@ handle_extension() {
             head -n 50 -- "${FILE_PATH}" && exit 0
             exit 1;;
 
+        ## JavaScript
+        js)
+            env COLORTERM=8bit bat --color=always --plain -- "${FILE_PATH}" && exit 5
+            pygmentize -f terminal256 -l javascript -- "${FILE_PATH}" && exit 5
+            exit 2;;
+
         ## XLSX
         xlsx)
             ## Preview as csv conversion
@@ -97,12 +103,13 @@ handle_extension() {
             # w3m -dump "${FILE_PATH}" && exit 5
             # lynx -dump -- "${FILE_PATH}" && exit 5
             # elinks -dump "${FILE_PATH}" && exit 5
+           env COLORTERM=8bit bat --color=always --plain -- "${FILE_PATH}" && exit 5
            pandoc -s -t markdown -- "${FILE_PATH}" && exit 5
             ;;
 
         ## JSON
         json)
-            JSON_PREVIEW_MAX_SIZE=512000 
+            JSON_PREVIEW_MAX_SIZE=512000
             FILE_SIZE=$(stat --printf='%s' -- "${FILE_PATH}")
             if [[ "${FILE_SIZE}" -gt "${JSON_PREVIEW_MAX_SIZE}" ]]; then
                 head -n 200 -- "${FILE_PATH}" && exit 5
