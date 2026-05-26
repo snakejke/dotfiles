@@ -7,7 +7,7 @@ Xft.hintstyle: hintslight
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
 ! Xft.dpi: 96
-st.alpha: 0.99
+st.alpha: 0.98
 ! st.font: JetBrainsMono Nerd Font:style=Regular:pixelsize=20
 st.font: Monospace-19;
 

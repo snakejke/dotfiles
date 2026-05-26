@@ -47,8 +47,8 @@ Adding a variable watcher can be a useful way to track down initialization and m
                         (message "%s set to %s" symbol newval)))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-(setq debug-on-error t)
+#+begin_src emacs-lisp
+;; (setq debug-on-error t)
 #+end_src
 
 ** Оптимизация file-name-handler-alist
@@ -56,6 +56,7 @@ Adding a variable watcher can be a useful way to track down initialization and m
 #+begin_src emacs-lisp :lexical t
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
+
 #+end_src
 ** TODO Папка с кешем
 #+begin_src emacs-lisp :lexical t
@@ -111,8 +112,8 @@ Adding a variable watcher can be a useful way to track down initialization and m
 (setq server-client-instructions nil)
 #+end_src
 *** Не менять размер фрейма в зависимости от шрифтов
-+к времени запуска если nil
 #+begin_src emacs-lisp :lexical t
+;;+к времени запуска если nil
 (setq frame-inhibit-implied-resize t)
 #+end_src
 *** Игнорирование настроек в  Xresources
@@ -161,20 +162,47 @@ This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-re
 #+begin_src emacs-lisp :lexical t
 ;; -*- lexical-binding: t; -*-
 #+end_src
-* Профилирование
+* TODO [#B] Профилирование
 ** Проверки времени запуска
 #+begin_src emacs-lisp :lexical t
-(add-hook 'elpaca-after-init-hook
-          (lambda ()
-            (message "Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract (current-time) before-init-time)))
-                     gcs-done)))
+;; (setq use-package-verbose 'debug)
+
+
+;; (setq use-package-compute-statistics t)
+
+;; (add-hook 'elpaca-after-init-hook
+;;           (lambda ()
+;;             (message "Emacs loaded in %s with %d garbage collections."
+;;                      (format "%.2f seconds"
+;;                              (float-time
+;;                               (time-subtract (current-time) before-init-time)))
+;;                      gcs-done)))
+
+  (add-hook 'elpaca--post-queues-hook
+            (lambda ()
+              (message "Emacs fully loaded in %.2f seconds with %d GCs."
+                       (float-time (time-subtract (current-time) before-init-time))
+                       gcs-done)))
+
+
+  ;; (defun my/report-startup-time ()
+  ;;   (message "Emacs fully loaded in %.2f seconds with %d GCs."
+  ;;            (float-time (time-subtract (current-time) before-init-time))
+  ;;            gcs-done)
+  ;;   (remove-hook 'elpaca--post-queues-hook #'my/report-startup-time))
+
+  ;; (add-hook 'elpaca--post-queues-hook #'my/report-startup-time)
+
+
+;; (add-hook 'after-load-functions
+;;           (lambda (path)
+;;             (when (or (string-match-p "url-parse" path)
+;;                       (string-match-p "auth-source" path))
+;;               (message "!!! ПОЙМАН !!! Загружается: %s" path)
+;;               (debug)))) ; Вызывает честный Backtrace-буфер
 #+end_src
 
-#+begin_src emacs-lisp :lexical :tangle no
-;;;
+#+begin_src emacs-lisp :lexical yes :tangle yes
 ;; (defvar my/require-log nil)
 
 ;; (defun my/wrap-require ()
@@ -298,12 +326,12 @@ ELP полезен для поиска горячих функций
 #+end_src
 ** настрока debug
 #+begin_src emacs-lisp :lexical t
-(if debug-on-error
-    (setq use-package-verbose t
-          use-package-expand-minimally nil
-          use-package-compute-statistics t)
-  (setq use-package-verbose nil
-        use-package-expand-minimally t))
+;; (if debug-on-error
+;;     (setq use-package-verbose t
+;;           use-package-expand-minimally nil
+;;           use-package-compute-statistics t)
+;;   (setq use-package-verbose nil
+;;         use-package-expand-minimally t))
 #+end_src
 ** Директории с личным пакетами
 #+begin_src emacs-lisp :lexical t
@@ -316,11 +344,26 @@ ELP полезен для поиска горячих функций
 на Void Linux  ~/usr/share/emacs/site-lisp/notmuch~
 #+begin_src emacs-lisp :lexical t
 
-(let ((dirs (list (expand-file-name "var" user-emacs-directory)
-                  (expand-file-name "etc" user-emacs-directory))))
-  (dolist (dir dirs)
-    (unless (file-exists-p dir)
-      (make-directory dir t))))
+(defvar my-etc-directory (expand-file-name "etc/" user-emacs-directory))
+(defvar my-var-directory (expand-file-name "var/" user-emacs-directory))
+
+(make-directory my-etc-directory t)
+(make-directory my-var-directory t)
+
+(defun my-expand-etc-file (file)
+  (let ((full-path (expand-file-name (convert-standard-filename file) my-etc-directory)))
+    (make-directory (file-name-directory full-path) t)
+    full-path))
+
+(defun my-expand-var-file (file)
+  (let ((full-path (expand-file-name (convert-standard-filename file) my-var-directory)))
+    (make-directory (file-name-directory full-path) t)
+    full-path))
+
+(with-file-modes #o700
+  (my-expand-etc-file "eshell/"))
+
+(my-expand-var-file "lsp/")
 
 ;; (let ((additional-paths '("/usr/share/emacs/site-lisp/notmuch")))
 
@@ -332,7 +375,7 @@ ELP полезен для поиска горячих функций
 ;;         additional-paths))
 #+end_src
 
-* literate
+* literate g
 #+begin_src emacs-lisp :lexical t
 (setq literate-file (concat user-emacs-directory "init.org"))
 #+end_src
@@ -626,14 +669,7 @@ And a macro to ease the creation of nested menu bindings:
   ".k" '((lambda () (interactive)
            (call-interactively (if (window-prev-sibling) #'enlarge-window #'shrink-window)))
          :which-key "divider down")
-  "x" 'kill-buffer-and-window)
-#+end_src
-*** TODO vim completion
-#+begin_src emacs-lisp :lexical t
-;;vim-like completion
-(general-create-definer completion-def
-  :prefix "C-x")
-)
+  "x" 'kill-buffer-and-window))
 #+end_src
 * TODO evil
 ** общее
@@ -733,7 +769,10 @@ https://github.com/emacsorphanage/evil-anzu
 Shows match counts in mode line.
 #+begin_src emacs-lisp :lexical t
 (use-package evil-anzu
-  :after (evil anzu))
+  :after (evil)
+  :config
+  (global-anzu-mode t)
+  )
 #+end_src
 
 ** evil-nerd-commenter
@@ -810,24 +849,25 @@ Shows match counts in mode line.
 #+end_src
 * display-line-numbers
 #+begin_src emacs-lisp :lexical t
-  ;;(add-hook 'text-mode-hook #'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+(use-feature display-line-numbers
+  :hook
+  (prog-mode . display-line-numbers-mode)
+  ;; (text-mode . display-line-numbers-mode)
+  ;; :custom
+  ;; (display-line-numbers-type 't)        ;; 't' (abs), 'relative' or 'visual' (visual-line-mode)
+  ;; (display-line-numbers-width-start t)  ;; pre-compute width from total line count, avoids gutter jumping
+  )
 #+end_src
 * Which-key
 #+begin_src emacs-lisp :lexical t
-(use-package which-key
+(use-feature which-key
   :demand t
-  :init
-  (setq which-key-enable-extended-define-key t)
   :config
   (which-key-mode)
   :custom
   (which-key-setup-side-window-bottom)
   (which-key-sort-order 'which-key-key-order-alpha)
-  (which-key-side-window-max-width 0.33)
-  ;;(which-key-idle-delay 0.2)
-  ;;(which-key-idle-delay 1)
-  )
+  (which-key-side-window-max-width 0.33))
 #+end_src
 * TESTTTTTTTTTTTTTTT
 #+begin_src emacs-lisp :lexical t
@@ -836,9 +876,9 @@ Shows match counts in mode line.
 * exec-path-from-shell Переменные среды
 #+begin_src emacs-lisp :lexical t :tangle yes
 ;;; Code to replace exec-path-from-shell
-;; Need to create file in $HOME/.emacs.d/.local/env
-;; use this command to create the file  `printenv > $HOME/.emacs.d/.local/env'
-(defconst my-local-dir (concat user-emacs-directory ".local/"))
+;; Need to create file in $HOME/.config/emacs/var/env
+;; use this command to create the file  `printenv > $HOME/.config/emacs/var/env'
+(defconst my-local-dir (concat user-emacs-directory "var/"))
 
 (defconst my-env-file (concat my-local-dir "env"))
 
@@ -883,13 +923,6 @@ unreadable. Returns the names of envvars that were changed."
   (my-load-envvars-file my-env-file))
 ;;; Code to replace exec-path-from-shell
 #+end_src
-
-#+begin_src emacs-lisp :lexical t :tangle no
-  (use-package exec-path-from-shell
-    :custom (exec-path-from-shell-arguments '("-l"))
-    :init (exec-path-from-shell-initialize))
-#+end_src
-
 * electric-pair-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-feature elec-pair
@@ -905,9 +938,9 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature eshell
   :commands (eshell eshell-command)
   :custom
+  (eshell-eshell-directory-name (my-expand-var-file "eshell/"))
   (eshell-banner-message "")
   :config
-  ;; Extensions
   (setq eshell-modules-list
         (append eshell-modules-list
                 '(eshell-smart eshell-elecslash eshell-tramp)))
@@ -968,19 +1001,39 @@ unreadable. Returns the names of envvars that were changed."
 ** тема
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package modus-themes
+  :ensure (:wait t)
+
+  :demand t
   ;; :ensure (modus-themes :ref "4.8.1")
+  :bind
+  (("<f5>" . modus-themes-rotate)
+   ("C-<f5>" . modus-themes-select)
+   ("M-<f5>" . modus-themes-load-random))
   :config
+  ;;
   (setq modus-themes-custom-auto-reload nil
       modus-themes-bold-constructs nil
       modus-themes-mixed-fonts t
       modus-themes-italic-constructs t
-      modus-themes-prompts '(bold intense)
-      modus-themes-completions '((t . (extrabold)))
+      ;; modus-themes-prompts '(bold intense) ;; This variable is obsolete since 5.3.0
+      ;; modus-themes-completions '((t . (extrabold))) ;; This variable is obsolete since 5.3.0
       modus-themes-headings
       '((0 . (variable-pitch 1))
         (t . (variable-pitch 1))
 
     ))
+  
+
+(setq modus-themes-after-load-theme-hook
+      '(lambda ()
+         (custom-set-faces
+           `(vertico-current ((t :weight extra-bold :background ,(modus-themes-get-color-value 'bg-completion))))
+           `(completions-highlight ((t :inherit bold :background ,(modus-themes-get-color-value 'bg-completion))))
+           `(corfu-current ((t :inherit bold :background ,(modus-themes-get-color-value 'bg-completion))))
+           `(icomplete-selected-match ((t :inherit bold :background ,(modus-themes-get-color-value 'bg-completion))))
+           `(ivy-current-match ((t :inherit bold :background ,(modus-themes-get-color-value 'bg-completion))))
+           `(company-tooltip-selection ((t :inherit bold :background ,(modus-themes-get-color-value 'bg-completion)))))))
+  
     ;;fonts
     (set-face-attribute 'default nil :height 190)
     (set-face-attribute 'variable-pitch nil :family "IBM Plex Serif" :height 1.0 :weight 'medium)
@@ -1022,19 +1075,6 @@ unreadable. Returns the names of envvars that were changed."
           (bg-main  "#f2f3f4")
           ;;(fg-main "#bcbec4")
           ))
-    ;; Make line numbers less intense
-;; (setq modus-themes-common-palette-overrides
-;;       '((fg-line-number-inactive "gray50")
-;;         (fg-line-number-active fg-main)
-;;         (bg-line-number-inactive unspecified)
-;;         (bg-line-number-active unspecified)))
-;;TODO
-    ;; Вот это ?
-;; (setq modus-themes-vivendi-palette-overrides
-;;       '((fg-line-number-inactive "gray50")
-;;         (fg-line-number-active fg-main)
-;;         (bg-line-number-inactive unspecified)
-;;         (bg-line-number-active unspecified)))
 ;;TODO
 (defun my-modus-themes-invisible-dividers (&rest _)
   "Make window dividers for THEME invisible."
@@ -1046,27 +1086,8 @@ unreadable. Returns the names of envvars that were changed."
      `(window-divider-last-pixel ((t :background ,bg :foreground ,bg))))))
 
 (add-hook 'enable-theme-functions #'my-modus-themes-invisible-dividers)
+(modus-themes-load-theme 'modus-vivendi))
 
-    (load-theme 'modus-vivendi t))
-
-    ;;  (setq modus-themes-common-palette-overrides '((constant "#bcbec4")))
-        ;;;;; font-lock
-    ;; `(font-lock-builtin-face ((,c :inherit modus-themes-bold :foreground ,builtin)))
-    ;; `(font-lock-comment-delimiter-face ((,c :inherit font-lock-comment-face)))
-    ;; `(font-lock-comment-face ((,c :inherit modus-themes-slant :foreground ,comment)))
-    ;; `(font-lock-constant-face ((,c :foreground ,constant)))
-    ;; `(font-lock-doc-face ((,c :inherit modus-themes-slant :foreground ,docstring)))
-    ;; `(font-lock-doc-markup-face ((,c :inherit modus-themes-slant :foreground ,docmarkup)))
-    ;; `(font-lock-function-name-face ((,c :foreground ,fnname)))
-    ;; `(font-lock-keyword-face ((,c :inherit modus-themes-bold :foreground ,keyword)))
-    ;; `(font-lock-negation-char-face ((,c :inherit error)))
-    ;; `(font-lock-preprocessor-face ((,c :foreground ,preprocessor)))
-    ;; `(font-lock-regexp-grouping-backslash ((,c :inherit modus-themes-bold :foreground ,rx-backslash)))
-    ;; `(font-lock-regexp-grouping-construct ((,c :inherit modus-themes-bold :foreground ,rx-construct)))
-    ;; `(font-lock-string-face ((,c :foreground ,string)))
-    ;; `(font-lock-type-face ((,c :inherit modus-themes-bold :foreground ,type)))
-    ;; `(font-lock-variable-name-face ((,c :foreground ,variable)))
-    ;; `(font-lock-warning-face ((,c :inherit modus-themes-bold :foreground ,warning)))
 #+end_src
 * TODO treesit.el
 
@@ -1154,7 +1175,40 @@ unreadable. Returns the names of envvars that were changed."
           (setq insert-directory-program gls)
         (setq args (list (car args)))))
     (setq dired-listing-switches (string-join args " ")))
-)
+
+
+  (defhydra hydra-dired (:color amaranth :hint nil)
+    "
+        ^Marking^      ^File Operations^     ^Actions^          ^Navigation^
+        ^-------^      ^---------------^     ^-------^          ^----------^
+        _m_ark        _c_opy                _d_elete           _n_ext line
+        _u_nmark      _r_ename              _e_dit file name   _p_rev line
+        _U_nmark all  _s_ymlink             _v_iew file        _j_ump to
+        _t_toggle     _M_kdir               _x_ecute marked    _q_uit
+        ^       ^      ^               ^    _w_ord (name)      ^          ^
+        ^       ^      ^               ^    _W_ord (full path) ^          ^
+   "
+    ("m" dired-mark)
+    ("u" dired-unmark)
+    ("U" dired-unmark-all-marks)
+    ("t" dired-toggle-marks)
+    ("c" dired-do-copy)
+    ("r" dired-do-rename)
+    ("s" dired-do-symlink)
+    ("M" dired-create-directory)
+    ("d" dired-flag-file-deletion)
+    ("e" dired-toggle-read-only)
+    ("v" dired-view-file)
+    ("x" dired-do-flagged-delete)
+    ("n" dired-next-line)
+    ("p" dired-previous-line)
+    ("j" dired-goto-file)
+    ("w" dired-copy-filename-as-kill)
+    ("W" (lambda () 
+           (interactive) 
+           (let ((current-prefix-arg 0)) 
+             (call-interactively #'dired-copy-filename-as-kill))))
+    ("q" nil "quit" :color blue)))
 #+end_src
 ** diredfl
 Цвета темы для dired
@@ -1185,13 +1239,6 @@ unreadable. Returns the names of envvars that were changed."
 (use-feature dired-x
  :after dired
  :hook (dired-mode . dired-omit-mode))
-#+end_src
-* TODO no littering
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package no-littering
-  :defer t
-  :config
-  (no-littering-theme-backups))
 #+end_src
 * docker
 #+begin_src emacs-lisp :lexical t
@@ -1387,24 +1434,21 @@ unreadable. Returns the names of envvars that were changed."
 #+end_src
 
 * TODO auto-revert
+
 #+begin_src emacs-lisp :lexical t
 (use-feature autorevert
-  :defer 2
+  :hook (emacs-startup . global-auto-revert-mode)
   :custom
   (auto-revert-verbose nil)
   (global-auto-revert-non-file-buffers t) ;; dired
-  ;; (auto-revert-interval 0.01 "Instantaneously revert")
   (auto-revert-interval 2 "Instantaneously revert")
   :config
-  (global-auto-revert-mode t)
   (add-to-list 'global-auto-revert-ignore-modes 'Buffer-menu-mode))
 #+end_src
 * anki-editor
 #+begin_src emacs-lisp :lexical t
 (use-package anki-editor
   :ensure (anki-editor :host github :repo "orgtre/anki-editor")
-  ;;orgtre/anki-editor
-  ;;anki-editor/anki-editor
   :after (org)
   :commands anki-editor-mode
   :bind (:map org-mode-map
@@ -1510,13 +1554,11 @@ is set if N was explicitly specified."
 #+begin_src emacs-lisp :lexical t
 (use-package elcord
   :defer 3
-  ;;:commands elcord
   :config
   (setq elcord-use-major-mode-as-main-icon t)
   (setq elcord-display-buffer-details nil)
   (setq elcord-idle-message "Thinking 🤔")
   (setq elcord-quiet t)
-  ;; (elcord-mode))
 
   (defun my/discord-running-p ()
     "Возвращает t если процесс Discord запущен."
@@ -1532,6 +1574,20 @@ is set if N was explicitly specified."
   (run-with-timer 30 30 #'my/elcord-sync))
 #+end_src
 
+* multisession
+#+begin_src emacs-lisp :lexical t
+(use-feature multisession
+  :custom
+  (multisession-directory (my-expand-var-file "multisession/")))
+#+end_src
+
+* nsm
+#+begin_src emacs-lisp :lexical t
+(use-feature nsm
+  :custom
+  (nsm-settings-file (my-expand-var-file "network-security.eld")))
+#+end_src
+
 * telega
 #+begin_src emacs-lisp :lexical t
 (use-package telega
@@ -1542,7 +1598,9 @@ is set if N was explicitly specified."
 * bookmark
 #+begin_src emacs-lisp :lexical t
 (use-feature bookmark
-  :custom (bookmark-fontify nil)
+  :custom
+  (bookmark-default-file (my-expand-var-file "bookmarks.eld"))
+  (bookmark-fontify nil)
   :general
   (+general-global-bookmark
     "j" 'bookmark-jump
@@ -1600,9 +1658,9 @@ for your search query.
 #+end_quote
 
 #+begin_src emacs-lisp :lexical t
-(use-package anzu
-  :defer 10
-  :config (global-anzu-mode))
+;; (use-package anzu
+;;   :defer 10
+;;   :config (global-anzu-mode))
 #+end_src
 
 * TODO Бекапы и Автосейвы
@@ -1664,13 +1722,12 @@ for your search query.
 
 * save-place
 #+begin_src emacs-lisp :lexical t
-;; Temp files (save-place, recenf, undo-tree)
 (use-feature saveplace
+  :custom
+  (save-place-file (my-expand-var-file "save-place.el"))
   :config
-  (setq save-place-file (expand-file-name "var/save-place.el" user-emacs-directory))
   (save-place-mode 1))
 #+end_src
-
 * undo-fu
 #+begin_src emacs-lisp :lexical t
 (use-package undo-fu
@@ -1687,10 +1744,13 @@ for your search query.
 
 (use-package undo-fu-session
   :defer t
+  ;; :hook (elpaca-after-init . undo-fu-session-global-mode)
   :custom
+  (undo-fu-session-directory (my-expand-var-file "undo-fu-session/"))
   (undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
   :config
-  (global-undo-fu-session-mode 1))
+  (undo-fu-session-global-mode t)
+  )
 
 #+end_src
 
@@ -1702,12 +1762,29 @@ for your search query.
   (setq vundo-glyph-alist vundo-unicode-symbols)
   (setq vundo-roll-back-on-quit nil))
   #+end_src
-* savehist истории минибуфера
+* savehist истории минибуфераf
 #+begin_src emacs-lisp :lexical t
+;; (use-feature savehist
+;;   ;; :demand t
+;;   ;; :defer t
+;;   ;; :init
+;;   ;; (setq savehist-file (my-expand-var-file "savehist"))
+
+;;   :config
+;;   ;; :init
+
+;;   (savehist-mode t))
+
 (use-feature savehist
-  :defer 1
-  :config
-  (savehist-mode 1))
+  :hook (after-init . savehist-mode)
+  :init (setq enable-recursive-minibuffers t ; Allow commands in minibuffers
+              history-length 1000
+              savehist-additional-variables '(mark-ring
+                                              global-mark-ring
+                                              search-ring
+                                              regexp-search-ring
+                                              extended-command-history)
+              savehist-autosave-interval 300))
 #+end_src
 * Мой modeline
 [[https://gist.github.com/clemera/8f6bdeffaf3495c98a070e50dc65acbc][mode-line+ · GitHub]]
@@ -1782,14 +1859,6 @@ for your search query.
               '((:eval my-evil-modeline-string)  ; ← Обёрнут в (:eval ...)
                 "%e"
                 mode-line-front-space
-                ;; (:propertize
-                ;;  (""
-                ;;   mode-line-mule-info
-                ;;   mode-line-client
-                ;;   mode-line-modified
-                ;;   mode-line-remote
-                ;;   " ")
-                ;;  display (min-width (5.0)))
                 mode-line-mule-info
                 mode-line-client
                 mode-line-modified
@@ -1844,7 +1913,7 @@ for your search query.
 #+end_src
 
 * TODO vertico
-
+vert
 #+begin_src emacs-lisp :lexical t
 (use-package vertico
   :demand t
@@ -1859,20 +1928,28 @@ for your search query.
 #+begin_src emacs-lisp :lexical t
 (use-package orderless
   :defer 1
-  ;;:custom (completion-styles '(orderless basic)))
   :custom
-  ;; (completion-styles '(orderless basic))
-  ;; (completion-styles '(orderless flex))
-  ;; (completion-category-defaults nil)
-  ;; (completion-category-overrides '((file (styles orderless partial-completion)))))
-  ;; (completion-category-overrides '((file (styles orderless partial-completion)))))
-  ;; :config
-  ;; (setq completion-styles '(orderless flex)
-  ;;       completion-category-overrides '((eglot (styles . (orderless flex))))))
-    (completion-styles '(orderless basic))
-    (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles basic partial-completion))))
-    (orderless-component-separator #'orderless-escapable-split-on-space))
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides
+    '((file (styles basic partial-completion))
+      (command (styles orderless flex))
+      (symbol (styles orderless basic))))
+  (orderless-component-separator #'orderless-escapable-split-on-space)
+  (orderless-affix-dispatch-alist
+    '((?! . orderless-without-literal)
+      (?% . char-fold-to-regexp)
+      (?` . orderless-initialism)
+      (?= . orderless-literal)
+      (?^ . orderless-literal-prefix)
+      (?~ . orderless-flex)))
+  (orderless-style-dispatchers '(orderless-affix-dispatch))
+  :config
+  (add-hook 'prog-mode-hook
+            (defun +prog-set-orderless-styles ()
+              (setq-local orderless-matching-styles '(orderless-prefixes))))
+
+  )
 #+end_src
 * marginalia
 #+begin_src emacs-lisp :lexical t
@@ -2049,10 +2126,11 @@ for your search query.
 #+end_src
 
 * corfu
+
 #+begin_src emacs-lisp :lexical t
 (use-package corfu
   :ensure (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
-  :defer 5
+  :defer 5 ;; was 5
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -2101,44 +2179,68 @@ for your search query.
 #+end_src
 
 * cape
-[[https://kristofferbalintona.me/posts/202203130102/][Cape | Kristoffer Balintona]]
 #+begin_src emacs-lisp :lexical t
 (use-package cape
+  ;; :disabled t
+  :commands (cape-file cape-elisp-block cape-keyword)
+  :autoload (cape-capf-super cape-wrap-noninterruptible cape-wrap-nonexclusive cape-wrap-buster)
   :custom
   (cape-dabbrev-buffer-function 'current-buffer)
   :init
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-  ;;(add-to-list 'completion-at-point-functions #'cape-history)
-  (add-to-list 'completion-at-point-functions #'cape-keyword)
-  (add-to-list 'completion-at-point-functions #'cape-abbrev)
-  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-  ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+
+  (defun my/cape--keyword-list ()
+    "Get keyword strings for current major-mode, resolving cape-keyword-list aliases."
+    (let ((entry (assq major-mode cape-keyword-list)))
+      (when entry
+        (let ((val (cdr entry)))
+          (if (and (consp val) (symbolp (car val)))
+              (cdr (assq (car val) cape-keyword-list))
+            val)))))
+
+  (defun my/cape-dabbrev-no-keyword ()
+    "cape-dabbrev excluding candidates already present in cape-keyword for current mode."
+    (when-let ((res (cape-dabbrev)))
+      (let* ((kws (my/cape--keyword-list))
+             (orig (nth 2 res)))
+        (if (null kws) res
+          (append (list (car res) (cadr res)
+                        (lambda (str pred action)
+                          (let ((cands (complete-with-action action orig str pred)))
+                            (if (eq action t)
+                                (seq-remove (lambda (c) (member c kws)) cands)
+                              cands))))
+                  (nthcdr 3 res))))))
+
+  ;; prog-mode: file paths (high) + dabbrev (low)
+  (add-hook 'prog-mode-hook
+    (defun +cape-add-file-h ()
+      (add-hook 'completion-at-point-functions #'cape-file -10 t)))
+  (add-hook 'prog-mode-hook
+    (defun +cape-add-super-h ()
+      (add-hook 'completion-at-point-functions
+                ;; (cape-capf-super #'cape-keyword #'cape-dabbrev) 20 t)))
+                (cape-capf-super #'cape-keyword #'my/cape-dabbrev-no-keyword) 20 t)))
+  ;; text-mode: dabbrev only
+  (add-hook 'text-mode-hook
+    (defun +cape-add-dabbrev-text-h ()
+      (add-hook 'completion-at-point-functions #'cape-dabbrev 25 t)))
+  ;; org-mode: elisp completion in src blocks
+  (add-hook 'org-mode-hook
+    (defun +cape-add-elisp-block-h ()
+      (add-hook 'completion-at-point-functions #'cape-elisp-block -5 t)))
+
+
+  ;; Make server capfs nonexclusive — не блокируют остальные capf
+  
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-)
-  ;; (use-package cape
-  ;;   :commands (cape-file cape-elisp-block cape-keyword)
-  ;;   :autoload (cape-wrap-noninterruptible cape-wrap-nonexclusive cape-wrap-buster)
-  ;;   :autoload (cape-wrap-silent)
-  ;;   :custom
-  ;;   (cape-dabbrev-buffer-function 'current-buffer)
-
-  ;;   :init
-  ;;   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  ;;   (add-to-list 'completion-at-point-functions #'cape-file)
-  ;;   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-  ;;   (add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;   ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
-
-  ;;   ;; Make these capfs composable.
-  ;;   (advice-add 'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
-  ;;   (advice-add 'lsp-completion-at-point :around #'cape-wrap-nonexclusive)
-  ;;   (advice-add 'comint-completion-at-point :around #'cape-wrap-nonexclusive)
-  ;;   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-  ;;   (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
-  ;;   (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive))
+  (advice-add 'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
+  (advice-add 'lsp-completion-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add 'comint-completion-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent) ;; <2026-05-23 Sat> :results corfu bug ?
+   )
+;;
 #+end_src
 
 * kind icon замена company-box-icons
@@ -2173,6 +2275,7 @@ for your search query.
 
 #+begin_src emacs-lisp :lexical t
 (use-package nerd-icons-corfu
+  :autoload nerd-icons-corfu-formatter
   :after corfu
   :init (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 #+end_src
@@ -2183,7 +2286,10 @@ for your search query.
 #+end_src
 
 * TODO hydra
-(use-package hydra)
+#+begin_src emacs-lisp :lexical t
+;; (use-package hydra
+;;   :defer t)
+#+end_src
 * quickrun
 #+begin_src emacs-lisp :lexical t
 (use-package quickrun
@@ -2226,12 +2332,22 @@ for your search query.
   ;; . lsp-deferred
   ;;:commands lsp
   :custom
+  (lsp-server-install-dir (my-expand-var-file "lsp/server/"))
+  (lsp-session-file (my-expand-var-file "lsp/lsp-session.el"))
+  (lsp-java-server-install-dir (my-expand-var-file "lsp-java/eclipse.jdt.ls/server/"))
+  (lsp-java-workspace-dir (my-expand-var-file "lsp-java/workspace/"))
+
   (lsp-completion-provider :none)
   (lsp-completion-show-kind nil)
   (lsp-completion-show-detail nil)
   (lsp-semgrep-languages nil)
   (lsp-enable-snippet nil)
   :config
+    ;; Не обращаться к ELPA/MELPA при старте LSP
+  (setq lsp-diagnostic-provider :flycheck)   ; или :flycheck/:flymake — явно
+  (setq lsp-auto-configure nil)          ; не автонастраивать пакеты
+  (setq lsp-enable-suggest-server-download nil)  ; не предлагать скачивать серверы
+
   (defun my-dap-use-compilation-mode-augmentation (orig-fn session-name)
     "Заменяем special-mode на compilation-mode в буферах DAP."
     (with-current-buffer (funcall orig-fn session-name)
@@ -2331,21 +2447,32 @@ for your search query.
 #+end_src
 ** lsp-java
 #+begin_src emacs-lisp :lexical t
-(use-package lsp-java
-  :after lsp
-  :hook ((java-mode java-ts-mode) . (lambda () (require 'lsp-java)))
-  :config
-  ;; (setq lsp-java-java-path "/usr/lib/jvm/java-17-openjdk/bin/java")
-  (setq lsp-java-java-path "/home/snake/.local/devjava/sdkman/candidates/java/current/bin/java")
-(setq lsp-java-configuration-runtimes '[(:name "JavaSE-21"
-                                               :path "/home/snake/.local/devjava/sdkman/candidates/java/current"
-                                               :default t)])
-  )
+;; (use-package lsp-java
+;;   :after lsp
+;;   ;; :hook ((java-mode java-ts-mode) . (lambda () (require 'lsp-java)))
+;;   :config
+;;   ;; (setq lsp-java-java-path "/usr/lib/jvm/java-17-openjdk/bin/java")
+;;   (setq lsp-java-java-path "/home/snake/.local/devjava/sdkman/candidates/java/current/bin/java")
+;; (setq lsp-java-configuration-runtimes '[(:name "JavaSE-21"
+;;                                                :path "/home/snake/.local/devjava/sdkman/candidates/java/current"
+;;                                                :default t)])
+;;   )
+
+  (use-package lsp-java
+    :after lsp
+    ;; :demand t  ; загрузить сразу, выполнить :config
+    :config
+    (setq lsp-java-java-path "/home/snake/.local/devjava/sdkman/candidates/java/25-graal/bin/java")
+    (setq lsp-java-configuration-runtimes
+          '[(:name "JavaSE-25"
+             :path "/home/snake/.local/devjava/sdkman/candidates/java/25-graal"
+             :default t)]))
   ;; :hook (java-ts-mode . lsp-deferred)
 #+end_src
 ** lsp-metals
 #+begin_src emacs-lisp :lexical t
 (use-package lsp-metals
+  ;; :after lsp
   :defer t
   :custom
   ;; You might set metals server options via -J arguments. This might not always work, for instance when
@@ -2364,6 +2491,13 @@ for your search query.
   (lsp-metals-enable-semantic-highlighting t)
   ;; :hook (scala-mode . lsp)
   )
+
+;; (use-package lsp-metals
+;;   :defer t
+;;   :init
+;;   (setq lsp-metals-server-args '("-J-Dmetals.allow-multiline-string-formatting=off"
+;;                                   "-J-Dmetals.icons=unicode"))
+;;   (setq lsp-metals-enable-semantic-highlighting t))
 #+end_src
 ** lsp-treemacs
 #+begin_src emacs-lisp :lexical t :tangle yes
@@ -2417,429 +2551,20 @@ for your search query.
        ((driver . "postgresql") (dataSourceName . "host=127.0.0.1 port=5432 user=postgres password=machaon dbname=postgres sslmode=disable"))
       ))
 #+end_src
-* eglot
-** general
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-feature eglot
-  ;; :hook
-  ;; (
-  ;;  ;;(python-mode . eglot-ensure)
-  ;;  ;;(c-mode . eglot-ensure)
-  ;;  ;;(c++-mode . eglot-ensure)
-  ;;  ;(java-ts-mode . eglot-ensure)
-  ;;  ;; (scala . eglot-ensure
-  ;;  ))
-  :custom
-  (eglot-autoshutdown t)
-  (eglot-report-progress nil)
-  (eglot-stay-out-of '())
-  (eglot-extend-to-xref t)
-  (eglot-send-changes-idle-time 0.5)
-
-  :config
-  (setq eglot-ignored-server-capabilities '(:documentHighlightProvider
-                                            :foldingRangeProvider))
-  (cl-callf plist-put eglot-events-buffer-config :size 0)
-  (push '((java-mode java-ts-mode) . jdtls-command-contact) eglot-server-programs)
-  :init
-  (defun +eglot-register (modes &rest servers)
-    "Register MODES with LSP SERVERS.
-     Examples:
-     (+eglot-register 'vhdl-mode \"vhdl_ls\")
-     (+eglot-register 'lua-mode \"lua-language-server\" \"lua-lsp\")
-     (+eglot-register '(c-mode c++-mode) '(\"clangd\" \"--clang-tidy\" \"-j=12\") \"ccls\")"
-    (declare (indent 0))
-    (with-eval-after-load 'eglot
-      (add-to-list
-       'eglot-server-programs
-       (cons modes (if (length> servers 1)
-                       (eglot-alternatives (ensure-list servers))
-                     (ensure-list (car servers)))))))
-
-)
-#+end_src
-
-** eglot-java
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package eglot-java
-  :ensure (eglot-java :host github :repo "yveszoundi/eglot-java" :files (:defaults "*.el"))
-  ;; :custom
-  ;; (eglot-java-eclipse-jdt-args
-  ;;  '("-XX:+UseAdaptiveSizePolicy"
-  ;;    "-XX:GCTimeRatio=4"
-  ;;    "-XX:AdaptiveSizePolicyWeight=90"
-  ;;    "-Xmx8G"
-  ;;    "-Xms2G"
-  ;;    ))
-  :config
-  (defun eglot-java-run-main-fork ()
-    "Run a main class."
-    (interactive)
-    (let* ((fqcn (eglot-java--class-fqcn))
-           (cp   (eglot-java--project-classpath (buffer-file-name) "runtime")))
-      (if fqcn
-          (compile
-           (concat "java -cp "
-                   (mapconcat #'identity cp path-separator)
-                   " "
-                   fqcn)
-           t)
-        (user-error "No main method found in this file! Is the file saved?!"))))
-  ;; :hook (java-ts-mode . eglot-java-mode)
-  )
-#+end_src
-
-** eglot-java extra
-#+begin_src emacs-lisp :lexical t :tangle no
-  (with-eval-after-load 'eglot
-
-  (defvar +eglot/display-buf "*+eglot/display-buffer*")
-  (defvar +eglot/display-frame nil)
-  (defvar +eglot/hover-last-point nil)
-  (defface +eglot/display-border '((((background dark)) . (:background "white"))
-                                   (((background light)) . (:background "black")))
-    "The border color used in childframe.")
-
-  (cl-defgeneric +eglot/workspace-configuration (server)
-    "Set workspace configuration,
-- Handle server request `workspace/configuration'
-- Send a `workspace/didChangeConfiguration' signal to SERVER"
-    nil)
-  (setq-default eglot-workspace-configuration #'+eglot/workspace-configuration)
-
-  ;; Hover
-  (defun +eglot/show-hover-at-point ()
-    (interactive)
-    (when (eglot-server-capable :hoverProvider)
-      (let ((buf (current-buffer)))
-        (jsonrpc-async-request
-         (eglot--current-server-or-lose)
-         :textDocument/hover (eglot--TextDocumentPositionParams)
-         :success-fn (eglot--lambda ((Hover) contents range)
-                       (eglot--when-buffer-window buf
-                         (if-let ((info (unless (seq-empty-p contents)
-                                          (eglot--hover-info contents range))))
-                             (progn
-                               (with-current-buffer (get-buffer-create +eglot/display-buf)
-                                 (erase-buffer)
-                                 (insert info))
-                               (setq +eglot/display-frame
-                                     (posframe-show
-                                      (get-buffer-create +eglot/display-buf)
-                                      :border-width 1
-                                      :border-color (face-background '+eglot/display-border nil t)
-                                      :max-height (/ (frame-height) 3)
-                                      :max-width (/ (frame-width) 3)
-                                      :poshandler 'posframe-poshandler-point-bottom-left-corner-upward))
-                               (run-with-timer 0.1 nil #'+eglot/hide-hover))
-                           (message "LSP No Hover Document"))))
-         :deferred :textDocument/hover))
-      (setq +eglot/hover-last-point (point))))
-
-  (defun +eglot/hide-hover ()
-    (if (or (eq (point) +eglot/hover-last-point)
-            (eq (selected-frame) +eglot/display-frame))
-        (run-with-timer 0.1 nil #'+eglot/hide-hover)
-      (posframe-hide +eglot/display-buf))))
-
-#+end_src
-** eglot-java-extra
-#+begin_src emacs-lisp :lexical t :tangle no
-(with-eval-after-load 'eglot
-  ;; ----------------------- Intialization/Configurations -----------------------
-  ;; (jsonrpc--json-encode (jdtls-initialization-options))
-  (defun jdtls-initialization-options ()
-    `(:settings (:java (:autobuild (:enabled t)
-                        :format (:settings (:url ,(expand-file-name (user-emacs-directory "share/eclipse-format.xml"))
-                                            :profile "CodeFormatterProfile"))
-                        :completion (:guessMethodArguments t
-                                     :lazyResolveTextEdit (:enabled t)
-                                     :favoriteStaticMembers ["org.junit.Assert.*"
-                                                             "org.junit.Assume.*"
-                                                             "org.junit.jupiter.api.Assertions.*"
-                                                             "org.junit.jupiter.api.Assumptions.*"
-                                                             "org.junit.jupiter.api.DynamicContainer.*"
-                                                             "org.junit.jupiter.api.DynamicTest.*"
-                                                             "org.mockito.Mockito.*"
-                                                             "org.mockito.ArgumentMatchers.*"
-                                                             "org.mockito.Answers.*"])
-                        :edit (:validateAllOpenBuffersOnChanges :json-false)
-                        ;; Javadoc generation, https://github.com/mfussenegger/nvim-jdtls/issues/76#issuecomment-831448277
-                        :codeGeneration (:generateComments t)))
-      :extendedClientCapabilities (:classFileContentsSupport t
-                                   :overrideMethodsPromptSupport t)
-      :bundles ,(if-let* ((bundles-dir (file-name-concat user-emacs-directory "cache" "lsp-servers" "java" "bundles"))
-                          (_ (file-directory-p bundles-dir))
-                          (jars (directory-files bundles-dir t "\\.jar$")))
-                    (apply #'vector jars)
-                  [])))
-    (cl-defmethod eglot-initialization-options (server &context (major-mode java-mode))
-    (jdtls-initialization-options))
-
-  (cl-defmethod eglot-initialization-options (server &context (major-mode java-ts-mode))
-    (jdtls-initialization-options))
-
-  (cl-defmethod +eglot/workspace-configuration (server &context (major-mode java-mode))
-    (plist-get (jdtls-initialization-options) :settings))
-
-  (cl-defmethod +eglot/workspace-configuration (server &context (major-mode java-ts-mode))
-    (plist-get (jdtls-initialization-options) :settings))
-
-  ;; ----------------------- Support URI jdt:// protocol -----------------------
-  (defun +java/eglot-find-jdt-server ()
-    (let ((filter-fn (lambda (server)
-                       (cl-loop for (mode . languageid) in
-                                (eglot--languages server)
-                                when (string= languageid "java")
-                                return languageid)))
-          (servers (gethash (eglot--current-project) eglot--servers-by-project)))
-      (cl-find-if filter-fn servers)))
-
-  (defun +java/eglot-jdt-uri-handler (operation &rest args)
-    "Support Eclipse jdtls `jdt://' uri scheme."
-    (let* ((uri (car args))
-           (cache-dir (expand-file-name "eglot-java" (temporary-file-directory)))
-           (_ (string-match "jdt://contents/\\(.*?\\)/\\(.*\\)\.class\\?" uri))
-           (jar-file (substring uri (match-beginning 1) (match-end 1)))
-           (java-file (format "%s.java" (replace-regexp-in-string "/" "." (substring uri (match-beginning 2) (match-end 2)) t t)))
-           (jar-dir (concat (file-name-as-directory cache-dir)
-                            (file-name-as-directory jar-file)))
-           (source-file (expand-file-name (concat jar-dir java-file))))
-      (unless (file-readable-p source-file)
-        (let ((content (jsonrpc-request
-                        (or (eglot-current-server)
-                            ;; NOTE: dape https://github.com/svaante/dape/issues/78#issuecomment-1966786597
-                            (+java/eglot-find-jdt-server))
-                        :java/classFileContents (list :uri uri))))
-          (unless (file-directory-p jar-dir) (make-directory jar-dir t))
-          (with-temp-file source-file (insert content))))
-      (cond
-       ((eq operation 'expand-file-name) source-file)
-       ((eq operation 'file-truename) source-file)
-       ((eq operation 'file-local-name) source-file)
-       ((eq operation 'file-remote-p) nil)
-       ;; Handle any operation we don’t know about.
-       (t (let ((inhibit-file-name-handlers
-                 (cons '+java/eglot-jdt-uri-handler
-                       (and (eq inhibit-file-name-operation operation)
-                            inhibit-file-name-handlers)))
-                (inhibit-file-name-operation operation))
-            (apply operation args))))))
-  (add-to-list 'file-name-handler-alist '("\\`jdt://" . +java/eglot-jdt-uri-handler))
-
-  ;; ----------------------- Support jdt.ls extra commands -----------------------
-  ;; (defun java-apply-workspaceEdit (arguments)
-  ;;   "Command `java.apply.workspaceEdit' handler."
-  ;;   (mapc #'eglot--apply-workspace-edit arguments this-command))
-
-  (defun java-action-overrideMethodsPrompt (arguments)
-    "Command `java.action.overrideMethodsPrompt' handler."
-    (let* ((argument (aref arguments 0))
-           (list-methods-result (jsonrpc-request (eglot--current-server-or-lose)
-                                                 :java/listOverridableMethods
-                                                 argument))
-           (methods (plist-get list-methods-result :methods))
-           (menu-items (mapcar (lambda (method)
-                                 (let* ((name (plist-get method :name))
-                                        (parameters (plist-get method :parameters))
-                                        (class (plist-get method :declaringClass)))
-                                   (cons (format "%s(%s) class: %s" name (string-join parameters ", ") class) method)))
-                               methods))
-           ;; use ";" instead of "," to separate strings in completing-read-multiple
-           (crm-separator "[ \t]*;[ \t]*")
-           (selected-methods (cl-map 'vector
-                                     (lambda (choice) (alist-get choice menu-items nil nil 'equal))
-                                     (delete-dups
-                                      (completing-read-multiple "overridable methods: " menu-items))))
-           (add-methods-result (jsonrpc-request (eglot--current-server-or-lose)
-                                                :java/addOverridableMethods
-                                                (list :overridableMethods selected-methods :context argument))))
-      (eglot--apply-workspace-edit add-methods-result this-command)))
-
-  (defun +java/execute-command (server _command)
-    (eglot--dbind ((Command) command arguments) _command
-      (pcase command
-        ;; ("java.apply.workspaceEdit" (java-apply-workspaceEdit arguments))
-        ("java.action.overrideMethodsPrompt" (java-action-overrideMethodsPrompt arguments))
-        (_ (eglot--request server :workspace/executeCommand _command)))))
-(defun +java/eglot-execute (server action)
-    "Ask SERVER to execute ACTION.
-ACTION is an LSP object of either `CodeAction' or `Command' type."
-    (eglot--dcase action
-      (((Command)) (+java/execute-command server action))
-      (((CodeAction) edit command data)
-       (if (and (null edit) (null command) data
-                (eglot-server-capable :codeActionProvider :resolveProvider))
-           (eglot-execute server (eglot--request server :codeAction/resolve action))
-         (when edit (eglot--apply-workspace-edit edit this-command))
-         (when command (+java/execute-command server command))))))
-
-  (cl-defmethod eglot-execute (server action &context (major-mode java-mode))
-    (+java/eglot-execute server action))
-
-  (cl-defmethod eglot-execute (server action &context (major-mode java-ts-mode))
-    (+java/eglot-execute server action)))
-
-
-
-
-#+end_src
-
-** extra 2
-#+begin_src emacs-lisp :lexical t :tangle no
-;; Run junit console
-(with-eval-after-load 'java-ts-mode
-  ;; Download `junit-platform-console-standalone.jar'
-  (defvar +java/junit-platform-console-standalone-jar
-    (expand-file-name (locate-user-emacs-file "cache/lsp-servers/java/junit-console/junit-platform-console-standalone.jar")))
-
-  ;; (+funcs/major-mode-leader-keys
-  ;;  java-ts-mode-map
-  ;;  "r" '(+java/junit-console-run-dwim :which-key "junit-console-run-dwim"))
-
-  ;; check junit console launcher options for details
-  (defun +java/junit-console-run-dwim ()
-    "Java run main/test at point."
-    (interactive)
-    (let* ((pkg (+java/treesit-get-package))
-           (class (+java/treesit-get-class))
-           (method (+java/treesit-get-method))
-           (classpath (+java/eglot-get-project-classpath)))
-      (if (and pkg class classpath)
-          (compile
-           (concat "java -jar " +java/junit-platform-console-standalone-jar
-                   " -cp " classpath
-                   (if method
-                       (format " -m '%s.%s#%s'" pkg class method)
-                     (format " -c '%s.%s'" pkg class)))
-           t)
-        (message "Can not found package/class/classpath"))))
-
-  (defun +java/treesit-get-package-node ()
-    (treesit-node-text
-     (car
-      (treesit-filter-child
-       (treesit-buffer-root-node)
-       (lambda (child)
-         (member (treesit-node-type child) '("package_declaration")))))
-     t))
-
-  (defun +java/treesit-get-package ()
-    (let ((p (+java/treesit-get-package-node)))
-      (when (string-match "package \\(.+\\);" p)
-        (match-string 1 p))))
-
-  (defun +java/treesit-get-class ()
-    (treesit-defun-name
-     (car
-      (treesit-filter-child
-       (treesit-buffer-root-node)
-       (lambda (child)
-         (member (treesit-node-type child) '("class_declaration")))))))
-
-  (defun +java/treesit-get-method ()
-    (treesit-defun-name
-     (treesit-parent-until
-      (treesit-node-at (point))
-      (lambda (parent)
-        (member (treesit-node-type parent) '("method_declaration"))))))
-
-  (defun +java/maven-get-deps-classpath (target-location)
-    "Get dependencies classpath."
-    (let* ((project-root-path (+project/root))
-           (default-directory project-root-path)
-           (deps-cp-file (format "%s/deps-cp" target-location)))
-      (unless (file-exists-p deps-cp-file)
-        ;; NOTE: Cache deps classpath to speed up shell command, regenerate it once you modify project dependencies.
-        (shell-command-to-string "mvn test-compile dependency:build-classpath -Dmdep.includeScope=test -Dmdep.outputFile=target/deps-cp"))
-      (with-temp-buffer
-        (insert-file-contents deps-cp-file)
-        (buffer-string))))
-
-  (defun +java/maven-get-project-classpath ()
-    (when-let* ((target-location (expand-file-name (locate-dominating-file default-directory "target")))
-                (target-path (format "%starget" target-location))
-                (deps-cp (+java/maven-get-deps-classpath target-path)))
-      (format "%s/classes:%s/test-classes:%s" target-path target-path deps-cp)))
-
-  (defun +java/eglot-get-project-classpath (&optional filename scope)
-    (let* ((filename (or filename (buffer-file-name)))
-           (scope (or scope "test"))
-           (command (list
-                     :title ""
-                     :command "java.project.getClasspaths"
-                     :arguments (vector (eglot-path-to-uri filename)
-                                        (json-serialize (list :scope scope)))))
-           (classpaths (plist-get (eglot-execute (eglot--current-server-or-lose) command) :classpaths)))
-      (mapconcat #'identity classpaths path-separator)))
-
-  (defun +java/testfile-p (file-path)
-    "Tell if a file locate at FILE-PATH is a test class."
-    (let ((command (list
-                    :title ""
-                    :command "java.project.isTestFile"
-                    :arguments (vector (eglot-path-to-uri file-path)))))
-      (eq t (eglot-execute (eglot--current-server-or-lose) command)))))
-
-;; ==================== Viewing Java Class Files in Emacs ====================
-;;
-;; https://nullprogram.com/blog/2012/08/01/
-;;
-(defun javap-handler (operation &rest args)
-  "Handle .class files by putting the output of javap in the buffer."
-  (cond
-   ((eq operation 'get-file-buffer)
-    (let ((file (car args)))
-      (with-current-buffer (create-file-buffer file)
-        (call-process "javap" nil (current-buffer) nil "-verbose"
-                      "-classpath" (file-name-directory file)
-                      (file-name-sans-extension
-                       (file-name-nondirectory file)))
-        (setq buffer-file-name file)
-        (setq buffer-read-only t)
-        (set-buffer-modified-p nil)
-        (goto-char (point-min))
-        ;; (java-mode)
-        (current-buffer))))
-   ;; Run the real handler without the javap handler installed
-   (t (let ((inhibit-file-name-handlers
-             (cons 'javap-handler
-                   (and (eq inhibit-file-name-operation operation)
-                        inhibit-file-name-handlers)))
-            (inhibit-file-name-operation operation))
-        (apply operation args)))))
-
-(add-to-list 'file-name-handler-alist '("\\.class$" . javap-handler))
-#+end_src
-
-** eglot-booster
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package eglot-booster
-  :ensure (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-	:after eglot
-	:config	(eglot-booster-mode))
-#+end_src
-* eglot-hierarchy
-#+begin_src emacs-lisp :lexical t
-(use-package eglot-hierarchy
-  :ensure (eglot-hierarchy :host github :repo "dolmens/eglot-hierarchy")
-  :defer t)
-#+end_src
 * envrc
 #+begin_src emacs-lisp :lexical t :tangle yes
-(use-package envrc
-  :hook (elpaca-after-init . envrc-global-mode))
 
-  ;; :config
-  ;; (add-hook 'elpaca-after-init-hook
-  ;;           (lambda () (envrc-global-mode 1))))
+ (use-package envrc
+    :config (add-hook 'elpaca--post-queues-hook #'envrc-global-mode))
+
+;; (use-package envrc
+;;   :hook (elpaca-after-init . envrc-global-mode))
 #+end_src
-* haskell
+
 * haskell-mode
 #+begin_src emacs-lisp :lexical t
 (use-package haskell-mode
-  :defer t
-  )
+  :defer t)
 #+end_src
 * Java-ts-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
@@ -2867,9 +2592,7 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package groovy-mode
 :mode (("build\\.gradle" . groovy-mode)
-       ("Jenkinsfile" . groovy-mode))
-:config
-(+eglot-register '(groovy-mode) "groovy-language-server"))
+       ("Jenkinsfile" . groovy-mode)))
 #+end_src
 * kotlin-ts-mode
 #+begin_src emacs-lisp :lexical t :tangle yes
@@ -2986,8 +2709,6 @@ ACTION is an LSP object of either `CodeAction' or `Command' type."
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 #+end_src
-* ob-scala
-
 * nix
 #+begin_src emacs-lisp :lexical t
 (use-package nix-mode
@@ -3040,24 +2761,25 @@ HTDP + SICP
   :hook ((geiser-mode geiser-repl-mode) . macrostep-geiser-setup))
 #+end_src
 
-* TODO ansible
 * TODO web-mode JS TS HTML
 [[https://github.com/seagle0128/.emacs.d/blob/9722d41abee93f8f6a28b36c3f7cb8795ada6a5a/lisp/init-web.el#L118][.emacs.d/lisp/init-web.el at 9722d41abee93f8f6a28b36c3f7cb8795ada6a5a · seagl...]]
 #+begin_src emacs-lisp :lexical t
 (use-package web-mode
-  :defer t
   :mode
   "\\.\\(phtml\\|php\\|[gj]sp\\|as[cp]x\\|erb\\|djhtml\\|html?\\|hbs\\|ejs\\|jade\\|swig\\|tm?pl\\|vue\\)$"
-  :config
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (web-mode-code-indent-offset 2))
 #+end_src
 
 * dap-mode
+var "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar"
 #+begin_src emacs-lisp :lexical t
 (use-package dap-mode
   :after lsp-mode
+  :custom
+  (dap-java-test-runner (my-expand-var-file "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar"))
   :config
   (dap-mode t))
 #+end_src
@@ -3393,8 +3115,8 @@ https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
 Для cape-dict
 #+begin_src emacs-lisp :lexical t
 (use-feature ispell
-  :config
-  (setq ispell-alternate-dictionary (file-truename "~/.config/emacs/dict/english-words.txt")))
+  :custom
+  (ispell-alternate-dictionary (file-truename "~/.config/emacs/dict/english-words.txt")))
 #+end_src
 
 * treemacs
@@ -3533,6 +3255,7 @@ Use `treemacs' command for old functionality."
   :defer t)
 #+end_src
 * [#D] org-modern
+- [X] сделать
 
 ("⚑" "⬆" "■")
     <--- [[https://github.com/karthink/popper][GitHub - karthink/popper: Emacs minor-mode to summon and dismiss buffers easi...]]
@@ -3546,13 +3269,15 @@ Use `treemacs' command for old functionality."
   (org-modern-horizontal-rule (make-string 36 ?─)) ;; "───────────"
   (org-modern-priority t)
   (org-modern-replace-stars "◉○✸✿✤✜◆▶")
-  (org-modern-checkbox nil)
+  ;; (org-modern-checkbox nil)
+  (org-modern-checkbox '((88 . "☑") (45 . "❍") (32 . "☐")))
   (org-modern-priority
       '((?A . #("❗" 0 1 (face (:foreground "orange" :weight bold :inverse-video t))))
         (?B . #("⬆"  0 1 (face (:foreground "yellow" :weight bold :inverse-video t))))
         (?C . #("⬇"  0 1 (face (:foreground "green"  :weight bold :inverse-video t))))
         (?D . #("⚑"  0 1 (face (:foreground "red"    :weight bold :height 1.2 ))))))
   :config
+  ;; (setf (alist-get ?X org-modern-checkbox) #("□x" 0 2 (composition ((2)))))
   (setq org-modern-star 'replace)
   (setq org-modern-block-name
         '((t . t)
@@ -3716,6 +3441,26 @@ Use `treemacs' command for old functionality."
   (denote-rename-buffer-mode 1))
 
 #+end_src
+* volatile-highlights
+
+#+begin_src emacs-lisp :lexical t
+(use-package volatile-highlights
+  :disabled t
+  :custom
+  ;; Animation: choose one of 'static, 'fade-in, or 'pulse
+  (vhl/animation-style 'fade-in)
+  ;; Also mark deletion points (zero-width ranges)
+  (vhl/highlight-zero-width-ranges t)
+  :config
+  (volatile-highlights-mode 1)
+  ;; Prefer customize-set-variable (or setopt on Emacs 29.1+) so :set hooks run
+  (customize-set-variable 'vhl/animation-mid-frames 4)
+  (customize-set-variable 'vhl/animation-frame-interval 0.03)
+  ;; On Emacs 29.1+ you can instead use:
+  ;; (setopt vhl/animation-mid-frames 4
+  ;;         vhl/animation-frame-interval 0.03)
+  )
+#+end_src
 * org mode
 #+begin_src emacs-lisp :lexical t
 (use-package org
@@ -3760,6 +3505,10 @@ Use `treemacs' command for old functionality."
     "!"  'org-time-stamp-inactive
     "<"  'org-date-from-calendar
     ">"  'org-goto-calendar
+
+    "l" '(:ignore t :which-key "links")
+    "lc" 'org-cliplink
+    "ll" 'org-insert-link
 
     "T"  '(:ignore t :which-key "toggle")
     "Tc"  'org-toggle-checkbox
@@ -3844,14 +3593,14 @@ Use `treemacs' command for old functionality."
    '((sequence  "TODO(t)" "DONE(d)" )
      (sequence "DEPRECATED(o)"))
    ;;move to theme?
-   org-todo-keyword-faces
-   `(("CANCELED" . (:foreground "IndianRed1" :weight bold))
-     ("TODO" . (:foreground "#ffddaa"
-                            :weight bold
-                            :background "#202020"
-                            :box (:line-width 3 :width -2 :style released-button)))
-     ("DEPRECATED" . (:foreground "yellow-faint" :weight bold))
-     ))
+   ;; org-todo-keyword-faces
+   ;; `(("CANCELED" . (:foreground "IndianRed1" :weight bold))
+   ;;   ("TODO" . (:foreground "#ffddaa"
+   ;;                          :weight bold
+   ;;                          :background "#202020"
+   ;;                          :box (:line-width 3 :width -2 :style released-button)))
+   ;;   ("DEPRECATED" . (:foreground "yellow-faint" :weight bold)))
+   )
   ;; (org-ellipsis (nth 5 '("↴" "˅" "…" " ⬙" " ▽" "▿")))
   (org-ellipsis " ▿")
   (org-priority-lowest ?D)
@@ -3859,8 +3608,19 @@ Use `treemacs' command for old functionality."
   (org-insert-heading-respect-content t) ;; вставить новый хеадер с уважением к контенту !
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
 #+end_src
+* org-id
+:PROPERTIES:
+:ID:       ddc98e84-959e-486e-856c-2dfe355dd0d8
+:END:
 
 
+
+#+begin_src emacs-lisp :lexical t
+(use-feature org-id
+  :after org
+  :custom
+  (org-id-locations-file (my-expand-var-file "org/id-locations.el")))
+#+end_src
 * TODO [#B] ox-gfm
 #+begin_src emacs-lisp :lexical t
 (use-package ox-gfm :defer t)
@@ -4509,14 +4269,15 @@ https://github.com/org-mime/org-mime
 
 * emacs-mcp-server
 #+begin_src emacs-lisp :lexical t
-(use-package mcp-server
-  :ensure (mcp-server :host github :repo "rhblind/emacs-mcp-server"
-             :files ("*.el" ("tools/" "tools/*.el") "mcp-wrapper.py" "mcp-wrapper.sh"))
-  ;; :disabled t
+(use-feature mcp-server
+  :ensure (mcp-server :repo "~/.config/emacs/lisp/mcp-server")
+  ;; :ensure (mcp-server :host github :repo "rhblind/emacs-mcp-server"
+  ;;            :files ("*.el" ("tools/" "tools/*.el") "mcp-wrapper.py" "mcp-wrapper.sh"))
+  :disabled t
   :config
   (setq mcp-server-security-allowed-dangerous-functions
-      '(find-file, with-current-buffer, insert-file-contents, dired))
-  (setq mcp-server-emacs-tools-enabled 'all)
+      '(find-file with-current-buffer insert-file-contents dired with-temp-buffer))
+  (setq mcp-server-emacs-tools-enabled 'all) ;;
   ;; (add-hook 'emacs-startup-hook #'mcp-server-start-unix)
   )
 #+end_src
@@ -4632,6 +4393,7 @@ https://github.com/org-mime/org-mime
 * TODO lsp-snippet
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package lsp-snippet-tempel
+  :defer t
   :ensure (lsp-snippet-tempel :host github :repo "svaante/lsp-snippet")
   :config
   (when (featurep 'lsp-mode)
@@ -4653,6 +4415,8 @@ https://github.com/org-mime/org-mime
 (use-feature tramp
   :defer t
   :custom
+  (tramp-persistency-file-name (my-expand-var-file "tramp/persistency.el"))
+  ;; (tramp-auto-save-directory (my-expand-var-file "tramp/auto-save/")) TODO
   (tramp-terminal-type "tramp")
   :config
   (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
@@ -4782,6 +4546,7 @@ https://github.com/ternjs/tern
   (add-to-list 'project-switch-commands '(+project-magit-status "Magit" "m"))
   (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep" "F"))
   :custom
+  (project-list-file (my-expand-var-file "project-list.eld"))
   (project-vc-ignores '("result/"
                         "*.png"
                         ".direnv/"
@@ -4863,6 +4628,7 @@ https://github.com/ternjs/tern
 ** auth-source-pass (built-in)
 #+begin_src emacs-lisp :lexical t
 (use-feature auth-source-pass
+  ;; :defer t
   :preface
   (defvar auth-source-pass--cache (make-hash-table :test #'equal))
 
@@ -4987,9 +4753,13 @@ modern replacement rainbow-mode
 * recentf
 #+begin_src emacs-lisp :lexical t
 (use-feature recentf
+  ;; :hook (elpaca-after-init . recentf-mode)
   :defer 1
   :config (recentf-mode)
   :custom
+  ;; (recentf-show-messages nil)
+  ;; (recentf-auto-cleanup 300)
+  (recentf-save-file (my-expand-var-file "recentf-save.el"))
   (recentf-max-menu-items 1000 "Offer more recent files in menu")
   (recentf-max-saved-items 1000 "Save more recent files"))
 #+end_src
@@ -5228,15 +4998,14 @@ modern replacement rainbow-mode
 #+end_src
 * find-func
 
-#+begin_quote
 Когда стандартное поведение lisp-функции непонятно или кажется багнутым. Например:
 - M-x find-function RET switch-to-buffer — хочешь понять, почему он не принимает C-u как pop-to-buffer
 - M-. на read-from-minibuffer — лезет в minibuf.c, смотришь как устроен ввод
-- split-window / delete-other-windows — непонятно почему rebalance работает неожиданно
+- split-window / delete-other-windows — непонятно почему r bebalance работает неожиданно
 - call-interactively — хочешь понять как Emacs разбирает interactive specs
 - Любая функция из C иконкой ⓒ в C-h f — signal, car, mapcar, accept-process-output
-Короче, когда lisp-реализация ссылается на C-примитив ((defalias 'car #'..., subr) или функция написана целиком на C (фреймовые/буферные/процессные/оконные менеджеры). Это не повседневщина, но при отладке или глубоком изучении — спасает.
-#+end_quote
+Короче, когда lisp-реализация ссылается на C-примитив ~((defalias 'car #'..., subr)~ или функция написана целиком на C (фреймовые/буферные/процессные/оконные менеджеры). Это не повседневщина, но при отладке или глубоком изучении — спасает.
+
 
 #+begin_src emacs-lisp :lexical t
 (use-feature find-func
@@ -5263,13 +5032,11 @@ modern replacement rainbow-mode
     "FG" 'global-display-fill-column-indicator-mode))
 #+end_src
 * fontify-face
-#+begin_quote
-Fontify symbols representing faces with that face.
-
-https://github.com/Fuco1/fontify-face
-#+end_quote
-
 #+begin_src emacs-lisp :lexical t
+;; Fontify symbols representing faces with that face.
+
+;; https://github.com/Fuco1/fontify-face
+
 (use-package fontify-face
   :commands (fontify-face-mode))
 #+end_src
@@ -5313,19 +5080,17 @@ https://github.com/Fuco1/fontify-face
 #+end_src
 
 * htmlize
-#+begin_quote
-This package converts the buffer text and the associated decorations to HTML.
-
-https://github.com/hniksic/emacs-htmlize
-#+end_quote
-This is necessary for exporting Org files to HTML.
 #+begin_src emacs-lisp :lexical t
+;; This package converts the buffer text and the associated decorations to HTML.
+;; This is necessary for exporting Org files to HTML.
 (use-package htmlize
   :defer t)
 #+end_src
 * ielm (для elisp)
 #+begin_src emacs-lisp :lexical t
 (use-feature ielm
+  :custom
+  (ielm-history-file-name (my-expand-var-file ("ielm-history.eld")))
   :general
   (global-leader
     :major-modes '(inferior-emacs-lisp-mode)
@@ -5349,28 +5114,25 @@ This is necessary for exporting Org files to HTML.
                    (switch-to-buffer-other-window i))))))
 #+end_src
 * fontset
-fix emoji without  VARIATION SELECTOR-16
 #+begin_src emacs-lisp :lexical t
+;; fix emoji without  VARIATION SELECTOR-16
 (use-feature fontset
   :config
   (set-fontset-font t 'unicode "Noto Color Emoji" nil 'prepend)
   )
 #+end_src
 * keycast
-modern replacement for command-log-mode and view-lossage
-SPC-h-l надо
 #+begin_src emacs-lisp :lexical t
+;; modern replacement for command-log-mode and view-lossage
+;; SPC-h-l надо
+
 (use-package keycast
   :defer t)
 #+end_src
 * js2
-#+begin_quote
-Improved JavaScript editing mode for GNU Emacs
-
-https://github.com/mooz/js2-mode
-#+end_quote
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package js2-mode
+  :disabled t
   :commands (js2-mode)
   :mode "\\.js\\'"
   :interpreter (("nodejs" . js2-mode) ("node" . js2-mode)))
@@ -5426,14 +5188,18 @@ https://github.com/mooz/js2-mode
 #+begin_src emacs-lisp :lexical t
 (use-package transient
   :defer t
-  :ensure(transient :host github :repo "magit/transient"))
+  :ensure(transient :host github :repo "magit/transient")
+  :custom
+  (transient-history-file (my-expand-var-file "transient/history.el")))
 #+end_src
 * forge
+
 #+begin_src emacs-lisp :lexical t
 (use-package forge
-  ;; :ensure (:files (:defaults "docs/*"))
   :ensure (forge :host github :repo "magit/forge")
   :after magit
+  :custom
+  (forge-database-file (my-expand-var-file "forge/database.sqlite"))
   :init
   (setq forge-add-default-bindings nil
               forge-display-in-status-buffer nil
@@ -5441,13 +5207,6 @@ https://github.com/mooz/js2-mode
   (setq forge-owned-accounts '(("snakejke")))
   )
 #+end_src
-* compat
-
-#+begin_src emacs-lisp :lexical t
-;; (use-package compat
-;;   :ensure (compat :host github :repo  "emacs-compat/compat"))
-#+end_src
-
 * with-editor
 
 #+begin_src emacs-lisp :lexical t
@@ -5525,24 +5284,11 @@ https://github.com/mooz/js2-mode
   (nov-mode))
 #+end_src
 * notmuch
-  (general-define-key :states '(normal insert) :keymaps 'org-mode-map
-                      (kbd "M-l") 'org-metaright
-                      (kbd "M-h") 'org-metaleft
-                      (kbd "M-k") 'org-metaup
-#+begin_src emacs-lisp :lexical t
-  ;; (with-eval-after-load 'evil-collection-notmuch
-  ;; (evil-define-key* '(normal visual) notmuch-search-mode-map
-  ;;   (kbd "RET") #'my/notmuch-search-maybe-resume-draft))
-
-#+end_src
 #+begin_src emacs-lisp :lexical t
 (use-feature notmuch
   :load-path ("/usr/share/emacs/site-lisp/notmuch")
   :commands (notmuch)
   :defer t
-  ;; :hook (notmuch-search-mode . (lambda ()
-  ;;   (evil-local-set-key 'normal (kbd "RET") #'my/notmuch-search-maybe-resume-draft)
-  ;;   (evil-local-set-key 'visual (kbd "RET") #'my/notmuch-search-maybe-resume-draft)))
   :init
   (setq notmuch-search-oldest-first nil
         message-send-mail-function 'message-send-mail-with-sendmail
@@ -5685,20 +5431,10 @@ https://github.com/mooz/js2-mode
     (evil-collection-notmuch-toggle-tag "trash" "search" #'ignore)))
 #+end_src
 
-;; 📨
-    ;; (general-define-key
-  ;;  :keymaps 'notmuch-search-mode-map
-;;    :states '(normal)
-;;    "d" #'my/notmuch-toggle-trash)
-* messages.el
-#+begin_src emacs-lisp :lexical t
-;; (use-feature message
-;;   :config
-;;   (setq message-posting-charset '(nil . t)))
-#+end_src
 * wgrep
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t :tangle yes
 (use-package wgrep
+  :disabled t
   ;;:defer t
   :init
   (setq wgrep-auto-save-buffer t
@@ -5720,7 +5456,7 @@ https://github.com/mooz/js2-mode
 
 #+end_src
 * TODO xref
-[[https://github.com/jiegec/emacs.d/blob/35af3f66947e5cfa6879b46d65de1f229802d845/lisp/init-utils.el#L37][emacs.d/lisp/init-utils.el at 35af3f66947e5cfa6879b46d65de1f229802d845 · jieg...]]
+[[https://github.com/jiegec/emacs.d/blob/35af3f66947e5cfa6879b46d65de1f229802d845/lisp/init-utils.el#L37]]
 #+begin_src emacs-lisp :lexical t
 (use-feature xref
 ;    :bind
@@ -5736,10 +5472,6 @@ https://github.com/mooz/js2-mode
   :custom
   (disabled-command-function nil "Enable all commands"))
 #+end_src
-* zsh aliases highlight
-#+begin_src emacs-lisp :lexical t
-
-#+end_src
 * extras
 #+begin_src emacs-lisp :lexical t
 ;; (eval-when-compile
@@ -5751,12 +5483,6 @@ https://github.com/mooz/js2-mode
              +unfill-region
              org-mouse-bold-mode-enable
              org-mouse-bold-mode-disable))
-#+end_src
-* edraw
-#+begin_src emacs-lisp :tangle no
-(use-package edraw
-  :ensure (:host github :repo "misohena/el-easydraw")
-  :after org)
 #+end_src
 * (provide 'init')
 

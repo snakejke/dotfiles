@@ -101,6 +101,7 @@ in
       scrcpy
       #pgloader #bug 04.02.2026
       firefox
+      hyperfine # instead of GNU /usr/bin/time
       # discord
       zed-editor
       # notmuch
