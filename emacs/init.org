@@ -24,27 +24,31 @@
 ;; (debug-on-entry 'emacs-repository-version-git)
 #+end_src
 ** Debugging
-Running this form will launch the debugger after loading a package.
-This is useful for finding out when a dependency is requiring a package (perhaps earlier than you want).
-Use by tangling this block and launching Emacs with =emacs --debug-init=.
 
-#+begin_src emacs-lisp :var file="" :results silent :tangle no
-(unless (string-empty-p file)
-  (eval-after-load file
-    '(debug)))
+#+begin_src emacs-lisp :lexical t
+;;; Debugging
+;; Running this form will launch the debugger after loading a package.
+;; This is useful for finding out when a dependency is requiring a package (perhaps earlier than you want).
+;; Use by tangling this block and launching Emacs with =emacs --debug-init=.
+
+;; (unless (string-empty-p file)
+;;   (eval-after-load file
+;;     '(debug)))
 #+end_src
 
-Similarly, this variable will hit the debugger when a message matches its regexp.
-#+begin_src emacs-lisp :tangle no
-(setq debug-on-message "")
+#+begin_src emacs-lisp
+;; Similarly, this variable will hit the debugger when a message matches its regexp.
+
+;; (setq debug-on-message "")
 #+end_src
 
-Adding a variable watcher can be a useful way to track down initialization and mutation of a variable.
-#+begin_src emacs-lisp :tangle no
-(add-variable-watcher 'org-capture-after-finalize-hook
-                      (lambda (symbol newval operation where)
-                        (debug)
-                        (message "%s set to %s" symbol newval)))
+
+#+begin_src emacs-lisp
+;; Adding a variable watcher can be a useful way to track down initialization and mutation of a variable.
+;; (add-variable-watcher 'org-capture-after-finalize-hook
+;;                       (lambda (symbol newval operation where)
+;;                         (debug)
+;;                         (message "%s set to %s" symbol newval)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -52,14 +56,16 @@ Adding a variable watcher can be a useful way to track down initialization and m
 #+end_src
 
 ** Оптимизация file-name-handler-alist
-Пропуск  регулярных выражений в  =file-name-handler-alist= .
+
 #+begin_src emacs-lisp :lexical t
+;; Пропуск  регулярных выражений в  =file-name-handler-alist= .
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
 #+end_src
 ** TODO Папка с кешем
 #+begin_src emacs-lisp :lexical t
+;; Папка с кешем
 (when (boundp 'native-comp-eln-load-path)
   (setcar native-comp-eln-load-path
           (expand-file-name "cache/eln-cache/" user-emacs-directory)))
@@ -68,6 +74,7 @@ Adding a variable watcher can be a useful way to track down initialization and m
 ** Настройка Garbage Collection
 
 #+begin_src emacs-lisp :lexical t
+;; Настройка Garbage Collection
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 1)
 
@@ -96,12 +103,14 @@ Adding a variable watcher can be a useful way to track down initialization and m
 
 ** TODO Преднастройка ui и некоторый тюнинг.
 *** TODO Это должно быть тут ?
-Увеличивает время запуска. Здесь не надо указывать.
 #+begin_src emacs-lisp :lexical t
+;; Увеличивает время запуска. Здесь не надо указывать.
+
 ;; (setq read-process-output-max (* 64 1024))  ; 64kb
 #+end_src
 *** Отключаем tool-bar, menu-bar, vertical-scroll
 #+begin_src emacs-lisp :lexical t
+;;Отключаем tool-bar, menu-bar, vertical-scroll
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -109,25 +118,30 @@ Adding a variable watcher can be a useful way to track down initialization and m
 
 *** Отключаем инструкции как закрывать emacsclient
 #+begin_src emacs-lisp :lexical t
+;; Отключаем инструкции как закрывать emacsclient
 (setq server-client-instructions nil)
 #+end_src
 *** Не менять размер фрейма в зависимости от шрифтов
 #+begin_src emacs-lisp :lexical t
+;;Не менять размер фрейма в зависимости от шрифтов
 ;;+к времени запуска если nil
 (setq frame-inhibit-implied-resize t)
 #+end_src
 *** Игнорирование настроек в  Xresources
 #+begin_src emacs-lisp :lexical t
+;;Игнорирование настроек в  Xresources
 (advice-add #'x-apply-session-resources :override #'ignore)
 #+end_src
 
 *** Фикс  бага ?
-Taken from:
-
-[[https://github.com/vsemyonoff/emacsrc/blob/14649a5bafea99cc7e13e7d048e9d15aed7926ce/early-init.el]]
-
-This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-read=.
 #+begin_src emacs-lisp :lexical t
+
+;; Taken from:
+
+;; [[https://github.com/vsemyonoff/emacsrc/blob/14649a5bafea99cc7e13e7d048e9d15aed7926ce/early-init.el]]
+
+;; This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-read=.
+
 (setq desktop-restore-forces-onscreen nil)
 #+end_src
 
@@ -218,18 +232,19 @@ This helps with a bug I was hitting when using =desktop-save-mode='s =desktop-re
 #+end_src
 
 ** Запуск profilling
-#+begin_src emacs-lisp :lexical t :tangle no
-(profiler-start 'cpu+mem)
-(add-hook 'elpaca-after-init-hook (lambda () (profiler-stop) (profiler-report)))
+#+begin_src emacs-lisp :lexical t
+;; (profiler-start 'cpu+mem)
+;; (add-hook 'elpaca-after-init-hook (lambda () (profiler-stop) (profiler-report)))
 #+end_src
 ** Поиск "горячих" функций
-ELP полезен для поиска горячих функций
-#+begin_src emacs-lisp :var file="elpaca" :lexical t :tangle no
-(require 'elp)
-(with-eval-after-load file
-  (elp-instrument-package file))
-(add-hook 'elpaca-after-init-hook
-          (lambda () (elp-results) (elp-restore-package (intern file))))
+
+#+begin_src emacs-lisp :lexical t
+;; ELP полезен для поиска горячих функций
+;; (require 'elp)
+;; (with-eval-after-load file
+;;   (elp-instrument-package file))
+;; (add-hook 'elpaca-after-init-hook
+;;           (lambda () (elp-results) (elp-restore-package (intern file))))
 #+end_src
 * Стартовый буфер initial-buffer-choice
 #+begin_src emacs-lisp :lexical t
@@ -238,15 +253,15 @@ ELP полезен для поиска горячих функций
 * Пример хранения тем в отдельной директории.
 =~/.emacs.d=
 #+begin_src emacs-lisp :lexical t :tangle no
-(setq custom-theme-directory "~/.emacs.d/themes/")
-#+end_src
+;;Пример хранения тем в отдельной директории
+;; (setq custom-theme-directory "~/.emacs.d/themes/")
 
-#+begin_src emacs-lisp :lexical t :tangle no
-(defvar +theme 'mine "Default theme.")
-(require 'cl-lib)
-(require 'custom)
-;; remove synthetic use-package theme
-(unless (remq 'use-package custom-enabled-themes) (load-theme +theme t))
+;; (defvar +theme 'mine "Default theme.")
+;; (require 'cl-lib)
+;; (require 'custom)
+;; ;; remove synthetic use-package theme
+;; (unless (remq 'use-package custom-enabled-themes) (load-theme +theme t))
+
 #+end_src
 
 * Elpaca настройка
@@ -296,12 +311,12 @@ ELP полезен для поиска горячих функций
 
 ** keychain (?)
 [[https://www.funtoo.org/Keychain][Keychain]]
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 ;; We need this loaded for SSH protocol
-(elpaca-queue
- (elpaca keychain-environment
-   (require 'keychain-environment)
-   (keychain-refresh-environment)))
+;; (elpaca-queue
+;;  (elpaca keychain-environment
+;;    (require 'keychain-environment)
+;;    (keychain-refresh-environment)))
 #+end_src
 ** Макрос use-feature с :ensure nil для built-in пакетов.
 #+begin_src emacs-lisp :lexical t
@@ -326,12 +341,12 @@ ELP полезен для поиска горячих функций
 #+end_src
 ** настрока debug
 #+begin_src emacs-lisp :lexical t
-;; (if debug-on-error
-;;     (setq use-package-verbose t
-;;           use-package-expand-minimally nil
-;;           use-package-compute-statistics t)
-;;   (setq use-package-verbose nil
-;;         use-package-expand-minimally t))
+(if debug-on-error
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
 #+end_src
 ** Директории с личным пакетами
 #+begin_src emacs-lisp :lexical t
@@ -389,8 +404,8 @@ ELP полезен для поиска горячих функций
 (add-hook 'server-after-make-frame-hook #'+terminal)
 #+end_src
 * Файл с секретами
-#+begin_src emacs-lisp :lexical t :tangle no
-(load-file "~/Documents/emacs-secrets.el")
+#+begin_src emacs-lisp :lexical t
+;; (load-file "~/Documents/emacs-secrets.el")
 #+end_src
 * General.el
 #+begin_src emacs-lisp :lexical t
@@ -761,12 +776,6 @@ And a macro to ease the creation of nested menu bindings:
 #+end_src
 
 ** evil-anzu-mode
-#+begin_quote
-anzu for evil-mode
-https://github.com/emacsorphanage/evil-anzu
-#+end_quote
-
-Shows match counts in mode line.
 #+begin_src emacs-lisp :lexical t
 (use-package evil-anzu
   :after (evil)
@@ -985,15 +994,12 @@ unreadable. Returns the names of envvars that were changed."
 
 #+end_src
 
-* eshell-toggle
-[[https://github.com/4DA/eshell-toggle/blob/master/eshell-toggle.el][eshell-toggle/eshell-toggle.el at master · 4DA/eshell-toggle · GitHub]]
-
 * TODO Java-runner.
 
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package java-runner
-  ;; :ensure nil
-  :load-path "~/.config/emacs/java-runner/")
+#+begin_src emacs-lisp :lexical t
+;; (use-package java-runner
+;;   ;; :ensure nil
+;;   :load-path "~/.config/emacs/java-runner/")
 #+end_src
 
 * TODO Настройка темы modus
@@ -1105,11 +1111,12 @@ unreadable. Returns the names of envvars that were changed."
     (message "Faces: %s" faces)))
 #+end_src
 
-[[https://www.google.com/][Google]]
-*New user option 'treesit-enabled-modes'.*
-[[https://github.com/emacs-mirror/emacs/blob/07adb8b59dee772b56612b90acd19e1a5a456628/etc/NEWS#L769][emacs/etc/NEWS at 07adb8b59dee772b56612b90acd19e1a5a456628 · emacs-mirror/ema...]]
+
 
 #+begin_src emacs-lisp :lexical t
+;; *New user option 'treesit-enabled-modes'.*
+;; [[https://github.com/emacs-mirror/emacs/blob/07adb8b59dee772b56612b90acd19e1a5a456628/etc/NEWS#L769][emacs/etc/NEWS at 07adb8b59dee772b56612b90acd19e1a5a456628 · emacs-mirror/ema...]]
+
 (use-feature treesit
   :custom
   (treesit-font-lock-level 2)
@@ -1211,15 +1218,17 @@ unreadable. Returns the names of envvars that were changed."
     ("q" nil "quit" :color blue)))
 #+end_src
 ** diredfl
-Цвета темы для dired
+
 #+begin_src emacs-lisp :lexical t
+;; Цвета темы для dired
 (use-package diredfl
   :hook (dired-mode . diredfl-mode))
 #+end_src
 ** TODO dired-rsync
 
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package dired-rsync
+  :disabled t
   :defer t
   :general (dired-mode-map "C-c C-r" #'dired-rsync))
 #+end_src
@@ -1257,22 +1266,6 @@ unreadable. Returns the names of envvars that were changed."
   :defer t
   :mode "Dockerfile[a-zA-Z.-]*\\'")
 #+end_src
-* TODO Настройка скролла
-[[https://github.com/Lovesan/.emacs.d/blob/master/lisp/lvsn-commons.el]] потом попробовать.
-[[https://github.com/MatthewZMD/.emacs.d/blob/7c0269d77ba4b99186143ebdd9afff04ce69580b/elisp/init-scroll.el#L42]]
-
-#+begin_src emacs-lisp :lexical t :tangle no
-(when (display-graphic-p)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . hscroll))
-        mouse-wheel-scroll-amount-horizontal 1
-        mouse-wheel-progressive-speed nil))
-(setq scroll-step 1
-      scroll-margin 1 ;; default 0
-      auto-window-vscroll nil
-      scroll-preserve-screen-position t)
-(pixel-scroll-precision-mode t)
-
-#+end_src
 * ultra-scroll
 
 #+begin_src emacs-lisp :lexical t
@@ -1298,8 +1291,9 @@ unreadable. Returns the names of envvars that were changed."
   (fill-column 80 "Wrap at 80 columns."))
 #+end_src
 * TODO benchmark
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package benchmark-init
+  :disabled t
   :config
   ;; To disable collection of benchmark data after init is done.
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
@@ -1336,101 +1330,101 @@ unreadable. Returns the names of envvars that were changed."
   (popper-echo-mode +1))
 #+end_src
 * popper пример
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package popper
-  :defines popper-echo-dispatch-actions
-  :commands popper-group-by-directory
-  ;; :bind (:map popper-mode-map
-  ;;             ("s-`" . popper-toggle)
-  ;;             ("s-o"   . popper-cycle)
-  ;;             ("q" . popper-kill-latest-popup)
-  ;;             ("M-`" . popper-toggle-type))
-  :hook (emacs-startup . popper-mode)
-  :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$" "\\*Pp Eval Output\\*$"
-          "\\*Compile-Log\\*"
-          "\\*Completions\\*"
-          "\\*Warnings\\*"
-          "\\*Flymake diagnostics.*\\*"
-          "\\*Async Shell Command\\*"
-          "\\*Apropos\\*"
-          "\\*Backtrace\\*"
-          "\\*prodigy\\*"
-          "\\*Calendar\\*"
-          "\\*Embark Actions\\*"
-          "\\*Finder\\*"
-          "\\*Kill Ring\\*"
-          "\\*Embark Export:.*\\*"
-          "\\*Edit Annotation.*\\*"
-          "\\*Flutter\\*"
-          bookmark-bmenu-mode
-          lsp-bridge-ref-mode
-          comint-mode
-          compilation-mode
-          help-mode helpful-mode
-          tabulated-list-mode
-          Buffer-menu-mode
-          occur-mode
-          gnus-article-mode devdocs-mode
-          grep-mode occur-mode rg-mode deadgrep-mode ag-mode pt-mode
-          ivy-occur-mode ivy-occur-grep-mode
-          process-menu-mode list-environment-mode cargo-process-mode
-          youdao-dictionary-mode osx-dictionary-mode fanyi-mode
+#+begin_src emacs-lisp :lexical t
+;; (use-package popper
+;;   :defines popper-echo-dispatch-actions
+;;   :commands popper-group-by-directory
+;;   ;; :bind (:map popper-mode-map
+;;   ;;             ("s-`" . popper-toggle)
+;;   ;;             ("s-o"   . popper-cycle)
+;;   ;;             ("q" . popper-kill-latest-popup)
+;;   ;;             ("M-`" . popper-toggle-type))
+;;   :hook (emacs-startup . popper-mode)
+;;   :init
+;;   (setq popper-reference-buffers
+;;         '("\\*Messages\\*"
+;;           "Output\\*$" "\\*Pp Eval Output\\*$"
+;;           "\\*Compile-Log\\*"
+;;           "\\*Completions\\*"
+;;           "\\*Warnings\\*"
+;;           "\\*Flymake diagnostics.*\\*"
+;;           "\\*Async Shell Command\\*"
+;;           "\\*Apropos\\*"
+;;           "\\*Backtrace\\*"
+;;           "\\*prodigy\\*"
+;;           "\\*Calendar\\*"
+;;           "\\*Embark Actions\\*"
+;;           "\\*Finder\\*"
+;;           "\\*Kill Ring\\*"
+;;           "\\*Embark Export:.*\\*"
+;;           "\\*Edit Annotation.*\\*"
+;;           "\\*Flutter\\*"
+;;           bookmark-bmenu-mode
+;;           lsp-bridge-ref-mode
+;;           comint-mode
+;;           compilation-mode
+;;           help-mode helpful-mode
+;;           tabulated-list-mode
+;;           Buffer-menu-mode
+;;           occur-mode
+;;           gnus-article-mode devdocs-mode
+;;           grep-mode occur-mode rg-mode deadgrep-mode ag-mode pt-mode
+;;           ivy-occur-mode ivy-occur-grep-mode
+;;           process-menu-mode list-environment-mode cargo-process-mode
+;;           youdao-dictionary-mode osx-dictionary-mode fanyi-mode
 
-          "^\\*eshell.*\\*.*$" eshell-mode
-          "^\\*shell.*\\*.*$"  shell-mode
-          "^\\*terminal.*\\*.*$" term-mode
-          "^\\*vterm.*\\*.*$"  vterm-mode
+;;           "^\\*eshell.*\\*.*$" eshell-mode
+;;           "^\\*shell.*\\*.*$"  shell-mode
+;;           "^\\*terminal.*\\*.*$" term-mode
+;;           "^\\*vterm.*\\*.*$"  vterm-mode
 
-          "\\*DAP Templates\\*$" dap-server-log-mode
-          "\\*ELP Profiling Restuls\\*" profiler-report-mode
-          "\\*Flycheck errors\\*$" " \\*Flycheck checker\\*$"
-          "\\*Paradox Report\\*$" "\\*package update results\\*$" "\\*Package-Lint\\*$"
-          "\\*[Wo]*Man.*\\*$"
-          "\\*ert\\*$" overseer-buffer-mode
-          "\\*gud-debug\\*$"
-          "\\*lsp-help\\*$" "\\*lsp session\\*$"
-          "\\*quickrun\\*$"
-          "\\*tldr\\*$"
-          "\\*vc-.*\\*$"
-          "\\*eldoc\\*"
-          "^\\*elfeed-entry\\*$"
-          "^\\*macro expansion\\**"
+;;           "\\*DAP Templates\\*$" dap-server-log-mode
+;;           "\\*ELP Profiling Restuls\\*" profiler-report-mode
+;;           "\\*Flycheck errors\\*$" " \\*Flycheck checker\\*$"
+;;           "\\*Paradox Report\\*$" "\\*package update results\\*$" "\\*Package-Lint\\*$"
+;;           "\\*[Wo]*Man.*\\*$"
+;;           "\\*ert\\*$" overseer-buffer-mode
+;;           "\\*gud-debug\\*$"
+;;           "\\*lsp-help\\*$" "\\*lsp session\\*$"
+;;           "\\*quickrun\\*$"
+;;           "\\*tldr\\*$"
+;;           "\\*vc-.*\\*$"
+;;           "\\*eldoc\\*"
+;;           "^\\*elfeed-entry\\*$"
+;;           "^\\*macro expansion\\**"
 
-          "\\*Agenda Commands\\*" "\\*Org Select\\*" "\\*Capture\\*" "^CAPTURE-.*\\.org*"
-          "\\*Gofmt Errors\\*$" "\\*Go Test\\*$" godoc-mode
-          "\\*docker-containers\\*" "\\*docker-images\\*" "\\*docker-networks\\*" "\\*docker-volumes\\*"
-          "\\*prolog\\*" inferior-python-mode inf-ruby-mode swift-repl-mode
-          "\\*rustfmt\\*$" rustic-compilation-mode rustic-cargo-clippy-mode
-          rustic-cargo-outdated-mode rustic-cargo-test-moed))
+;;           "\\*Agenda Commands\\*" "\\*Org Select\\*" "\\*Capture\\*" "^CAPTURE-.*\\.org*"
+;;           "\\*Gofmt Errors\\*$" "\\*Go Test\\*$" godoc-mode
+;;           "\\*docker-containers\\*" "\\*docker-images\\*" "\\*docker-networks\\*" "\\*docker-volumes\\*"
+;;           "\\*prolog\\*" inferior-python-mode inf-ruby-mode swift-repl-mode
+;;           "\\*rustfmt\\*$" rustic-compilation-mode rustic-cargo-clippy-mode
+;;           rustic-cargo-outdated-mode rustic-cargo-test-moed))
 
 
-  (setq popper-echo-dispatch-actions t)
-  (setq popper-group-function nil)
-  :config
-  (popper-echo-mode 1)
+;;   (setq popper-echo-dispatch-actions t)
+;;   (setq popper-group-function nil)
+;;   :config
+;;   (popper-echo-mode 1)
 
-  (with-no-warnings
-    (defun my-popper-fit-window-height (win)
-      "Determine the height of popup window WIN by fitting it to the buffer's content."
-      (fit-window-to-buffer
-       win
-       (floor (frame-height) 3)
-       (floor (frame-height) 3)))
-    (setq popper-window-height #'my-popper-fit-window-height)
+;;   (with-no-warnings
+;;     (defun my-popper-fit-window-height (win)
+;;       "Determine the height of popup window WIN by fitting it to the buffer's content."
+;;       (fit-window-to-buffer
+;;        win
+;;        (floor (frame-height) 3)
+;;        (floor (frame-height) 3)))
+;;     (setq popper-window-height #'my-popper-fit-window-height)
 
-    (defun popper-close-window-hack (&rest _)
-      "Close popper window via `C-g'."
-      ;; `C-g' can deactivate region
-      (when (and (called-interactively-p 'interactive)
-                 (not (region-active-p))
-                 popper-open-popup-alist)
-        (let ((window (caar popper-open-popup-alist)))
-          (when (window-live-p window)
-            (delete-window window)))))
-    (advice-add #'keyboard-quit :before #'popper-close-window-hack)))
+;;     (defun popper-close-window-hack (&rest _)
+;;       "Close popper window via `C-g'."
+;;       ;; `C-g' can deactivate region
+;;       (when (and (called-interactively-p 'interactive)
+;;                  (not (region-active-p))
+;;                  popper-open-popup-alist)
+;;         (let ((window (caar popper-open-popup-alist)))
+;;           (when (window-live-p window)
+;;             (delete-window window)))))
+;;     (advice-add #'keyboard-quit :before #'popper-close-window-hack)))
 #+end_src
 
 * TODO auto-revert
@@ -1502,32 +1496,32 @@ unreadable. Returns the names of envvars that were changed."
 
 #+end_src
 * TODO smart-backspace
-#+begin_src emacs-lisp :lexical t :tangle no
-(defun smart-backspace (n &optional killflag)
-  "This function provides intellij like backspace.
-Delete the backword-char usually and delete whitespace
-to previous line indentation if it's start of line.
-If a prefix argument is giben, delete the following N characters.
-Optianal second arg KILLFLAG non-nil means to kill (save in killring)
-instead of delete. Interactively, N is the prefix arg, and KILLFLAG
-is set if N was explicitly specified."
-  (interactive "p\nP")
-  (let* ((current (point))
-         (beginning (save-excursion
-                      (beginning-of-line)
-                      (point))))
-    (if (string-match "^[ \t]*$" (buffer-substring beginning current))
-        (progn
-          (kill-line 0)
-          (delete-char (- n) killflag)
-          (indent-according-to-mode))
-      (delete-char (- n) killflag))))
-(define-key evil-insert-state-map [?\C-?] 'smart-backspace)
-#+end_src
 
 #+begin_src emacs-lisp :lexical t
 (use-package smart-backspace
   :bind ("<C-M-backspace>" . smart-backspace))
+
+;; (defun smart-backspace (n &optional killflag)
+;;   "This function provides intellij like backspace.
+;; Delete the backword-char usually and delete whitespace
+;; to previous line indentation if it's start of line.
+;; If a prefix argument is giben, delete the following N characters.
+;; Optianal second arg KILLFLAG non-nil means to kill (save in killring)
+;; instead of delete. Interactively, N is the prefix arg, and KILLFLAG
+;; is set if N was explicitly specified."
+;;   (interactive "p\nP")
+;;   (let* ((current (point))
+;;          (beginning (save-excursion
+;;                       (beginning-of-line)
+;;                       (point))))
+;;     (if (string-match "^[ \t]*$" (buffer-substring beginning current))
+;;         (progn
+;;           (kill-line 0)
+;;           (delete-char (- n) killflag)
+;;           (indent-according-to-mode))
+;;       (delete-char (- n) killflag))))
+;; (define-key evil-insert-state-map [?\C-?] 'smart-backspace)
+
 
 #+end_src
 * sqlite3
@@ -1550,8 +1544,9 @@ is set if N was explicitly specified."
 #+end_src
 
 * elcord
-[[https://github.com/yqrashawn/yqdotfiles/blob/1634092b80933ecd94018074847e2aaf35279d69/.doom.d/visual.el#L45][yqrashawn]] фикс таймера
+
 #+begin_src emacs-lisp :lexical t
+;; [[https://github.com/yqrashawn/yqdotfiles/blob/1634092b80933ecd94018074847e2aaf35279d69/.doom.d/visual.el#L45][yqrashawn]] фикс таймера
 (use-package elcord
   :defer 3
   :config
@@ -1608,12 +1603,11 @@ is set if N was explicitly specified."
     "r" 'bookmark-rename))
 #+end_src
 * buttercup
-#+begin_quote
-Buttercup is a behavior-driven development framework for testing Emacs Lisp code.
-
-https://github.com/jorgenschaefer/emacs-buttercup
-#+end_quote
 #+begin_src emacs-lisp :lexical t
+;; Buttercup is a behavior-driven development framework for testing Emacs Lisp code.
+
+;; https://github.com/jorgenschaefer/emacs-buttercup
+
 (use-package buttercup
   :commands (buttercup-run-at-point))
 #+end_src
@@ -1649,24 +1643,12 @@ https://github.com/jorgenschaefer/emacs-buttercup
         ediff-merge-split-window-function 'split-window-horizontally))
 
 #+end_src
-* anzu
-#+begin_quote
-anzu.el provides a minor mode which displays 'current match/total
-matches' in the mode-line in various search modes.  This makes it
-easy to understand how many matches there are in the current buffer
-for your search query.
-#+end_quote
-
-#+begin_src emacs-lisp :lexical t
-;; (use-package anzu
-;;   :defer 10
-;;   :config (global-anzu-mode))
-#+end_src
 
 * TODO Бекапы и Автосейвы
 [[https://github.com/zendo/nsworld/blob/fc5b7bf36df24e97eab45f27bcd18b20d05191bd/dotfiles/emacs/elisp/ee-backup.el#L26][nsworld/dotfiles/emacs/elisp/ee-backup.el at fc5b7bf36df24e97eab45f27bcd18b20...]]
 
 #+begin_src emacs-lisp :lexical t :tangle yes
+;; Бекапы и Автосейвы
 (use-feature files
   :config
   ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
@@ -1728,15 +1710,11 @@ for your search query.
   :config
   (save-place-mode 1))
 #+end_src
+
 * undo-fu
 #+begin_src emacs-lisp :lexical t
 (use-package undo-fu
   :defer t)
-#+end_src
-
-* TODO delight
-#+begin_src emacs-lisp :lexical t
-;; (use-package delight)
 #+end_src
 
 * undo-fu-session
@@ -1787,8 +1765,9 @@ for your search query.
               savehist-autosave-interval 300))
 #+end_src
 * Мой modeline
-[[https://gist.github.com/clemera/8f6bdeffaf3495c98a070e50dc65acbc][mode-line+ · GitHub]]
+
 #+begin_src emacs-lisp :lexical t
+;; [[https://gist.github.com/clemera/8f6bdeffaf3495c98a070e50dc65acbc][mode-line+ · GitHub]]
 (defface evil-state-face
   '((t (:weight bold)))
   "Bold face for evil states")
@@ -2076,10 +2055,6 @@ vert
 (use-package consult-eglot
   :defer t)
 #+end_src
-* consult-eglot-embark
-это расширение из consult-eglot
-#+begin_src emacs-lisp :lexical t
-#+end_src
 * emojify
 #+begin_src emacs-lisp :lexical t
 ;; (use-package emojify
@@ -2145,32 +2120,9 @@ vert
     (setq evil-complete-next-func (lambda (_) (completion-at-point))))
   )
 #+end_src
-* corfu-doc замена company-quickhelp(OBSULUTE) . Использовать corfu-popinfo
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package corfu-doc
-  ;; NOTE 2022-02-05: At the time of writing, `corfu-doc' is not yet on melpa
-  :ensure (corfu-doc :host github :repo "galeo/corfu-doc")
-  :after corfu
-  :hook (corfu-mode . corfu-doc-mode)
-  :general (:keymaps 'corfu-map
-            ;; This is a manual toggle for the documentation popup.
-            [remap corfu-show-documentation] #'corfu-doc-toggle ; Remap the default doc command
-            ;; Scroll in the documentation window
-            "M-n" #'corfu-doc-scroll-up
-            "M-p" #'corfu-doc-scroll-down)
-  :custom
-  (corfu-doc-delay 0.5)
-  (corfu-doc-max-width 70)
-  (corfu-doc-max-height 20)
-
-  ;; NOTE 2022-02-05: I've also set this in the `corfu' use-package to be
-  ;; extra-safe that this is set when corfu-doc is loaded. I do not want
-  ;; documentation shown in both the echo area and in the `corfu-doc' popup.
-  (corfu-echo-documentation nil))
-#+end_src
-
 * corfu-popinfo
 #+begin_src emacs-lisp :lexical t
+;; Замена company-quickhelp. corfu-popupinfo это бывший corfu-doc
 (use-feature corfu-popupinfo
   :after corfu
   :hook (corfu-mode . corfu-popupinfo-mode)
@@ -2243,33 +2195,6 @@ vert
 ;;
 #+end_src
 
-* kind icon замена company-box-icons
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package kind-icon
-  :after corfu
-  :custom
-  (kind-icon-use-icons t)
-  (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
-  ;;(kind-icon-blend-background nil)  ; Use midpoint color between foreground and background colors ("blended")?
-  ;;(kind-icon-blend-frac 0.08)
-
-  ;; NOTE 2022-02-05: `kind-icon' depends `svg-lib' which creates a cache
-  ;; directory that defaults to the `user-emacs-directory'. Here, I change that
-  ;; directory to a location appropriate to `no-littering' conventions, a
-  ;; package which moves directories of other packages to sane locations.
-  ;;(svg-lib-icons-dir (no-littering-expand-var-file-name "svg-lib/cache/")) ; Change cache dir
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)) ; Enable `kind-icon'
-
-  ;; Add hook to reset cache so the icon colors match my theme
-  ;; NOTE 2022-02-05: This is a hook which resets the cache whenever I switch
-  ;; the theme using my custom defined command for switching themes. If I don't
-  ;; do this, then the backgound color will remain the same, meaning it will not
-  ;; match the background color corresponding to the current theme. Important
-  ;; since I have a light theme and dark theme I switch between. This has no
-  ;; function unless you use something similar
- ;; (add-hook 'kb/themes-hooks #'(lambda () (interactive) (kind-icon-reset-cache))))
-#+end_src
 
 * nerd-icons-corfu
 
@@ -2536,8 +2461,9 @@ vert
 #+end_src
 
 ** python lsp-pyright
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package lsp-pyright
+  :disabled t
   :hook (python-mode . (lambda () (require 'lsp-pyright)))
   :init (when (executable-find "python3")
           (setq lsp-pyright-python-executable-cmd "python3")))
@@ -2653,15 +2579,12 @@ vert
   :mode ("\\.nim\\'" . nim-mode)
         ("\\.nimble\\'" . nimscript-mode-maybe))
 #+end_src
-* go
 * rust
 #+begin_src emacs-lisp :lexical t
 (use-package rustic
   :ensure (rustic :host github :repo "emacs-rustic/rustic")
   :defer t)
 #+end_src
-* ruby
-* clojure
 * scala
 #+begin_src emacs-lisp :lexical t
 (use-package scala-mode
@@ -2762,7 +2685,6 @@ HTDP + SICP
 #+end_src
 
 * TODO web-mode JS TS HTML
-[[https://github.com/seagle0128/.emacs.d/blob/9722d41abee93f8f6a28b36c3f7cb8795ada6a5a/lisp/init-web.el#L118][.emacs.d/lisp/init-web.el at 9722d41abee93f8f6a28b36c3f7cb8795ada6a5a · seagl...]]
 #+begin_src emacs-lisp :lexical t
 (use-package web-mode
   :mode
@@ -2774,7 +2696,6 @@ HTDP + SICP
 #+end_src
 
 * dap-mode
-var "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar"
 #+begin_src emacs-lisp :lexical t
 (use-package dap-mode
   :after lsp-mode
@@ -2784,22 +2705,23 @@ var "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar"
   (dap-mode t))
 #+end_src
 * move-text
-Двигаем текст между строк.
+
 #+begin_src emacs-lisp :lexical t
+;; Двигаем текст между строк.
 (use-package move-text
   :bind (("M-p" . move-text-up)
          ("M-n" . move-text-down))
   :config (move-text-default-bindings))
 #+end_src
 * eldoc
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package eldoc
-  :preface
-  (unload-feature 'eldoc t)
-  (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil)
-  :config
-  (global-eldoc-mode))
+#+begin_src emacs-lisp :lexical t
+;; (use-package eldoc
+;;   :preface
+;;   (unload-feature 'eldoc t)
+;;   (setq custom-delayed-init-variables '())
+;;   (defvar global-eldoc-mode nil)
+;;   :config
+;;   (global-eldoc-mode))
 #+end_src
 * eldoc-box
 #+begin_src emacs-lisp :lexical t
@@ -2929,8 +2851,9 @@ var "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar"
 
 #+end_src
 
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package sly-stepper
+  :disabled t
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-stepper))
@@ -2981,6 +2904,7 @@ var "lsp-java/eclipse.jdt.ls/test-runner/junit-platform-console-standalone.jar"
 Работает.
 #+begin_src emacs-lisp :lexical t :tangle yes
 (use-package ejc-sql
+  :disabled t
   :defer t
   :commands ejc-sql-mode ejc-connect
   :config
@@ -3028,20 +2952,14 @@ Eglot + sqls ?
   :custom (flycheck-emacs-lisp-load-path 'inherit "necessary with alternatives to package.el"))
 #+end_src
 ** flycheck-package
-=package-lint= integration for flycheck.
+
 #+begin_src emacs-lisp :lexical t
+;; =package-lint= integration for flycheck.
 (use-package flycheck-package
   :after (flycheck)
   :config (flycheck-package-setup)
   (add-to-list 'display-buffer-alist
                '("\\*Flycheck errors\\*"  display-buffer-below-selected (window-height . 0.15))))
-#+end_src
-** flycheck-eglot
-#+begin_src emacs-lisp :lexical t :tangle yes
-(use-package flycheck-eglot
-  :after (flycheck eglot)
-  :config
-  (global-flycheck-eglot-mode 1))
 #+end_src
 
 * flymake
@@ -3073,29 +2991,28 @@ Eglot + sqls ?
   (add-hook 'flymake-mode-hook #'+flymake-elpaca-bytecomp-load-path))
 #+end_src
 * flyspell
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-feature flyspell
-  :commands (flyspell-mode flyspell-prog-mode)
-  :general
-  (+general-global-toggle
-    "ss" 'flyspell-mode
-    "sp" 'flyspell-prog-mode)
-  (+general-global-spelling
-    "n" 'flyspell-goto-next-error
-    "b" 'flyspell-buffer
-    "w" 'flyspell-word
-    "r" 'flyspell-region)
-  :hook ((org-mode mu4e-compose-mode git-commit-mode) . flyspell-mode))
+#+begin_src emacs-lisp :lexical t
+;; (use-feature flyspell
+;;   :commands (flyspell-mode flyspell-prog-mode)
+;;   :general
+;;   (+general-global-toggle
+;;     "ss" 'flyspell-mode
+;;     "sp" 'flyspell-prog-mode)
+;;   (+general-global-spelling
+;;     "n" 'flyspell-goto-next-error
+;;     "b" 'flyspell-buffer
+;;     "w" 'flyspell-word
+;;     "r" 'flyspell-region)
+;;   :hook ((org-mode mu4e-compose-mode git-commit-mode) . flyspell-mode))
 #+end_src
 ** flyspell-correct
-#+begin_quote
-"This package provides functionality for correcting words via custom interfaces."
---
-https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
-#+end_quote
+#+begin_src emacs-lisp :lexical t
+;; "This package provides functionality for correcting words via custom interfaces."
+;; --
+;; https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
 
-#+begin_src emacs-lisp :lexical t :tangle no
 (use-package flyspell-correct
+  :disabled t
   :after (flyspell)
   :general
   (+general-global-spelling
@@ -3184,21 +3101,24 @@ Use `treemacs' command for old functionality."
   )
 #+end_src
 ** treemacs-persp
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+  :disabled t
   :after (treemacs persp-mode) ;;or perspective vs. persp-mode
   :config (treemacs-set-scope-type 'Perspectives))
 #+end_src
 ** treemacs-tab-bar
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
+  :disabled t
   :after (treemacs)
   :config (treemacs-set-scope-type 'Tabs))
 #+end_src
 
 * [#A] org-contrib(походу не надо это)
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-package org-contrib)
+#+begin_src emacs-lisp :lexical t
+;; Надо ?
+;; (use-package org-contrib)
 #+end_src
 
 * yaml-pro
@@ -3255,10 +3175,6 @@ Use `treemacs' command for old functionality."
   :defer t)
 #+end_src
 * [#D] org-modern
-- [X] сделать
-
-("⚑" "⬆" "■")
-    <--- [[https://github.com/karthink/popper][GitHub - karthink/popper: Emacs minor-mode to summon and dismiss buffers easi...]]
 #+begin_src  emacs-lisp :lexical t
 (use-package org-modern
   :after (org)
@@ -3297,13 +3213,6 @@ Use `treemacs' command for old functionality."
            :repo "progfolio/auto-tangle-mode.el"
            :local-repo "auto-tangle-mode")
   :commands (auto-tangle-mode))
-#+end_src
-* scala-cli
-#+begin_src emacs-lisp :lexical t
-;; (use-feature ob-scala-cli
-;;   :load-path "~/.config/emacs/lisp/"
-;;   :config
-;;   (ob-scala-cli-setup))
 #+end_src
 
 * TODO org-babel ob-tangle
@@ -3411,7 +3320,7 @@ Use `treemacs' command for old functionality."
 #+end_src
 
 * org-roam
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package org-roam
   :ensure (org-roam :host github :repo "org-roam/org-roam")
   :disabled t
@@ -3423,6 +3332,7 @@ Use `treemacs' command for old functionality."
 * denote
 #+begin_src emacs-lisp :lexical t
 (use-package denote
+  :disabled t
   :hook (dired-mode . denote-dired-mode)
   :bind
   (("C-c n n" . denote)
@@ -3609,11 +3519,6 @@ Use `treemacs' command for old functionality."
   (org-M-RET-may-split-line nil "Don't split current line when creating new heading"))
 #+end_src
 * org-id
-:PROPERTIES:
-:ID:       ddc98e84-959e-486e-856c-2dfe355dd0d8
-:END:
-
-
 
 #+begin_src emacs-lisp :lexical t
 (use-feature org-id
@@ -3626,12 +3531,11 @@ Use `treemacs' command for old functionality."
 (use-package ox-gfm :defer t)
 #+end_src
 * ox-twbs
-#+begin_quote
-Export org-mode docs as HTML compatible with Twitter Bootstrap.
-
-https://github.com/marsmining/ox-twbs
-#+end_quote
 #+begin_src emacs-lisp :lexical t
+;; Export org-mode docs as HTML compatible with Twitter Bootstrap.
+
+;; https://github.com/marsmining/ox-twbs
+
 (use-package ox-twbs
   :disabled t
   :after (org)
@@ -3698,194 +3602,195 @@ https://github.com/marsmining/ox-twbs
         ))))
 #+end_src
 * olivetti
-#+begin_quote
-A simple Emacs minor mode for a nice writing environment.
 
-https://github.com/rnkn/olivetti
-#+end_quote
 #+begin_src emacs-lisp :lexical t
+;; A simple Emacs minor mode for a nice writing environment.
+
+;; https://github.com/rnkn/olivetti
+
 (use-package olivetti
   :commands (olivetti-mode))
 #+end_src
 * org-agenda
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-feature org-agenda
-  :after   (general evil)
-  :config
-  (defun +org-agenda-archives (&optional arg)
-    "Toggle `org-agenda-archives-mode' so that it includes archive files by default.
-  Inverts normal logic of ARG."
-    (interactive "P")
-    (let ((current-prefix-arg (unless (or org-agenda-archives-mode arg) '(4))))
-      (call-interactively #'org-agenda-archives-mode)))
+#+begin_src emacs-lisp :lexical t
+;; (use-feature org-agenda
+;;   :after   (general evil)
+;;   :config
+;;   (defun +org-agenda-archives (&optional arg)
+;;     "Toggle `org-agenda-archives-mode' so that it includes archive files by default.
+;;   Inverts normal logic of ARG."
+;;     (interactive "P")
+;;     (let ((current-prefix-arg (unless (or org-agenda-archives-mode arg) '(4))))
+;;       (call-interactively #'org-agenda-archives-mode)))
 
-  (defun +org-agenda-place-point ()
-    "Place point on first agenda item."
-    (goto-char (point-min))
-    (org-agenda-find-same-or-today-or-agenda))
+;;   (defun +org-agenda-place-point ()
+;;     "Place point on first agenda item."
+;;     (goto-char (point-min))
+;;     (org-agenda-find-same-or-today-or-agenda))
 
-  (add-hook 'org-agenda-finalize-hook #'+org-agenda-place-point 90)
-  :general
-  (+general-global-application
-  "o#"   'org-agenda-list-stuck-projects
-  "o/"   'org-occur-in-agenda-files
-  "oa"   '((lambda () (interactive) (org-agenda nil "a")) :which-key "agenda")
-  "oe"   'org-store-agenda-views
-  "oo"   'org-agenda)
-  (global-leader :keymaps 'org-mode-map
-  "a"   'org-agenda)
-;;Consider cribbing =evilified-state= from Spacemacs?
+;;   (add-hook 'org-agenda-finalize-hook #'+org-agenda-place-point 90)
+;;   :general
+;;   (+general-global-application
+;;   "o#"   'org-agenda-list-stuck-projects
+;;   "o/"   'org-occur-in-agenda-files
+;;   "oa"   '((lambda () (interactive) (org-agenda nil "a")) :which-key "agenda")
+;;   "oe"   'org-store-agenda-views
+;;   "oo"   'org-agenda)
+;;   (global-leader :keymaps 'org-mode-map
+;;   "a"   'org-agenda)
+;; ;;Consider cribbing =evilified-state= from Spacemacs?
 
-(with-eval-after-load 'org-agenda
-  (evil-make-intercept-map org-agenda-mode-map)
-  (general-define-key
-   :keymaps 'org-agenda-mode-map
-   ;;:states '(emacs normal motion)
-   "A"     '+org-agenda-archives
-   "C"     'org-agenda-clockreport-mode
-   "D"     'org-agenda-goto-date
-   "E"     'epoch-agenda-todo
-   "H"     'org-habit-toggle-habits
-   "J"     'org-agenda-next-item
-   "K"     'org-agenda-previous-item
-   "R"     'org-agenda-refile
-   "S"     'org-agenda-schedule
-   "RET"   'org-agenda-recenter
-   ;; "a"     '+org-capture-again
-   "c"     'org-agenda-capture
-   "j"     'org-agenda-next-line
-   "k"     'org-agenda-previous-line
-   "m"     'org-agenda-month-view
-   "t"     'org-agenda-set-tags
-   "T"     'org-agenda-todo
-   "u"     'org-agenda-undo))
-;;When saving, I want changes to my org-files reflected in any open org agenda
-;;buffers.
-  :config
+;; (with-eval-after-load 'org-agenda
+;;   (evil-make-intercept-map org-agenda-mode-map)
+;;   (general-define-key
+;;    :keymaps 'org-agenda-mode-map
+;;    ;;:states '(emacs normal motion)
+;;    "A"     '+org-agenda-archives
+;;    "C"     'org-agenda-clockreport-mode
+;;    "D"     'org-agenda-goto-date
+;;    "E"     'epoch-agenda-todo
+;;    "H"     'org-habit-toggle-habits
+;;    "J"     'org-agenda-next-item
+;;    "K"     'org-agenda-previous-item
+;;    "R"     'org-agenda-refile
+;;    "S"     'org-agenda-schedule
+;;    "RET"   'org-agenda-recenter
+;;    ;; "a"     '+org-capture-again
+;;    "c"     'org-agenda-capture
+;;    "j"     'org-agenda-next-line
+;;    "k"     'org-agenda-previous-line
+;;    "m"     'org-agenda-month-view
+;;    "t"     'org-agenda-set-tags
+;;    "T"     'org-agenda-todo
+;;    "u"     'org-agenda-undo))
+;; ;;When saving, I want changes to my org-files reflected in any open org agenda
+;; ;;buffers.
+;;   :config
 
-;;for org-agenda-icon-alist
-(evil-set-initial-state 'org-agenda-mode 'normal)
-(defun +org-agenda-redo-all ()
-  "Rebuild all agenda buffers"
-  (interactive)
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (when (derived-mode-p 'org-agenda-mode)
-        (org-agenda-maybe-redo)))))
+;; ;;for org-agenda-icon-alist
+;; (evil-set-initial-state 'org-agenda-mode 'normal)
+;; (defun +org-agenda-redo-all ()
+;;   "Rebuild all agenda buffers"
+;;   (interactive)
+;;   (dolist (buffer (buffer-list))
+;;     (with-current-buffer buffer
+;;       (when (derived-mode-p 'org-agenda-mode)
+;;         (org-agenda-maybe-redo)))))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (add-hook 'after-save-hook '+org-agenda-redo-all nil t)
-            (setq prettify-symbols-unprettify-at-point 'right-edge)
-            (setq prettify-symbols-alist
-                  (mapcan (lambda (el) (list el (cons (upcase (car el)) (cdr el))))
-                          '(("#+begin_src"     . "λ")
-                            ("#+end_src"       . "λ")
-                            (":properties:"    . "⚙")
-                            (":end:"           . "∎")
-                            ("#+results:"      . "→"))))
-            (prettify-symbols-mode 1)))
+;; (add-hook 'org-mode-hook
+;;           (lambda ()
+;;             (add-hook 'after-save-hook '+org-agenda-redo-all nil t)
+;;             (setq prettify-symbols-unprettify-at-point 'right-edge)
+;;             (setq prettify-symbols-alist
+;;                   (mapcan (lambda (el) (list el (cons (upcase (car el)) (cdr el))))
+;;                           '(("#+begin_src"     . "λ")
+;;                             ("#+end_src"       . "λ")
+;;                             (":properties:"    . "⚙")
+;;                             (":end:"           . "∎")
+;;                             ("#+results:"      . "→"))))
+;;             (prettify-symbols-mode 1)))
 
-  :custom
-;; Add a custom view for a simplified work agenda.
-(org-agenda-custom-commands
- '(("w" "Work Schedule" agenda "+work"
-    ((org-agenda-files '("~/Documents/todo/work.org"))
-     (org-agenda-span 'week)
-     (org-mode-hook nil)
-     (org-agenda-start-on-weekday 2)
-     (org-agenda-timegrid-use-ampm t)
-     (org-agenda-time-leading-zero t)
-     (org-agenda-use-time-grid nil)
-     (org-agenda-archives-mode t)
-     (org-agenda-weekend-days '(2 3))
-     (org-agenda-format-date "%a %m-%d")
-     (org-agenda-prefix-format '((agenda . " %t")))
-     (org-agenda-finalize-hook
-      '((lambda ()
-          "Format custom agenda command for work schedule."
-          (save-excursion
-            (goto-char (point-min))
-            (while (re-search-forward "TODO Work" nil 'noerror)
-              (replace-match ""))
-            (goto-char (point-min))
-            (forward-line) ;skip header
-            (while (not (eobp))
-              (when (get-text-property (point) 'org-agenda-date-header)
-                (let (fn)
-                  (save-excursion
-                    (forward-line)
-                    (setq fn
-                          (cond ((or (eobp)
-                                     (get-text-property (point) 'org-agenda-date-header))
-                                 (lambda () (end-of-line) (insert " OFF")))
-                                ((get-text-property (point) 'time)
-                                 (lambda () (forward-line) (join-line))))))
-                  (funcall fn)))
-              (forward-line))))))))
-   ("n" "Agenda and all TODOs" ((agenda "") (alltodo "")))))
-(org-agenda-skip-deadline-prewarning-if-scheduled nil "Show approaching deadlines even when scheduled.")
-;; I prefer the agenda to start on the current day view instead of the week. It's
-;; generally faster to generate and usually what I want.
-(org-agenda-span 'day)
-;; These settings should speed up agenda generation:
-(org-agenda-inhibit-startup t)
-;; But, I'm not sure about this one. It doesn't seem to speed things up that much
-;; for me and I like to see inherited tags on tasks.
-(org-agenda-use-tag-inheritance nil)
-;; I find category icons to be a nice visual shorthand that keeps the agenda less cluttered.
-(org-agenda-prefix-format '((agenda . " %i %?-12t% s")))
-(org-agenda-category-icon-alist
- (let ((image-dir (expand-file-name "images/org/" user-emacs-directory))
-       (categories '(("[Aa]ccounting" "accounting.svg")
-                     ("[Bb]irthday"   "birthday.svg")
-                     ("[Cc]alendar"   "calendar.svg")
-                     ("[Cc]hore"      "chore.svg"    :height 25)
-                     ("[Ee]xercise"   "exercise.svg" :height 24)
-                     ("[Ff]ood"       "food.svg")
-                     ("[Hh]abit"      "habit.svg")
-                     ("[Hh]ealth"     "health.svg")
-                     ("[Ii]n"         "in.svg")
-                     ("[Ll]isten"     "listen.svg")
-                     ("[Oo]ut"        "out.svg")
-                     ("[Pp]lay"       "play.svg")
-                     ("[Rr]efile"     "refile.svg")
-                     ("[Rr]ead"       "read.svg")
-                     ("[Ww]atch"      "watch.svg")
-                     ("[Ww]ork"       "work.svg"))))
-   (mapcar (lambda (category)
-             (list (nth 0 category)
-                   (expand-file-name (nth 1 category) image-dir)
-                   'svg
-                   nil
-                   :height (or (plist-get category :height) 20)
-                   :ascent (or (plist-get category :ascent) 'center)))
-           categories)))
-;; This sorting strategy will place habits in/next to the agenda time-grid.
-(org-agenda-sorting-strategy
- '((agenda time-up priority-down category-keep)
-   (todo priority-down category-keep)
-   (tags priority-down category-keep)
-   (search category-keep)))
+;;   :custom
+;; ;; Add a custom view for a simplified work agenda.
+;; (org-agenda-custom-commands
+;;  '(("w" "Work Schedule" agenda "+work"
+;;     ((org-agenda-files '("~/Documents/todo/work.org"))
+;;      (org-agenda-span 'week)
+;;      (org-mode-hook nil)
+;;      (org-agenda-start-on-weekday 2)
+;;      (org-agenda-timegrid-use-ampm t)
+;;      (org-agenda-time-leading-zero t)
+;;      (org-agenda-use-time-grid nil)
+;;      (org-agenda-archives-mode t)
+;;      (org-agenda-weekend-days '(2 3))
+;;      (org-agenda-format-date "%a %m-%d")
+;;      (org-agenda-prefix-format '((agenda . " %t")))
+;;      (org-agenda-finalize-hook
+;;       '((lambda ()
+;;           "Format custom agenda command for work schedule."
+;;           (save-excursion
+;;             (goto-char (point-min))
+;;             (while (re-search-forward "TODO Work" nil 'noerror)
+;;               (replace-match ""))
+;;             (goto-char (point-min))
+;;             (forward-line) ;skip header
+;;             (while (not (eobp))
+;;               (when (get-text-property (point) 'org-agenda-date-header)
+;;                 (let (fn)
+;;                   (save-excursion
+;;                     (forward-line)
+;;                     (setq fn
+;;                           (cond ((or (eobp)
+;;                                      (get-text-property (point) 'org-agenda-date-header))
+;;                                  (lambda () (end-of-line) (insert " OFF")))
+;;                                 ((get-text-property (point) 'time)
+;;                                  (lambda () (forward-line) (join-line))))))
+;;                   (funcall fn)))
+;;               (forward-line))))))))
+;;    ("n" "Agenda and all TODOs" ((agenda "") (alltodo "")))))
+;; (org-agenda-skip-deadline-prewarning-if-scheduled nil "Show approaching deadlines even when scheduled.")
+;; ;; I prefer the agenda to start on the current day view instead of the week. It's
+;; ;; generally faster to generate and usually what I want.
+;; (org-agenda-span 'day)
+;; ;; These settings should speed up agenda generation:
+;; (org-agenda-inhibit-startup t)
+;; ;; But, I'm not sure about this one. It doesn't seem to speed things up that much
+;; ;; for me and I like to see inherited tags on tasks.
+;; (org-agenda-use-tag-inheritance nil)
+;; ;; I find category icons to be a nice visual shorthand that keeps the agenda less cluttered.
+;; (org-agenda-prefix-format '((agenda . " %i %?-12t% s")))
+;; (org-agenda-category-icon-alist
+;;  (let ((image-dir (expand-file-name "images/org/" user-emacs-directory))
+;;        (categories '(("[Aa]ccounting" "accounting.svg")
+;;                      ("[Bb]irthday"   "birthday.svg")
+;;                      ("[Cc]alendar"   "calendar.svg")
+;;                      ("[Cc]hore"      "chore.svg"    :height 25)
+;;                      ("[Ee]xercise"   "exercise.svg" :height 24)
+;;                      ("[Ff]ood"       "food.svg")
+;;                      ("[Hh]abit"      "habit.svg")
+;;                      ("[Hh]ealth"     "health.svg")
+;;                      ("[Ii]n"         "in.svg")
+;;                      ("[Ll]isten"     "listen.svg")
+;;                      ("[Oo]ut"        "out.svg")
+;;                      ("[Pp]lay"       "play.svg")
+;;                      ("[Rr]efile"     "refile.svg")
+;;                      ("[Rr]ead"       "read.svg")
+;;                      ("[Ww]atch"      "watch.svg")
+;;                      ("[Ww]ork"       "work.svg"))))
+;;    (mapcar (lambda (category)
+;;              (list (nth 0 category)
+;;                    (expand-file-name (nth 1 category) image-dir)
+;;                    'svg
+;;                    nil
+;;                    :height (or (plist-get category :height) 20)
+;;                    :ascent (or (plist-get category :ascent) 'center)))
+;;            categories)))
+;; ;; This sorting strategy will place habits in/next to the agenda time-grid.
+;; (org-agenda-sorting-strategy
+;;  '((agenda time-up priority-down category-keep)
+;;    (todo priority-down category-keep)
+;;    (tags priority-down category-keep)
+;;    (search category-keep)))
 
-;; I want the agenda clock report table to skip files that don't have any time
-;; clocked for the current agenda view.
-(org-agenda-clockreport-parameter-plist
- '(:link t :maxlevel 2 :stepskip0 t :fileskip0 t))
+;; ;; I want the agenda clock report table to skip files that don't have any time
+;; ;; clocked for the current agenda view.
+;; (org-agenda-clockreport-parameter-plist
+;;  '(:link t :maxlevel 2 :stepskip0 t :fileskip0 t))
 
-;; I don't need to see the word "Scheduled" before scheduled items.
-(org-agenda-scheduled-leaders '("" "%2dx "))
+;; ;; I don't need to see the word "Scheduled" before scheduled items.
+;; (org-agenda-scheduled-leaders '("" "%2dx "))
 
-;; Align tags to column 80 in the agenda view:
-(org-agenda-tags-column -80)
+;; ;; Align tags to column 80 in the agenda view:
+;; (org-agenda-tags-column -80)
 
-)
+;; )
 
 #+end_src
 * org-capture
-for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3cfaebbafb7674f77ff7f70f2/init.org?plain=1#L2676][progfolio]]
+
 
 #+begin_src emacs-lisp :lexical t :tangle yes
+;; for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3cfaebbafb7674f77ff7f70f2/init.org?plain=1#L2676][progfolio]]
 (use-feature org-capture
   :after org
   :config
@@ -3948,8 +3853,9 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
 )
 #+end_src
 * TODO duck-db
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package ob-duckdb
+  :disabled t
   :after org
   :custom
   ;; Limit output to prevent Emacs freezing on large results
@@ -3982,8 +3888,9 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
 	      #'ob-racket-raco-make-runtime-library))
 #+end_src
 * org-clean-refile
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package org-clean-refile
+  :disabled t
   :elpaca (org-clean-refile :host github :repo "progfolio/org-clean-refile" :protocol ssh)
   :commands (org-clean-refile)
   :after (org)
@@ -3991,16 +3898,6 @@ for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3c
   (global-leader
     :keymaps 'org-mode-map
     "sr" 'org-clean-refile))
-#+end_src
-* [#C] org-fancy-priorities
-
-#+begin_src emacs-lisp :lexical t
-;; (use-package org-fancy-priorities
-;;   :commands (org-fancy-priorities-mode)
-;;   :hook (org-mode . org-fancy-priorities-mode)
-;;   :config
-;;   (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
-;;   )
 #+end_src
 * org-habit
 #+begin_src emacs-lisp :lexical t
@@ -4071,10 +3968,11 @@ Speeds up `org-agenda' remote operations."
     (when (get-buffer-window (current-buffer) t) (apply fn args))))
 #+end_src
 ** [#B] refile
-This function allows me to refile within the currently open org files
-as well as agenda files. Useful for structural editing.
-Stolen from: [[https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file?rq=1][stackoverflow: how to org-refile to a target within the current file?]]
 #+begin_src emacs-lisp :lexical t
+;; This function allows me to refile within the currently open org files
+;; as well as agenda files. Useful for structural editing.
+;; Stolen from: [[https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file?rq=1][stackoverflow: how to org-refile to a target within the current file?]]
+
 (defun +org-files-list ()
   "Returns a list of the file names for currently open Org files"
   (delq nil
@@ -4118,8 +4016,9 @@ Stolen from: [[https://emacs.stackexchange.com/questions/22128/how-to-org-refile
         ("\\.x?html?\\'" . "/usr/bin/bash -c '$BROWSER  %s'")
         ("\\.pdf\\'" . default)))
 #+end_src
-Set clock report duration format to floating point hours
+
 #+begin_src emacs-lisp :lexical t
+;;Set clock report duration format to floating point hours
 ;;(setq org-duration-format  '(h:mm))
 (setq org-duration-format '(("h" . nil) (special . 2)))
 #+end_src
@@ -4317,11 +4216,6 @@ https://github.com/org-mime/org-mime
   (add-to-list 'evil-insert-state-modes #'vterm-mode))
 #+end_src
 
-* TODO diminish
-#+begin_src emacs-lisp :lexical t
-(use-package diminish
-  :defer 10)
-#+end_src
 * winner
 #+begin_src emacs-lisp :lexical t
 (use-feature winner
@@ -4452,20 +4346,19 @@ You probably want this 99% of the time and it will skip an annoying prompt.
 #+end_src
 
 * dictionary
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-feature dictionary
-  :general
-  (global-definer "W" 'dictionary-lookup-definition)
-  (+general-global-application "D" 'dictionary-search)
-  (+general-global-text "d" 'dictionary-search))
+#+begin_src emacs-lisp :lexical t 
+;; (use-feature dictionary
+;;   :general
+;;   (global-definer "W" 'dictionary-lookup-definition)
+;;   (+general-global-application "D" 'dictionary-search)
+;;   (+general-global-text "d" 'dictionary-search))
 #+end_src
 * tern (build fails)
-#+begin_quote
-Tern is a stand-alone, editor-independent JavaScript analyzer that can be used to improve the JavaScript integration of existing editors.
+#+begin_src emacs-lisp :lexical
+;; Tern is a stand-alone, editor-independent JavaScript analyzer that can be used to improve the JavaScript integration of existing editors.
 
-https://github.com/ternjs/tern
-#+end_quote
-#+begin_src emacs-lisp :lexical t :tangle no
+;; https://github.com/ternjs/tern
+
 (use-package tern
   :disabled t
   :commands (tern-mode)
@@ -4505,12 +4398,6 @@ https://github.com/ternjs/tern
 
 #+end_src
 
-(use-package erc
-  :ensure nil
-  :defines erc-autojoin-channels-alist
-  :init (setq erc-interpret-mirc-color t
-              erc-lurker-hide-list '("JOIN" "PART" "QUIT")
-              erc-autojoin-channels-alist '(("freenode.net" "#emacs"))))
 * package-lint
 #+begin_src emacs-lisp :lexical t
 (use-package package-lint
@@ -4573,8 +4460,9 @@ https://github.com/ternjs/tern
 #+end_src
 * pdf-tools
 
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package pdf-tools
+  :disabled t
   :ensure (pdf-tools :pre-build ("./server/autobuild") :files (:defaults "server/epdfinfo"))
   :functions (pdf-isearch-batch-mode)
   :commands (pdf-tools-install pdf-view-mode)
@@ -4593,8 +4481,9 @@ https://github.com/ternjs/tern
   :mode (("\\.pdf\\'" . pdf-view-mode)))
 #+end_src
 
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package pdf-tools
+  :disabled t
   :custom (pdf-view-midnight-colors '("#AFA27C" . "#0F0E16"))
   :config (add-hook 'pdf-view-mode-hook
                     (lambda ()
@@ -4720,10 +4609,9 @@ append it to ENTRY."
 #+end_src
 
 * [#C] colorful-mode
-modern replacement rainbow-mode
+
 #+begin_src emacs-lisp :lexical t
-;; (use-package rainbow-mode
-;;   :commands (rainbow-mode))
+;; modern replacement rainbow-mode
 (use-package colorful-mode
   :commands(colorful-mode)
   ;; :diminish
@@ -4764,8 +4652,9 @@ modern replacement rainbow-mode
   (recentf-max-saved-items 1000 "Save more recent files"))
 #+end_src
 * TODO dirvish
-#+begin_src emacs-lisp :lexical t :tangle no
+#+begin_src emacs-lisp :lexical t
 (use-package dirvish
+  :disabled t
   :init
   (dirvish-override-dired-mode)
   :custom
@@ -4843,13 +4732,12 @@ modern replacement rainbow-mode
 # param1=value1¶m2=value2\n")))
       (switch-to-buffer restclient-buffer))))
 #+end_src
-* ob-http
 * TODO shr-color
-#+begin_src emacs-lisp :lexical t :tangle no
-(use-feature shr-color
-  :custom
-  (shr-color-visible-luminance-min 85 "For clearer email/eww rendering of bg/fg colors")
-  (shr-use-colors nil "Don't use colors (for HTML email legibility)"))
+#+begin_src emacs-lisp :lexical t
+;; (use-feature shr-color
+;;   :custom
+;;   (shr-color-visible-luminance-min 85 "For clearer email/eww rendering of bg/fg colors")
+;;   (shr-use-colors nil "Don't use colors (for HTML email legibility)"))
 #+end_src
 * custom-set-variables
 #+begin_src emacs-lisp :lexical t
@@ -4998,16 +4886,17 @@ modern replacement rainbow-mode
 #+end_src
 * find-func
 
-Когда стандартное поведение lisp-функции непонятно или кажется багнутым. Например:
-- M-x find-function RET switch-to-buffer — хочешь понять, почему он не принимает C-u как pop-to-buffer
-- M-. на read-from-minibuffer — лезет в minibuf.c, смотришь как устроен ввод
-- split-window / delete-other-windows — непонятно почему r bebalance работает неожиданно
-- call-interactively — хочешь понять как Emacs разбирает interactive specs
-- Любая функция из C иконкой ⓒ в C-h f — signal, car, mapcar, accept-process-output
-Короче, когда lisp-реализация ссылается на C-примитив ~((defalias 'car #'..., subr)~ или функция написана целиком на C (фреймовые/буферные/процессные/оконные менеджеры). Это не повседневщина, но при отладке или глубоком изучении — спасает.
 
 
 #+begin_src emacs-lisp :lexical t
+;; Когда стандартное поведение lisp-функции непонятно или кажется багнутым. Например:
+;; - M-x find-function RET switch-to-buffer — хочешь понять, почему он не принимает C-u как pop-to-buffer
+;; - M-. на read-from-minibuffer — лезет в minibuf.c, смотришь как устроен ввод
+;; - split-window / delete-other-windows — непонятно почему r bebalance работает неожиданно
+;; - call-interactively — хочешь понять как Emacs разбирает interactive specs
+;; - Любая функция из C иконкой ⓒ в C-h f — signal, car, mapcar, accept-process-output
+;; Короче, когда lisp-реализация ссылается на C-примитив ~((defalias 'car #'..., subr)~ или функция написана целиком на C (фреймовые/буферные/процессные/оконные менеджеры). Это не повседневщина, но при отладке или глубоком изучении — спасает.
+
 (use-feature find-func
   :defer t
   :config (setq find-function-C-source-directory

@@ -49,6 +49,16 @@
 
 ;; (my/wrap-require)
 
+;; (profiler-start 'cpu+mem)
+;; (add-hook 'elpaca-after-init-hook (lambda () (profiler-stop) (profiler-report)))
+
+;; ELP полезен для поиска горячих функций
+;; (require 'elp)
+;; (with-eval-after-load file
+;;   (elp-instrument-package file))
+;; (add-hook 'elpaca-after-init-hook
+;;           (lambda () (elp-results) (elp-restore-package (intern file))))
+
 (setq initial-buffer-choice t) ;;*scratch*
 
 (defvar elpaca-installer-version 0.12)
@@ -92,6 +102,12 @@
 (elpaca `(,@elpaca-order))
 (setq elpaca-queue-limit 30)
 
+;; We need this loaded for SSH protocol
+;; (elpaca-queue
+;;  (elpaca keychain-environment
+;;    (require 'keychain-environment)
+;;    (keychain-refresh-environment)))
+
 (defmacro use-feature (name &rest args)
   "Like `use-package' but accounting for asynchronous installation.
   NAME and ARGS are in `use-package'."
@@ -107,12 +123,12 @@
 
 (elpaca-wait)
 
-;; (if debug-on-error
-;;     (setq use-package-verbose t
-;;           use-package-expand-minimally nil
-;;           use-package-compute-statistics t)
-;;   (setq use-package-verbose nil
-;;         use-package-expand-minimally t))
+(if debug-on-error
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
 
 (let ((default-directory "~/.config/emacs/lisp"))
   (when (file-exists-p default-directory)
@@ -157,6 +173,8 @@
     (set-terminal-coding-system 'utf-8)))
 
 (add-hook 'server-after-make-frame-hook #'+terminal)
+
+;; (load-file "~/Documents/emacs-secrets.el")
 
 (use-package general
   :ensure (:wait t)
@@ -656,6 +674,10 @@ unreadable. Returns the names of envvars that were changed."
   ;;
   )
 
+;; (use-package java-runner
+;;   ;; :ensure nil
+;;   :load-path "~/.config/emacs/java-runner/")
+
 (use-package modus-themes
   :ensure (:wait t)
 
@@ -755,6 +777,9 @@ unreadable. Returns the names of envvars that were changed."
                       (plist-get (text-properties-at pos) 'face)))))
     (message "Faces: %s" faces)))
 
+;; *New user option 'treesit-enabled-modes'.*
+;; [[https://github.com/emacs-mirror/emacs/blob/07adb8b59dee772b56612b90acd19e1a5a456628/etc/NEWS#L769][emacs/etc/NEWS at 07adb8b59dee772b56612b90acd19e1a5a456628 · emacs-mirror/ema...]]
+
 (use-feature treesit
   :custom
   (treesit-font-lock-level 2)
@@ -852,8 +877,14 @@ unreadable. Returns the names of envvars that were changed."
              (call-interactively #'dired-copy-filename-as-kill))))
     ("q" nil "quit" :color blue)))
 
+;; Цвета темы для dired
 (use-package diredfl
   :hook (dired-mode . diredfl-mode))
+
+(use-package dired-rsync
+  :disabled t
+  :defer t
+  :general (dired-mode-map "C-c C-r" #'dired-rsync))
 
 (use-package nerd-icons-dired
   :hook (dired-mode . nerd-icons-dired-mode)
@@ -896,6 +927,12 @@ unreadable. Returns the names of envvars that were changed."
   (save-interprogram-paste-before-kill t)
   (fill-column 80 "Wrap at 80 columns."))
 
+(use-package benchmark-init
+  :disabled t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
 (use-package popper
   :bind (("C-`"   . popper-toggle)
          ;; ("M-`"   . popper-cycle)
@@ -924,6 +961,101 @@ unreadable. Returns the names of envvars that were changed."
           compilation-mode))
   (popper-mode +1)
   (popper-echo-mode +1))
+
+;; (use-package popper
+;;   :defines popper-echo-dispatch-actions
+;;   :commands popper-group-by-directory
+;;   ;; :bind (:map popper-mode-map
+;;   ;;             ("s-`" . popper-toggle)
+;;   ;;             ("s-o"   . popper-cycle)
+;;   ;;             ("q" . popper-kill-latest-popup)
+;;   ;;             ("M-`" . popper-toggle-type))
+;;   :hook (emacs-startup . popper-mode)
+;;   :init
+;;   (setq popper-reference-buffers
+;;         '("\\*Messages\\*"
+;;           "Output\\*$" "\\*Pp Eval Output\\*$"
+;;           "\\*Compile-Log\\*"
+;;           "\\*Completions\\*"
+;;           "\\*Warnings\\*"
+;;           "\\*Flymake diagnostics.*\\*"
+;;           "\\*Async Shell Command\\*"
+;;           "\\*Apropos\\*"
+;;           "\\*Backtrace\\*"
+;;           "\\*prodigy\\*"
+;;           "\\*Calendar\\*"
+;;           "\\*Embark Actions\\*"
+;;           "\\*Finder\\*"
+;;           "\\*Kill Ring\\*"
+;;           "\\*Embark Export:.*\\*"
+;;           "\\*Edit Annotation.*\\*"
+;;           "\\*Flutter\\*"
+;;           bookmark-bmenu-mode
+;;           lsp-bridge-ref-mode
+;;           comint-mode
+;;           compilation-mode
+;;           help-mode helpful-mode
+;;           tabulated-list-mode
+;;           Buffer-menu-mode
+;;           occur-mode
+;;           gnus-article-mode devdocs-mode
+;;           grep-mode occur-mode rg-mode deadgrep-mode ag-mode pt-mode
+;;           ivy-occur-mode ivy-occur-grep-mode
+;;           process-menu-mode list-environment-mode cargo-process-mode
+;;           youdao-dictionary-mode osx-dictionary-mode fanyi-mode
+
+;;           "^\\*eshell.*\\*.*$" eshell-mode
+;;           "^\\*shell.*\\*.*$"  shell-mode
+;;           "^\\*terminal.*\\*.*$" term-mode
+;;           "^\\*vterm.*\\*.*$"  vterm-mode
+
+;;           "\\*DAP Templates\\*$" dap-server-log-mode
+;;           "\\*ELP Profiling Restuls\\*" profiler-report-mode
+;;           "\\*Flycheck errors\\*$" " \\*Flycheck checker\\*$"
+;;           "\\*Paradox Report\\*$" "\\*package update results\\*$" "\\*Package-Lint\\*$"
+;;           "\\*[Wo]*Man.*\\*$"
+;;           "\\*ert\\*$" overseer-buffer-mode
+;;           "\\*gud-debug\\*$"
+;;           "\\*lsp-help\\*$" "\\*lsp session\\*$"
+;;           "\\*quickrun\\*$"
+;;           "\\*tldr\\*$"
+;;           "\\*vc-.*\\*$"
+;;           "\\*eldoc\\*"
+;;           "^\\*elfeed-entry\\*$"
+;;           "^\\*macro expansion\\**"
+
+;;           "\\*Agenda Commands\\*" "\\*Org Select\\*" "\\*Capture\\*" "^CAPTURE-.*\\.org*"
+;;           "\\*Gofmt Errors\\*$" "\\*Go Test\\*$" godoc-mode
+;;           "\\*docker-containers\\*" "\\*docker-images\\*" "\\*docker-networks\\*" "\\*docker-volumes\\*"
+;;           "\\*prolog\\*" inferior-python-mode inf-ruby-mode swift-repl-mode
+;;           "\\*rustfmt\\*$" rustic-compilation-mode rustic-cargo-clippy-mode
+;;           rustic-cargo-outdated-mode rustic-cargo-test-moed))
+
+
+;;   (setq popper-echo-dispatch-actions t)
+;;   (setq popper-group-function nil)
+;;   :config
+;;   (popper-echo-mode 1)
+
+;;   (with-no-warnings
+;;     (defun my-popper-fit-window-height (win)
+;;       "Determine the height of popup window WIN by fitting it to the buffer's content."
+;;       (fit-window-to-buffer
+;;        win
+;;        (floor (frame-height) 3)
+;;        (floor (frame-height) 3)))
+;;     (setq popper-window-height #'my-popper-fit-window-height)
+
+;;     (defun popper-close-window-hack (&rest _)
+;;       "Close popper window via `C-g'."
+;;       ;; `C-g' can deactivate region
+;;       (when (and (called-interactively-p 'interactive)
+;;                  (not (region-active-p))
+;;                  popper-open-popup-alist)
+;;         (let ((window (caar popper-open-popup-alist)))
+;;           (when (window-live-p window)
+;;             (delete-window window)))))
+;;     (advice-add #'keyboard-quit :before #'popper-close-window-hack)))
 
 (use-feature autorevert
   :hook (emacs-startup . global-auto-revert-mode)
@@ -988,6 +1120,27 @@ unreadable. Returns the names of envvars that were changed."
 (use-package smart-backspace
   :bind ("<C-M-backspace>" . smart-backspace))
 
+;; (defun smart-backspace (n &optional killflag)
+;;   "This function provides intellij like backspace.
+;; Delete the backword-char usually and delete whitespace
+;; to previous line indentation if it's start of line.
+;; If a prefix argument is giben, delete the following N characters.
+;; Optianal second arg KILLFLAG non-nil means to kill (save in killring)
+;; instead of delete. Interactively, N is the prefix arg, and KILLFLAG
+;; is set if N was explicitly specified."
+;;   (interactive "p\nP")
+;;   (let* ((current (point))
+;;          (beginning (save-excursion
+;;                       (beginning-of-line)
+;;                       (point))))
+;;     (if (string-match "^[ \t]*$" (buffer-substring beginning current))
+;;         (progn
+;;           (kill-line 0)
+;;           (delete-char (- n) killflag)
+;;           (indent-according-to-mode))
+;;       (delete-char (- n) killflag))))
+;; (define-key evil-insert-state-map [?\C-?] 'smart-backspace)
+
 (use-package sqlite3
   :ensure (sqlite3 :host github :repo "pekingduck/emacs-sqlite3-api")
   :defer t)
@@ -1000,6 +1153,7 @@ unreadable. Returns the names of envvars that were changed."
   (leetcode-directory "/tmp/")
   (leetcode-prefer-language "java"))
 
+;; [[https://github.com/yqrashawn/yqdotfiles/blob/1634092b80933ecd94018074847e2aaf35279d69/.doom.d/visual.el#L45][yqrashawn]] фикс таймера
 (use-package elcord
   :defer 3
   :config
@@ -1043,6 +1197,10 @@ unreadable. Returns the names of envvars that were changed."
     "s" 'bookmark-set
     "r" 'bookmark-rename))
 
+;; Buttercup is a behavior-driven development framework for testing Emacs Lisp code.
+
+;; https://github.com/jorgenschaefer/emacs-buttercup
+
 (use-package buttercup
   :commands (buttercup-run-at-point))
 
@@ -1071,10 +1229,7 @@ unreadable. Returns the names of envvars that were changed."
         ediff-split-window-function 'split-window-horizontally
         ediff-merge-split-window-function 'split-window-horizontally))
 
-;; (use-package anzu
-;;   :defer 10
-;;   :config (global-anzu-mode))
-
+;; Бекапы и Автосейвы
 (use-feature files
   :config
   ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
@@ -1136,8 +1291,6 @@ unreadable. Returns the names of envvars that were changed."
 (use-package undo-fu
   :defer t)
 
-;; (use-package delight)
-
 (use-package undo-fu-session
   :defer t
   ;; :hook (elpaca-after-init . undo-fu-session-global-mode)
@@ -1176,6 +1329,7 @@ unreadable. Returns the names of envvars that were changed."
                                               extended-command-history)
               savehist-autosave-interval 300))
 
+;; [[https://gist.github.com/clemera/8f6bdeffaf3495c98a070e50dc65acbc][mode-line+ · GitHub]]
 (defface evil-state-face
   '((t (:weight bold)))
   "Bold face for evil states")
@@ -1437,8 +1591,6 @@ unreadable. Returns the names of envvars that were changed."
 (use-package consult-eglot
   :defer t)
 
-
-
 ;; (use-package emojify
 ;;   :hook (after-init . global-emojify-mode))
 
@@ -1488,6 +1640,7 @@ unreadable. Returns the names of envvars that were changed."
     (setq evil-complete-next-func (lambda (_) (completion-at-point))))
   )
 
+;; Замена company-quickhelp. corfu-popupinfo это бывший corfu-doc
 (use-feature corfu-popupinfo
   :after corfu
   :hook (corfu-mode . corfu-popupinfo-mode)
@@ -1784,6 +1937,12 @@ unreadable. Returns the names of envvars that were changed."
   ;; (setq lsp-haskell-plugin-stan-global-on nil)
   )
 
+(use-package lsp-pyright
+  :disabled t
+  :hook (python-mode . (lambda () (require 'lsp-pyright)))
+  :init (when (executable-find "python3")
+          (setq lsp-pyright-python-executable-cmd "python3")))
+
 (add-hook 'sql-mode-hook 'lsp)
 (setq lsp-sqls-workspace-config-path nil)
 (setq lsp-sqls-connections
@@ -1963,10 +2122,19 @@ unreadable. Returns the names of envvars that were changed."
   :config
   (dap-mode t))
 
+;; Двигаем текст между строк.
 (use-package move-text
   :bind (("M-p" . move-text-up)
          ("M-n" . move-text-down))
   :config (move-text-default-bindings))
+
+;; (use-package eldoc
+;;   :preface
+;;   (unload-feature 'eldoc t)
+;;   (setq custom-delayed-init-variables '())
+;;   (defvar global-eldoc-mode nil)
+;;   :config
+;;   (global-eldoc-mode))
 
 (use-package eldoc-box
   :hook (prog-mode . +eldoc-box-hover-at-point-mode-maybe)
@@ -2079,6 +2247,12 @@ unreadable. Returns the names of envvars that were changed."
 ;;   (require 'sly-quicklisp-autoloads)
 ;;   )
 
+(use-package sly-stepper
+  :disabled t
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-stepper))
+
 ;;(use-package sly-macrostep )
 
 (use-package sly-repl-ansi-color
@@ -2108,6 +2282,7 @@ unreadable. Returns the names of envvars that were changed."
   :defer t)
 
 (use-package ejc-sql
+  :disabled t
   :defer t
   :commands ejc-sql-mode ejc-connect
   :config
@@ -2144,16 +2319,12 @@ unreadable. Returns the names of envvars that were changed."
   :commands (flycheck-mode)
   :custom (flycheck-emacs-lisp-load-path 'inherit "necessary with alternatives to package.el"))
 
+;; =package-lint= integration for flycheck.
 (use-package flycheck-package
   :after (flycheck)
   :config (flycheck-package-setup)
   (add-to-list 'display-buffer-alist
                '("\\*Flycheck errors\\*"  display-buffer-below-selected (window-height . 0.15))))
-
-(use-package flycheck-eglot
-  :after (flycheck eglot)
-  :config
-  (global-flycheck-eglot-mode 1))
 
 (use-feature flymake
   :general
@@ -2180,6 +2351,31 @@ unreadable. Returns the names of envvars that were changed."
                 `("./" ,@(mapcar #'file-name-as-directory
                                  (nthcdr 2 (directory-files (expand-file-name "builds" elpaca-directory) 'full))))))
   (add-hook 'flymake-mode-hook #'+flymake-elpaca-bytecomp-load-path))
+
+;; (use-feature flyspell
+;;   :commands (flyspell-mode flyspell-prog-mode)
+;;   :general
+;;   (+general-global-toggle
+;;     "ss" 'flyspell-mode
+;;     "sp" 'flyspell-prog-mode)
+;;   (+general-global-spelling
+;;     "n" 'flyspell-goto-next-error
+;;     "b" 'flyspell-buffer
+;;     "w" 'flyspell-word
+;;     "r" 'flyspell-region)
+;;   :hook ((org-mode mu4e-compose-mode git-commit-mode) . flyspell-mode))
+
+;; "This package provides functionality for correcting words via custom interfaces."
+;; --
+;; https://d12frosted.io/posts/2016-05-09-flyspell-correct-intro.html
+
+(use-package flyspell-correct
+  :disabled t
+  :after (flyspell)
+  :general
+  (+general-global-spelling
+    "B" 'flyspell-correct-wrapper
+    "p" 'flyspell-correct-at-point))
 
 (use-package fvwm-mode
   :ensure (fvwm-mode :host github :repo "theBlackDragon/fvwm-mode")
@@ -2240,6 +2436,19 @@ Use `treemacs' command for old functionality."
 (use-package treemacs-magit
   :after (treemacs magit)
   )
+
+(use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+  :disabled t
+  :after (treemacs persp-mode) ;;or perspective vs. persp-mode
+  :config (treemacs-set-scope-type 'Perspectives))
+
+(use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
+  :disabled t
+  :after (treemacs)
+  :config (treemacs-set-scope-type 'Tabs))
+
+;; Надо ?
+;; (use-package org-contrib)
 
 (use-package yaml-pro
   :hook
@@ -2318,11 +2527,6 @@ Use `treemacs' command for old functionality."
            :repo "progfolio/auto-tangle-mode.el"
            :local-repo "auto-tangle-mode")
   :commands (auto-tangle-mode))
-
-;; (use-feature ob-scala-cli
-;;   :load-path "~/.config/emacs/lisp/"
-;;   :config
-;;   (ob-scala-cli-setup))
 
 (use-feature ob-tangle
   :after (org)
@@ -2421,7 +2625,16 @@ Use `treemacs' command for old functionality."
      'org-babel-load-languages
      '((mermaid . t)))))
 
+(use-package org-roam
+  :ensure (org-roam :host github :repo "org-roam/org-roam")
+  :disabled t
+  :general ;;
+  (+general-global-application
+    "or" '(:ignore t :which-key "org-roam-setup"))
+  :init (setq org-roam-v2-ack t))
+
 (use-package denote
+  :disabled t
   :hook (dired-mode . denote-dired-mode)
   :bind
   (("C-c n n" . denote)
@@ -2608,6 +2821,10 @@ Use `treemacs' command for old functionality."
 
 (use-package ox-gfm :defer t)
 
+;; Export org-mode docs as HTML compatible with Twitter Bootstrap.
+
+;; https://github.com/marsmining/ox-twbs
+
 (use-package ox-twbs
   :disabled t
   :after (org)
@@ -2670,9 +2887,186 @@ Use `treemacs' command for old functionality."
 
         ))))
 
+;; A simple Emacs minor mode for a nice writing environment.
+
+;; https://github.com/rnkn/olivetti
+
 (use-package olivetti
   :commands (olivetti-mode))
 
+;; (use-feature org-agenda
+;;   :after   (general evil)
+;;   :config
+;;   (defun +org-agenda-archives (&optional arg)
+;;     "Toggle `org-agenda-archives-mode' so that it includes archive files by default.
+;;   Inverts normal logic of ARG."
+;;     (interactive "P")
+;;     (let ((current-prefix-arg (unless (or org-agenda-archives-mode arg) '(4))))
+;;       (call-interactively #'org-agenda-archives-mode)))
+
+;;   (defun +org-agenda-place-point ()
+;;     "Place point on first agenda item."
+;;     (goto-char (point-min))
+;;     (org-agenda-find-same-or-today-or-agenda))
+
+;;   (add-hook 'org-agenda-finalize-hook #'+org-agenda-place-point 90)
+;;   :general
+;;   (+general-global-application
+;;   "o#"   'org-agenda-list-stuck-projects
+;;   "o/"   'org-occur-in-agenda-files
+;;   "oa"   '((lambda () (interactive) (org-agenda nil "a")) :which-key "agenda")
+;;   "oe"   'org-store-agenda-views
+;;   "oo"   'org-agenda)
+;;   (global-leader :keymaps 'org-mode-map
+;;   "a"   'org-agenda)
+;; ;;Consider cribbing =evilified-state= from Spacemacs?
+
+;; (with-eval-after-load 'org-agenda
+;;   (evil-make-intercept-map org-agenda-mode-map)
+;;   (general-define-key
+;;    :keymaps 'org-agenda-mode-map
+;;    ;;:states '(emacs normal motion)
+;;    "A"     '+org-agenda-archives
+;;    "C"     'org-agenda-clockreport-mode
+;;    "D"     'org-agenda-goto-date
+;;    "E"     'epoch-agenda-todo
+;;    "H"     'org-habit-toggle-habits
+;;    "J"     'org-agenda-next-item
+;;    "K"     'org-agenda-previous-item
+;;    "R"     'org-agenda-refile
+;;    "S"     'org-agenda-schedule
+;;    "RET"   'org-agenda-recenter
+;;    ;; "a"     '+org-capture-again
+;;    "c"     'org-agenda-capture
+;;    "j"     'org-agenda-next-line
+;;    "k"     'org-agenda-previous-line
+;;    "m"     'org-agenda-month-view
+;;    "t"     'org-agenda-set-tags
+;;    "T"     'org-agenda-todo
+;;    "u"     'org-agenda-undo))
+;; ;;When saving, I want changes to my org-files reflected in any open org agenda
+;; ;;buffers.
+;;   :config
+
+;; ;;for org-agenda-icon-alist
+;; (evil-set-initial-state 'org-agenda-mode 'normal)
+;; (defun +org-agenda-redo-all ()
+;;   "Rebuild all agenda buffers"
+;;   (interactive)
+;;   (dolist (buffer (buffer-list))
+;;     (with-current-buffer buffer
+;;       (when (derived-mode-p 'org-agenda-mode)
+;;         (org-agenda-maybe-redo)))))
+
+;; (add-hook 'org-mode-hook
+;;           (lambda ()
+;;             (add-hook 'after-save-hook '+org-agenda-redo-all nil t)
+;;             (setq prettify-symbols-unprettify-at-point 'right-edge)
+;;             (setq prettify-symbols-alist
+;;                   (mapcan (lambda (el) (list el (cons (upcase (car el)) (cdr el))))
+;;                           '(("#+begin_src"     . "λ")
+;;                             ("#+end_src"       . "λ")
+;;                             (":properties:"    . "⚙")
+;;                             (":end:"           . "∎")
+;;                             ("#+results:"      . "→"))))
+;;             (prettify-symbols-mode 1)))
+
+;;   :custom
+;; ;; Add a custom view for a simplified work agenda.
+;; (org-agenda-custom-commands
+;;  '(("w" "Work Schedule" agenda "+work"
+;;     ((org-agenda-files '("~/Documents/todo/work.org"))
+;;      (org-agenda-span 'week)
+;;      (org-mode-hook nil)
+;;      (org-agenda-start-on-weekday 2)
+;;      (org-agenda-timegrid-use-ampm t)
+;;      (org-agenda-time-leading-zero t)
+;;      (org-agenda-use-time-grid nil)
+;;      (org-agenda-archives-mode t)
+;;      (org-agenda-weekend-days '(2 3))
+;;      (org-agenda-format-date "%a %m-%d")
+;;      (org-agenda-prefix-format '((agenda . " %t")))
+;;      (org-agenda-finalize-hook
+;;       '((lambda ()
+;;           "Format custom agenda command for work schedule."
+;;           (save-excursion
+;;             (goto-char (point-min))
+;;             (while (re-search-forward "TODO Work" nil 'noerror)
+;;               (replace-match ""))
+;;             (goto-char (point-min))
+;;             (forward-line) ;skip header
+;;             (while (not (eobp))
+;;               (when (get-text-property (point) 'org-agenda-date-header)
+;;                 (let (fn)
+;;                   (save-excursion
+;;                     (forward-line)
+;;                     (setq fn
+;;                           (cond ((or (eobp)
+;;                                      (get-text-property (point) 'org-agenda-date-header))
+;;                                  (lambda () (end-of-line) (insert " OFF")))
+;;                                 ((get-text-property (point) 'time)
+;;                                  (lambda () (forward-line) (join-line))))))
+;;                   (funcall fn)))
+;;               (forward-line))))))))
+;;    ("n" "Agenda and all TODOs" ((agenda "") (alltodo "")))))
+;; (org-agenda-skip-deadline-prewarning-if-scheduled nil "Show approaching deadlines even when scheduled.")
+;; ;; I prefer the agenda to start on the current day view instead of the week. It's
+;; ;; generally faster to generate and usually what I want.
+;; (org-agenda-span 'day)
+;; ;; These settings should speed up agenda generation:
+;; (org-agenda-inhibit-startup t)
+;; ;; But, I'm not sure about this one. It doesn't seem to speed things up that much
+;; ;; for me and I like to see inherited tags on tasks.
+;; (org-agenda-use-tag-inheritance nil)
+;; ;; I find category icons to be a nice visual shorthand that keeps the agenda less cluttered.
+;; (org-agenda-prefix-format '((agenda . " %i %?-12t% s")))
+;; (org-agenda-category-icon-alist
+;;  (let ((image-dir (expand-file-name "images/org/" user-emacs-directory))
+;;        (categories '(("[Aa]ccounting" "accounting.svg")
+;;                      ("[Bb]irthday"   "birthday.svg")
+;;                      ("[Cc]alendar"   "calendar.svg")
+;;                      ("[Cc]hore"      "chore.svg"    :height 25)
+;;                      ("[Ee]xercise"   "exercise.svg" :height 24)
+;;                      ("[Ff]ood"       "food.svg")
+;;                      ("[Hh]abit"      "habit.svg")
+;;                      ("[Hh]ealth"     "health.svg")
+;;                      ("[Ii]n"         "in.svg")
+;;                      ("[Ll]isten"     "listen.svg")
+;;                      ("[Oo]ut"        "out.svg")
+;;                      ("[Pp]lay"       "play.svg")
+;;                      ("[Rr]efile"     "refile.svg")
+;;                      ("[Rr]ead"       "read.svg")
+;;                      ("[Ww]atch"      "watch.svg")
+;;                      ("[Ww]ork"       "work.svg"))))
+;;    (mapcar (lambda (category)
+;;              (list (nth 0 category)
+;;                    (expand-file-name (nth 1 category) image-dir)
+;;                    'svg
+;;                    nil
+;;                    :height (or (plist-get category :height) 20)
+;;                    :ascent (or (plist-get category :ascent) 'center)))
+;;            categories)))
+;; ;; This sorting strategy will place habits in/next to the agenda time-grid.
+;; (org-agenda-sorting-strategy
+;;  '((agenda time-up priority-down category-keep)
+;;    (todo priority-down category-keep)
+;;    (tags priority-down category-keep)
+;;    (search category-keep)))
+
+;; ;; I want the agenda clock report table to skip files that don't have any time
+;; ;; clocked for the current agenda view.
+;; (org-agenda-clockreport-parameter-plist
+;;  '(:link t :maxlevel 2 :stepskip0 t :fileskip0 t))
+
+;; ;; I don't need to see the word "Scheduled" before scheduled items.
+;; (org-agenda-scheduled-leaders '("" "%2dx "))
+
+;; ;; Align tags to column 80 in the agenda view:
+;; (org-agenda-tags-column -80)
+
+;; )
+
+;; for more examples [[https://github.com/progfolio/.emacs.d/blob/7bc8b278c00047e3cfaebbafb7674f77ff7f70f2/init.org?plain=1#L2676][progfolio]]
 (use-feature org-capture
   :after org
   :config
@@ -2734,6 +3128,30 @@ Use `treemacs' command for old functionality."
 ;; (org-capture-dir (concat (getenv "HOME") "/Documents/todo/"))
 )
 
+(use-package ob-duckdb
+  :disabled t
+  :after org
+  :custom
+  ;; Limit output to prevent Emacs freezing on large results
+  (org-babel-duckdb-max-rows 200000)
+
+  ;; Show progress for async queries
+  (org-babel-duckdb-show-progress t)
+  (org-babel-duckdb-progress-display 'minibuffer) ; or 'popup
+
+  ;; Auto-show queue when multiple async queries pending
+  (org-babel-duckdb-queue-display 'auto) ; or 'manual
+  (org-babel-duckdb-queue-position 'bottom) ; or 'side
+
+  :config
+  ;; Optional: MotherDuck token from file
+  ;; (setq org-babel-duckdb-motherduck-token
+  ;;       (lambda ()
+  ;;         (with-temp-buffer
+  ;;           (insert-file-contents "~/.config/duckdb/.motherduck_token")
+  ;;           (string-trim (buffer-string)))))
+  )
+
 (use-package ob-racket
   :ensure (ob-racket :host github :repo "hasu/emacs-ob-racket" :files ("*.el" "*.rkt"))
   :after org
@@ -2741,12 +3159,15 @@ Use `treemacs' command for old functionality."
   (add-hook 'ob-racket-pre-runtime-library-load-hook
 	      #'ob-racket-raco-make-runtime-library))
 
-;; (use-package org-fancy-priorities
-;;   :commands (org-fancy-priorities-mode)
-;;   :hook (org-mode . org-fancy-priorities-mode)
-;;   :config
-;;   (setq org-fancy-priorities-list '("⚑" "⬆" "■"))
-;;   )
+(use-package org-clean-refile
+  :disabled t
+  :elpaca (org-clean-refile :host github :repo "progfolio/org-clean-refile" :protocol ssh)
+  :commands (org-clean-refile)
+  :after (org)
+  :general
+  (global-leader
+    :keymaps 'org-mode-map
+    "sr" 'org-clean-refile))
 
 (use-feature org-habit
   :after (org)
@@ -2812,6 +3233,10 @@ Use `treemacs' command for old functionality."
 Speeds up `org-agenda' remote operations."
     (when (get-buffer-window (current-buffer) t) (apply fn args))))
 
+;; This function allows me to refile within the currently open org files
+;; as well as agenda files. Useful for structural editing.
+;; Stolen from: [[https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file?rq=1][stackoverflow: how to org-refile to a target within the current file?]]
+
 (defun +org-files-list ()
   "Returns a list of the file names for currently open Org files"
   (delq nil
@@ -2851,6 +3276,7 @@ Speeds up `org-agenda' remote operations."
         ("\\.x?html?\\'" . "/usr/bin/bash -c '$BROWSER  %s'")
         ("\\.pdf\\'" . default)))
 
+;;Set clock report duration format to floating point hours
 ;;(setq org-duration-format  '(h:mm))
 (setq org-duration-format '(("h" . nil) (special . 2)))
 
@@ -3009,9 +3435,6 @@ Speeds up `org-agenda' remote operations."
   :init
   (add-to-list 'evil-insert-state-modes #'vterm-mode))
 
-(use-package diminish
-  :defer 10)
-
 (use-feature winner
   :defer 5
   :general
@@ -3119,6 +3542,21 @@ Speeds up `org-agenda' remote operations."
   :custom
   (vc-follow-symlinks t "Visit real file when editing a symlink without prompting."))
 
+;; (use-feature dictionary
+;;   :general
+;;   (global-definer "W" 'dictionary-lookup-definition)
+;;   (+general-global-application "D" 'dictionary-search)
+;;   (+general-global-text "d" 'dictionary-search))
+
+;; Tern is a stand-alone, editor-independent JavaScript analyzer that can be used to improve the JavaScript integration of existing editors.
+
+;; https://github.com/ternjs/tern
+
+(use-package tern
+  :disabled t
+  :commands (tern-mode)
+  :hook (js2-mode . tern-mode))
+
 (use-feature window
   :bind (("C-x 2" . vsplit-last-buffer)
          ("C-x 3" . hsplit-last-buffer))
@@ -3199,6 +3637,40 @@ Speeds up `org-agenda' remote operations."
   (interactive)
   (magit-status (project-root (project-current))))
 )
+
+(use-package pdf-tools
+  :disabled t
+  :ensure (pdf-tools :pre-build ("./server/autobuild") :files (:defaults "server/epdfinfo"))
+  :functions (pdf-isearch-batch-mode)
+  :commands (pdf-tools-install pdf-view-mode)
+ ;; :custom (pdf-view-midnight-colors '("#AFA27C" . "#0F0E16"))
+  :config (add-hook 'pdf-view-mode-hook
+                    (lambda ()
+                      ;; get rid of borders on pdf's edges
+                      (set (make-local-variable 'evil-normal-state-cursor) (list nil))
+                      ;;for fast i-search in pdf buffers
+                      (pdf-isearch-minor-mode)
+                      (pdf-isearch-batch-mode)
+                      ;;(pdf-view-dark-minor-mode)
+                      ;;(pdf-view-midnight-minor-mode)
+                      )
+                    )
+  :mode (("\\.pdf\\'" . pdf-view-mode)))
+
+(use-package pdf-tools
+  :disabled t
+  :custom (pdf-view-midnight-colors '("#AFA27C" . "#0F0E16"))
+  :config (add-hook 'pdf-view-mode-hook
+                    (lambda ()
+                      ;; get rid of borders on pdf's edges
+                      (set (make-local-variable 'evil-normal-state-cursor) (list nil))
+                      ;;for fast i-search in pdf buffers
+                      (pdf-isearch-minor-mode)
+                      (pdf-isearch-batch-mode)
+                      (pdf-view-dark-minor-mode)
+                      (pdf-view-midnight-minor-mode)))
+  :magic ("%PDF" . pdf-view-mode)
+  )
 
 (use-package pass
   :defer t
@@ -3296,8 +3768,7 @@ append it to ENTRY."
       (when (not password-store-otp-screenshots-path)
         (delete-file qr-image-filename)))))
 
-;; (use-package rainbow-mode
-;;   :commands (rainbow-mode))
+;; modern replacement rainbow-mode
 (use-package colorful-mode
   :commands(colorful-mode)
   ;; :diminish
@@ -3329,6 +3800,50 @@ append it to ENTRY."
   (recentf-save-file (my-expand-var-file "recentf-save.el"))
   (recentf-max-menu-items 1000 "Offer more recent files in menu")
   (recentf-max-saved-items 1000 "Save more recent files"))
+
+(use-package dirvish
+  :disabled t
+  :init
+  (dirvish-override-dired-mode)
+  :custom
+  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("m" "/mnt/"                       "Drives")
+     ("t" "~/.local/share/Trash/files/" "TrashCan")))
+  :config
+  (dirvish-peek-mode)             ; Preview files in minibuffer
+  ;; (dirvish-side-follow-mode)      ; similar to `treemacs-follow-mode'
+  (setq dirvish-mode-line-format
+        '(:left (sort symlink) :right (omit yank index)))
+  (setq dirvish-attributes
+        '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg)
+        dirvish-side-attributes
+        '(vc-state file-size nerd-icons collapse))
+  (setq delete-by-moving-to-trash t)
+  (setq dired-listing-switches
+        "-l --almost-all --human-readable --group-directories-first --no-group")
+  :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
+  (("C-c f" . dirvish)
+   :map dirvish-mode-map          ; Dirvish inherits `dired-mode-map'
+   ("?"   . dirvish-dispatch)     ; contains most of sub-menus in dirvish extensions
+   ("a"   . dirvish-quick-access)
+   ("f"   . dirvish-file-info-menu)
+   ("y"   . dirvish-yank-menu)
+   ("N"   . dirvish-narrow)
+   ("^"   . dirvish-history-last)
+   ("h"   . dirvish-history-jump) ; remapped `describe-mode'
+   ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+   ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+   ("TAB" . dirvish-subtree-toggle)
+   ("M-f" . dirvish-history-go-forward)
+   ("M-b" . dirvish-history-go-backward)
+   ("M-l" . dirvish-ls-switches-menu)
+   ("M-m" . dirvish-mark-menu)
+   ("M-t" . dirvish-layout-toggle)
+   ("M-s" . dirvish-setup-menu)
+   ("M-e" . dirvish-emerge-menu)
+   ("M-j" . dirvish-fd-jump)))
 
 (use-package restclient
   :commands (restclient-mode +web/restclient-new-buffer)
@@ -3362,6 +3877,11 @@ append it to ENTRY."
 # Content-Type: application/x-www-form-urlencoded
 # param1=value1¶m2=value2\n")))
       (switch-to-buffer restclient-buffer))))
+
+;; (use-feature shr-color
+;;   :custom
+;;   (shr-color-visible-luminance-min 85 "For clearer email/eww rendering of bg/fg colors")
+;;   (shr-use-colors nil "Don't use colors (for HTML email legibility)"))
 
 (use-feature cus-edit
   :defer t
@@ -3495,6 +4015,14 @@ append it to ENTRY."
   :defer t
   :init (setq epa-file-cache-passphrase-for-symmetric-encryption t))
 
+;; Когда стандартное поведение lisp-функции непонятно или кажется багнутым. Например:
+;; - M-x find-function RET switch-to-buffer — хочешь понять, почему он не принимает C-u как pop-to-buffer
+;; - M-. на read-from-minibuffer — лезет в minibuf.c, смотришь как устроен ввод
+;; - split-window / delete-other-windows — непонятно почему r bebalance работает неожиданно
+;; - call-interactively — хочешь понять как Emacs разбирает interactive specs
+;; - Любая функция из C иконкой ⓒ в C-h f — signal, car, mapcar, accept-process-output
+;; Короче, когда lisp-реализация ссылается на C-примитив ~((defalias 'car #'..., subr)~ или функция написана целиком на C (фреймовые/буферные/процессные/оконные менеджеры). Это не повседневщина, но при отладке или глубоком изучении — спасает.
+
 (use-feature find-func
   :defer t
   :config (setq find-function-C-source-directory
@@ -3514,6 +4042,10 @@ append it to ENTRY."
     "F" '(:ignore t :which-key "fill-column-indicator")
     "FF" 'display-fill-column-indicator-mode
     "FG" 'global-display-fill-column-indicator-mode))
+
+;; Fontify symbols representing faces with that face.
+
+;; https://github.com/Fuco1/fontify-face
 
 (use-package fontify-face
   :commands (fontify-face-mode))
