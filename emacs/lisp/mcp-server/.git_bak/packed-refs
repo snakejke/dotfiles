@@ -1,0 +1,16 @@
+# pack-refs with: peeled fully-peeled sorted 
+1947617b582676cf5725fbbdf8f0157521d0ab08 refs/remotes/origin/10-security-static-form-walker-has-two-known-bypass-paths
+166b526301d28def0c8dbecca5bb54e1f2d5bfeb refs/remotes/origin/14-server-advertises-mcp-capabilities-it-doesnt-implement
+ee1d8452eb0a22360b7571671b3029d3e5c149e9 refs/remotes/origin/5-feature-add-error-diagnostics-tool
+f9ad85f8d10a2aa6bf8d49130a36664d9a56f3c3 refs/remotes/origin/7-tool-calling
+ab56926f8ce347fa84f546cf946be3401aba3f1c refs/remotes/origin/feature/org-tools
+a5d749cf9880598f66308545985526fd4460627f refs/remotes/origin/main
+058073c0c3a7ae276057aa833c0683742a73e02b refs/remotes/origin/release-please--branches--main--components--emacs-mcp-server
+97668f04b7659e77c04ea56f785afd4dc8c8d3e6 refs/tags/v0.1.0
+97668f04b7659e77c04ea56f785afd4dc8c8d3e6 refs/tags/v0.1.1
+e5edc3e064ed6d8d6a0921f43ca577f7e7a17856 refs/tags/v0.2.0
+f1c6dec144cc249125277b5666a4c1adda32010a refs/tags/v0.3.0
+bda5401613232b0ffe35af8d1b2d9a8f2c62f2e7 refs/tags/v0.4.0
+da21de8a1b401e5a0ad0a52cc8642aba76ca5815 refs/tags/v0.5.0
+1947617b582676cf5725fbbdf8f0157521d0ab08 refs/tags/v0.6.0
+a5d749cf9880598f66308545985526fd4460627f refs/tags/v0.7.0
