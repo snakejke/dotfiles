@@ -165,7 +165,8 @@
 ;;             (add-to-list 'load-path path)))
 ;;         additional-paths))
 
-(setq literate-file (concat user-emacs-directory "init.org"))
+;; (setq literate-file (concat user-emacs-directory "init.org"))
+(setq literate-file (concat user-emacs-directory "init.el"))
 
 (defun +terminal ()
   "Set the terimnal coding system."

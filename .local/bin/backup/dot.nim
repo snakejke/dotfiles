@@ -66,8 +66,8 @@ const userConfigs: seq[Entry] = @[
   # Emacs
   ("emacs/early-init.el",                                           locHome, ekFile, 0o444),
   ("emacs/init.el",                                                 locHome, ekFile, 0o644),
-  ("emacs/init.org",                                                locHome, ekFile, 0o644),
-  ("emacs/init-dev.el",                                             locHome, ekFile, 0o644),
+  # ("emacs/init.org",                                                locHome, ekFile, 0o644),
+  # ("emacs/init-dev.el",                                             locHome, ekFile, 0o644),
   ("emacs/dict/english-words.txt",                                  locHome, ekFile, 0o644),
   ("emacs/lisp",                                                    locHome, ekDir, 0o755),
   ("emacs/templates",                                               locHome, ekDir, 0o755),
